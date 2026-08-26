@@ -7,6 +7,9 @@ import SectionReveal from "@/components/SectionReveal";
 import ProtectedEmail from "@/components/ProtectedEmail";
 import { siteConfig } from "@/lib/data";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const Hero3DObject = dynamic(() => import("@/components/Hero3DObject"), { ssr: false });
 
 export default function Contact() {
   return (
@@ -90,10 +93,15 @@ export default function Contact() {
               </div>
             </SectionReveal>
 
-            {/* Right Column: Contact Form */}
+            {/* Right Column: Contact Form & 3D Background */}
             <SectionReveal delay={0.2}>
+              <div className="relative">
+                {/* 3D Object placed to the right in the background with lower opacity */}
+                <div className="absolute top-12 -right-96 w-[400px] h-[400px] opacity-40 pointer-events-none z-0 hidden lg:block">
+                  <Hero3DObject />
+                </div>
               <form
-                className="flex flex-col space-y-6 bg-surface p-8 border border-border-primary"
+                className="relative z-10 flex flex-col space-y-6 bg-surface/90 backdrop-blur-sm p-8 border border-border-primary"
                 onSubmit={(e) => {
                   e.preventDefault();
                   alert("Message submitted! (Placeholder action)");
@@ -145,6 +153,7 @@ export default function Contact() {
                   [ SEND MESSAGE ]
                 </button>
               </form>
+              </div>
             </SectionReveal>
           </div>
         </div>
