@@ -1,5 +1,6 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 import CustomCursor from "../components/CustomCursor";
 
@@ -58,7 +59,9 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen relative">
         <CustomCursor />
         <div className="noise-overlay" />
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
         <Analytics />
       </body>
     </html>
