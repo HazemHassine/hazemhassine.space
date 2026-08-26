@@ -66,9 +66,6 @@ export default function Sidebar() {
         <p className="font-[family-name:var(--font-mono)] text-[11px] tracking-wider uppercase text-text-dim">
           {siteConfig.copyright}
         </p>
-        <Link href="/admin" className="bg-surface-dim hover:bg-border-primary transition-colors text-text-muted text-[10px] uppercase px-2 py-1 w-max border border-border-primary mt-1">
-          [ ADMIN PANEL ]
-        </Link>
       </div>
     </aside>
   );

@@ -151,12 +151,7 @@ export default function Contact() {
 
         {/* Footer */}
         <footer className="mt-auto border-t border-border-primary p-[28px] flex justify-between items-center text-text-dim font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-wider">
-          <div className="flex flex-col gap-2">
-            <div>{siteConfig.copyright}</div>
-            <Link href="/admin" className="bg-surface-dim hover:bg-border-primary transition-colors text-text-muted text-[10px] uppercase px-2 py-1 w-max border border-border-primary">
-              [ ADMIN PANEL ]
-            </Link>
-          </div>
+          <div>{siteConfig.copyright}</div>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-primary-fixed transition-colors">
               PRIVACY POLICY
