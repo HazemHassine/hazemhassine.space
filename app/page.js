@@ -21,7 +21,7 @@ export default function Home() {
         <HeroSection siteConfig={siteConfig} projects={projects} />
 
         {/* MARQUEE SECTION */}
-        <Marquee items={["CODING IN THE SHADOWS", "SYNTAX ERROR SURVIVOR", "CAFFEINE POWERED", "CTRL+Z ENTHUSIAST", "DEBUGGING THE MULTIVERSE"]} />
+        <Marquee items={["ORCHESTRATING 13 AGENTS SIMULTANEOUSLY", "WRITING DEVELOPMENT LOOPS", "PROMPT ENGINEERING SURVIVOR", "LLM WHISPERER", "FINE-TUNING THE MULTIVERSE"]} />
 
         {/* LOWER GRID SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-[1fr_1.35fr_1fr] flex-grow bg-border-primary gap-[1px]">
