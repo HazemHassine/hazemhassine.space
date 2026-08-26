@@ -67,7 +67,15 @@ function RotatingObject() {
       facesToLightRef.current -= numFacesToLight;
 
       for (let f = 0; f < numFacesToLight; f++) {
-        const faceIndex = Math.floor(Math.random() * faceCount);
+        let faceIndex = Math.floor(Math.random() * faceCount);
+        let attempts = 0;
+        
+        // Ensure we pick a face that isn't currently glowing (red channel > 0.1)
+        while (colorAttr.array[faceIndex * 9] > 0.1 && attempts < 50) {
+          faceIndex = Math.floor(Math.random() * faceCount);
+          attempts++;
+        }
+        
         // Neon primary color is #ccf200 -> rgb(204, 242, 0)
         // Normalized: r=204/255=0.8, g=242/255=0.95, b=0
         for (let v = 0; v < 3; v++) {
@@ -93,11 +101,12 @@ function RotatingObject() {
             opacity={0.8}
             depthWrite={false}
             blending={THREE.AdditiveBlending}
+            side={THREE.DoubleSide}
           />
         </mesh>
         {/* The persistent wireframe */}
         <mesh geometry={geometry}>
-          <meshBasicMaterial color="#ccf200" wireframe={true} transparent={true} opacity={0.15} />
+          <meshBasicMaterial color="#ccf200" wireframe={true} transparent={true} opacity={0.15} side={THREE.DoubleSide} />
         </mesh>
       </group>
     </group>
