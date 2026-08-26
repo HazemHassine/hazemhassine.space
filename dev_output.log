@@ -1,0 +1,18 @@
+
+> hazemhassine.space@0.1.0 dev
+> next dev -H 127.0.0.1
+
+▲ Next.js 16.3.3 (Turbopack)
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+✓ Ready in 533ms
+✓ Running next.config.mjs took 24ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+○ Compiling /test-magnetic ...
+ GET /test-magnetic 200 in 4.5s (next.js: 4.1s, application-code: 437ms)
