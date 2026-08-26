@@ -228,3 +228,13 @@ body {
   background-color: var(--color-surface) !important;
   box-shadow: inset 1px 0 0 0 var(--color-border-primary) !important;
 }
+
+/* ===== MARQUEE ANIMATION ===== */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
