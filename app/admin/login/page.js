@@ -25,8 +25,7 @@ export default function AdminLogin() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push('/admin');
-        router.refresh(); // Force refresh to ensure middleware clears client cache
+        window.location.href = '/admin';
       } else {
         setError(data.error || 'Invalid code');
         setCode('');
