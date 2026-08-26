@@ -1,5 +1,6 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
 const inter = Inter({
@@ -56,7 +57,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen relative">
         <div className="noise-overlay" />
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
         <Analytics />
       </body>
     </html>
