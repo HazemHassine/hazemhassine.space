@@ -272,8 +272,8 @@ body {
   96% { opacity: 1; transform: translate(-3px, 2px); clip-path: polygon(0 70%, 100% 70%, 100% 78%, 0 78%); }
   97% { opacity: 1; transform: translate(3px, 0); clip-path: polygon(0 30%, 100% 30%, 100% 48%, 0 48%); }
   98%, 100% { opacity: 0; transform: none; clip-path: none; }
+}
 
-  
 /* ===== MARQUEE ANIMATION ===== */
 @keyframes marquee {
   0% {
