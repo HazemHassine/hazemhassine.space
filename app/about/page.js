@@ -19,11 +19,11 @@ export default function AboutPage() {
             {/* Col 1 — About Me */}
             <div className="md:col-span-4 p-[28px] border-b md:border-b-0 md:border-r border-border-primary flex flex-col">
               <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
-                // ABOUT ME
+                {`//`} ABOUT ME
               </div>
               
               <h1 className="font-[family-name:var(--font-display)] text-[32px] leading-[1.1] tracking-[-0.02em] font-bold uppercase mb-8">
-                I'M HAZEM, A SOFTWARE ENGINEER BASED IN BIELEFELD, GERMANY.
+                I&apos;M HAZEM, A SOFTWARE ENGINEER BASED IN BIELEFELD, GERMANY.
               </h1>
               
               <div className="flex flex-col gap-4 text-[14px] leading-[1.6] font-normal text-text-muted flex-1">
@@ -41,7 +41,7 @@ export default function AboutPage() {
             {/* Col 2 — Skills */}
             <div className="md:col-span-4 p-[28px] border-b md:border-b-0 md:border-r border-border-primary bg-surface flex flex-col">
               <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
-                // SKILLS
+                {`//`} SKILLS
               </div>
 
               <div className="flex flex-col gap-6 flex-1">
@@ -72,7 +72,7 @@ export default function AboutPage() {
             {/* Col 3 — Tech Stack */}
             <div className="md:col-span-4 p-[28px] flex flex-col">
               <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
-                // TECH STACK
+                {`//`} TECH STACK
               </div>
 
               <div className="grid grid-cols-3 gap-px bg-border-primary border border-border-primary flex-1 content-start aspect-square w-full">
@@ -98,7 +98,7 @@ export default function AboutPage() {
         <SectionReveal>
           <section className="p-[28px] flex-1 flex flex-col">
             <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-12">
-              // EXPERIENCE TIMELINE
+              {`//`} EXPERIENCE TIMELINE
             </div>
 
             <div className="relative max-w-4xl">
@@ -115,7 +115,7 @@ export default function AboutPage() {
                     
                     <div className="flex flex-col">
                       <h3 className="text-[12px] leading-[1] tracking-[0.02em] font-semibold uppercase text-on-background mb-1">
-                        {item.company} // {item.role}
+                        {item.company} {`//`} {item.role}
                       </h3>
                       <span className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-text-muted uppercase mb-3">
                         {item.location}
