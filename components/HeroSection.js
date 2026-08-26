@@ -2,9 +2,6 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-const Hero3DObject = dynamic(() => import('./Hero3DObject'), { ssr: false });
 
 export default function HeroSection({ siteConfig, projects }) {
   const containerVariants = {
@@ -62,13 +59,10 @@ export default function HeroSection({ siteConfig, projects }) {
 
       {/* Middle Column */}
       <div className="min-h-[400px] border-r border-border-primary bg-surface overflow-hidden relative min-w-[300px]">
-        <div className="w-full h-full bg-surface-container-high relative flex items-center justify-center">
+        <div className="w-full h-full bg-surface-container-high relative">
           <div className="grid-background absolute inset-0 pointer-events-none opacity-30"></div>
-          <div className="absolute inset-0 z-10 cursor-move">
-            <Hero3DObject />
-          </div>
-          <div className="absolute bottom-12 left-12 w-16 h-16 bg-primary-fixed z-0"></div>
-          <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-primary-fixed flex items-center justify-center z-0">
+          <div className="absolute bottom-12 left-12 w-16 h-16 bg-primary-fixed"></div>
+          <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-primary-fixed flex items-center justify-center">
             <span className="material-symbols-outlined text-primary-fixed">arrow_outward</span>
           </div>
         </div>
