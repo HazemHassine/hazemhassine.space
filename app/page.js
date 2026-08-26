@@ -99,9 +99,6 @@ export default function Home() {
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase mb-8">
                   / BLOG
                 </div>
-                <div className="group relative w-full h-32 bg-surface-container-high border border-border-primary hover:border-primary-fixed transition-colors mb-8 cursor-pointer">
-                  <div className="absolute inset-0 grid-background opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                </div>
                 <div className="flex-grow flex flex-col gap-6">
                   {blogPosts.slice(0, 3).map((post, i) => (
                     <Link key={post.slug || i} href={`/blog/${post.slug}`} className="group block">

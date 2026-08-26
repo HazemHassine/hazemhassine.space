@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
   
   return {
     title: `${post.title} | HAZEM HASSINE`,
-    description: post.excerpt,
+    description: post.summary,
   };
 }
 
@@ -55,9 +55,9 @@ export default async function BlogPost({ params }) {
               <h1 className="font-[family-name:var(--font-display)] text-[40px] md:text-[56px] font-bold leading-[1.1] tracking-tight text-primary mb-6">
                 {post.title}
               </h1>
-              {post.excerpt && (
+              {post.summary && (
                 <p className="font-[family-name:var(--font-mono)] text-[16px] text-secondary-fixed-dim leading-[1.6]">
-                  {post.excerpt}
+                  {post.summary}
                 </p>
               )}
             </header>
