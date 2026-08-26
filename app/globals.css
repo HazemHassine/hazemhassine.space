@@ -114,6 +114,10 @@ html {
   scroll-behavior: smooth;
 }
 
+* {
+  cursor: none !important;
+}
+
 body {
   background-color: #050505;
   color: var(--color-on-background);
