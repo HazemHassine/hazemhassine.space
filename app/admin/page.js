@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import AdminMarkdownEditor from '@/components/AdminMarkdownEditor';
 import { 
   siteConfig as initialSiteConfig, 
   experience as initialExperience, 
@@ -382,11 +383,9 @@ export default function AdminDashboard() {
                       <label className="text-[11px] uppercase text-text-muted flex justify-between">
                         <span>Markdown Content (includes Frontmatter)</span>
                       </label>
-                      <textarea 
+                      <AdminMarkdownEditor 
                         value={selectedPost.content}
-                        onChange={(e) => setSelectedPost({...selectedPost, content: e.target.value})}
-                        className="bg-background border border-border-primary p-4 text-[14px] text-primary focus:border-primary-fixed focus:outline-none flex-1 min-h-[400px] font-mono whitespace-pre"
-                        spellCheck={false}
+                        onChange={(val) => setSelectedPost({...selectedPost, content: val})}
                       />
                     </div>
                   </div>
