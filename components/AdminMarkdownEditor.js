@@ -56,7 +56,7 @@ export default function AdminMarkdownEditor({ value, onChange }) {
 
   return (
     <div 
-      className="flex-1 flex flex-col min-h-[500px]" 
+      className="flex-1 flex flex-col h-[calc(100vh-250px)]" 
       data-color-mode="dark"
       onDrop={onDrop}
       onDragOver={(e) => e.preventDefault()}

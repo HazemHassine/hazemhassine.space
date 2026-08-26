@@ -195,8 +195,32 @@ body {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ===== PROJECT PREVIEW ===== */
 .project-preview {
   opacity: 0;
   transition: all 0.5s ease-out;
+}
+
+/* ===== MDEditor BRUTALIST OVERRIDES ===== */
+.w-md-editor {
+  border-radius: 0 !important;
+  border: 1px solid var(--color-border-primary) !important;
+  background-color: var(--color-surface) !important;
+  box-shadow: none !important;
+}
+
+.w-md-editor-toolbar {
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--color-border-primary) !important;
+  background-color: var(--color-background) !important;
+}
+
+.w-md-editor-text-pre > code,
+.w-md-editor-text-input {
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+}
+
+.w-md-editor-preview {
+  background-color: var(--color-surface) !important;
+  box-shadow: inset 1px 0 0 0 var(--color-border-primary) !important;
 }

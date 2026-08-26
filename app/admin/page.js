@@ -107,7 +107,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-primary font-[family-name:var(--font-mono)] p-8">
-      <div className="max-w-5xl mx-auto flex flex-col h-full">
+      <div className="w-full flex flex-col h-full">
         
         {/* Header */}
         <div className="flex justify-between items-end border-b border-border-primary pb-6 mb-8">
