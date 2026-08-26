@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -10,6 +10,18 @@ function RotatingObject() {
   const rotationGroupRef = useRef(null);
 
   const geometryRef = useRef(null);
+  const facesToLightRef = useRef(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Light up a face on alphanumeric keys, backspace, enter, etc.
+      if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') {
+        facesToLightRef.current += 1;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Create a non-indexed geometry so we can color individual faces
   const geometry = useMemo(() => {
@@ -49,10 +61,11 @@ function RotatingObject() {
       colorAttr.array[i] = Math.max(0, colorAttr.array[i] - delta * 0.8);
     }
 
-    // Randomly light up a new face (every few seconds, adjust probability)
-    // With 60fps, a probability of ~0.01 lights up ~1 face every 1.5 seconds
-    if (Math.random() < 0.015) {
-      const numFacesToLight = Math.random() > 0.7 ? 2 : 1; // Sometimes light up two
+    // Light up faces when typing
+    if (facesToLightRef.current > 0) {
+      const numFacesToLight = Math.min(facesToLightRef.current, 5); // Limit per frame if typing fast
+      facesToLightRef.current -= numFacesToLight;
+
       for (let f = 0; f < numFacesToLight; f++) {
         const faceIndex = Math.floor(Math.random() * faceCount);
         // Neon primary color is #ccf200 -> rgb(204, 242, 0)
