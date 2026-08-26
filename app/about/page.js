@@ -8,12 +8,11 @@ import { siteConfig, skills, techStack, experience } from '@/lib/data';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
+    <>
       <Sidebar />
-      <TopBar />
-      <MobileMenu />
-
-      <main className="flex-1 md:ml-[150px] flex flex-col pt-16 md:pt-0">
+      <main className="md:ml-[150px] min-h-screen flex flex-col pt-16 md:pt-0">
+        <TopBar />
+        <MobileMenu />
         <SectionReveal>
           <section className="grid grid-cols-1 md:grid-cols-12 border-b border-border-primary min-h-[500px]">
             {/* Col 1 — About Me */}
@@ -135,6 +134,6 @@ export default function AboutPage() {
           </section>
         </SectionReveal>
       </main>
-    </div>
+    </>
   );
 }
