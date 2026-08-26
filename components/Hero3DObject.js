@@ -40,7 +40,7 @@ function RotatingObject() {
     }
 
     // 3. Light up faces effect
-    const colorAttr = geometryRef.current.attributes.color;
+    const colorAttr = geometryRef.current.geometry.attributes.color;
     const count = colorAttr.count;
     const faceCount = count / 3;
 
