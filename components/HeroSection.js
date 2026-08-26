@@ -30,13 +30,15 @@ export default function HeroSection({ siteConfig, projects }) {
         >
           <motion.h1 
             variants={itemVariants}
-            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-white"
+            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-white glitch-static"
+            data-text={siteConfig.title.split(' ').slice(0, -1).join(' ')}
           >
             {siteConfig.title.split(' ').slice(0, -1).join(' ')}
           </motion.h1>
           <motion.h1 
             variants={itemVariants}
-            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-outline"
+            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-outline glitch-static block"
+            data-text={siteConfig.title.split(' ').slice(-1)[0]}
           >
             {siteConfig.title.split(' ').slice(-1)[0]}
           </motion.h1>
