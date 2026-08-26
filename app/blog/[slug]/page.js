@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
 
 export async function generateStaticParams() {
@@ -35,7 +34,6 @@ export default async function BlogPost({ params }) {
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full bg-background">
       <Sidebar />
-      <TopBar />
       <MobileMenu />
 
       <main className="flex-1 flex flex-col md:ml-[150px] min-h-screen border-l border-border-primary relative z-10 pt-16 md:pt-0">
