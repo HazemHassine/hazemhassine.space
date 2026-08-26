@@ -1,32 +1,81 @@
-import React from 'react';
+"use client";
+
+import React, { useRef, useEffect } from 'react';
 
 export default function Marquee({ items = ["OPEN TO WORK", "AVAILABLE FOR FREELANCE", "CREATIVE DEVELOPER"] }) {
   // We don't need to duplicate too many times if the items array is already populated, but for safety:
   const repeatedItems = [...items, ...items, ...items, ...items];
+  
+  const containerRef = useRef(null);
+  const percentRef = useRef(0);
+  const velocityRef = useRef(0.015); // Slightly slower than before
+  const targetVelocityRef = useRef(0.015);
+  const lastTimeRef = useRef(0);
+
+  useEffect(() => {
+    let animationFrameId;
+
+    const animate = (time) => {
+      if (!lastTimeRef.current) lastTimeRef.current = time;
+      const deltaTime = time - lastTimeRef.current;
+      lastTimeRef.current = time;
+
+      // Smoothly interpolate current velocity towards target velocity
+      // We use a small smoothing factor. deltaTime adjustment ensures consistency across refresh rates.
+      const smoothing = 0.05 * (deltaTime / 16.66);
+      velocityRef.current += (targetVelocityRef.current - velocityRef.current) * Math.min(smoothing, 1);
+      
+      percentRef.current -= velocityRef.current * (deltaTime / 16.66);
+      
+      // Since container holds 2 identical blocks, moving it by -50% shifts it exactly by 1 block width
+      if (percentRef.current <= -50) {
+        percentRef.current += 50;
+      }
+      
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translateX(${percentRef.current}%)`;
+      }
+      
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
 
   return (
-    <div className="w-full overflow-hidden border-y border-border-primary bg-surface py-3 flex group">
-      {/* First block */}
-      <div className="flex shrink-0 animate-[marquee_40s_linear_infinite] group-hover:[animation-play-state:paused]">
-        {repeatedItems.map((item, index) => (
-          <div key={`first-${index}`} className="flex items-center px-4">
-            <span className="font-[family-name:var(--font-mono)] text-primary font-bold uppercase whitespace-nowrap text-sm md:text-base">
-              {item}
-            </span>
-            <span className="ml-8 text-primary-fixed text-lg">•</span>
-          </div>
-        ))}
-      </div>
-      {/* Second block (identical) */}
-      <div aria-hidden="true" className="flex shrink-0 animate-[marquee_40s_linear_infinite] group-hover:[animation-play-state:paused]">
-        {repeatedItems.map((item, index) => (
-          <div key={`second-${index}`} className="flex items-center px-4">
-            <span className="font-[family-name:var(--font-mono)] text-primary font-bold uppercase whitespace-nowrap text-sm md:text-base">
-              {item}
-            </span>
-            <span className="ml-8 text-primary-fixed text-lg">•</span>
-          </div>
-        ))}
+    <div 
+      className="w-full overflow-hidden border-y border-border-primary bg-surface py-3 flex group"
+      onMouseEnter={() => { targetVelocityRef.current = 0; }}
+      onMouseLeave={() => { targetVelocityRef.current = 0.015; }}
+    >
+      {/* 
+        We use w-max to ensure the container is exactly as wide as both blocks combined. 
+        Moving this container by -50% will shift it by exactly one block's width. 
+      */}
+      <div className="flex shrink-0 w-max" ref={containerRef}>
+        {/* First block */}
+        <div className="flex shrink-0">
+          {repeatedItems.map((item, index) => (
+            <div key={`first-${index}`} className="flex items-center px-4">
+              <span className="font-[family-name:var(--font-mono)] text-primary font-bold uppercase whitespace-nowrap text-sm md:text-base">
+                {item}
+              </span>
+              <span className="ml-8 text-primary-fixed text-lg">•</span>
+            </div>
+          ))}
+        </div>
+        {/* Second block (identical) */}
+        <div aria-hidden="true" className="flex shrink-0">
+          {repeatedItems.map((item, index) => (
+            <div key={`second-${index}`} className="flex items-center px-4">
+              <span className="font-[family-name:var(--font-mono)] text-primary font-bold uppercase whitespace-nowrap text-sm md:text-base">
+                {item}
+              </span>
+              <span className="ml-8 text-primary-fixed text-lg">•</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

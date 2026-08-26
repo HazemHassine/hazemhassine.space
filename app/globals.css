@@ -274,13 +274,3 @@ body {
   98%, 100% { opacity: 0; transform: none; clip-path: none; }
 }
 
-/* ===== MARQUEE ANIMATION ===== */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-
-}

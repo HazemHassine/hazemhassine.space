@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HeroSection({ siteConfig, projects }) {
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -20,9 +22,9 @@ export default function HeroSection({ siteConfig, projects }) {
   };
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto_0.8fr] border-b border-border-primary">
+    <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto_0.6fr] border-b border-border-primary">
       {/* Left Column */}
-      <div className="p-[28px] lg:p-12 border-r border-border-primary">
+      <div className="p-[28px] lg:p-12 relative z-20">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -60,13 +62,37 @@ export default function HeroSection({ siteConfig, projects }) {
       </div>
 
       {/* Middle Column */}
-      <div className="min-h-[400px] border-r border-border-primary bg-surface overflow-hidden relative min-w-[300px]">
-        <div className="w-full h-full bg-surface-container-high relative">
-          <div className="grid-background absolute inset-0 pointer-events-none opacity-30"></div>
-          <div className="absolute bottom-12 left-12 w-16 h-16 bg-primary-fixed"></div>
-          <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-primary-fixed flex items-center justify-center">
-            <span className="material-symbols-outlined text-primary-fixed">arrow_outward</span>
-          </div>
+      <div className="min-h-[500px] md:min-h-[600px] min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden">
+        {/* Global Grid Background */}
+        <div className="grid-background absolute inset-0 pointer-events-none opacity-20"></div>
+        
+        {/* Decorative background block (Gray Textured Area) */}
+        <div className="absolute left-[5%] md:left-[10%] bottom-[20%] w-[45%] md:w-[40%] aspect-square bg-surface-container-high border border-border-primary z-0"></div>
+        
+        {/* The portrait container (Uncropped/Controlled aspect ratio) */}
+        <div 
+          className="relative w-[320px] md:w-[460px] aspect-[4/5] z-10 group"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)'
+          }}
+        >
+          <Image 
+            src="/hazem.jpeg" 
+            alt="Hazem" 
+            fill 
+            sizes="(max-width: 768px) 320px, 460px"
+            className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+            priority
+          />
+          {/* Subtle grid texture overlaid directly on the portrait */}
+          <div className="grid-background absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-10"></div>
+        </div>
+
+        {/* Accent blocks (Primary colored squares) */}
+        <div className="absolute left-[10%] md:left-[15%] bottom-[15%] w-12 h-12 bg-primary-fixed z-20"></div>
+        <div className="absolute right-[5%] md:right-[10%] bottom-[10%] w-16 h-16 bg-primary-fixed flex items-center justify-center z-20 shadow-lg border border-primary-fixed-dim">
+          <span className="material-symbols-outlined text-background text-2xl font-bold">arrow_outward</span>
         </div>
       </div>
 
