@@ -35,7 +35,7 @@ export default function Contact() {
               <div className="flex flex-col space-y-12">
                 <div>
                   <h2 className="font-[family-name:var(--font-display)] text-[64px] md:text-[80px] font-extrabold leading-[0.85] tracking-[-0.04em] text-outline uppercase">
-                    LET'S
+                    LET&apos;S
                     <br />
                     TALK
                   </h2>

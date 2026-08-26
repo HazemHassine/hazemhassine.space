@@ -1,6 +1,7 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import CustomCursor from "../components/CustomCursor";
 
 const inter = Inter({
   variable: "--font-display",
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen relative">
+        <CustomCursor />
         <div className="noise-overlay" />
         {children}
         <Analytics />
