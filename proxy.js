@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-export async function middleware(request) {
+export async function proxy(request) {
   const path = request.nextUrl.pathname;
 
   // Paths that require authentication
