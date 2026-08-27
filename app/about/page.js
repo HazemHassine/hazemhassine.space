@@ -4,7 +4,7 @@ import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
-import { siteConfig, skills, techStack, experience } from '@/lib/data';
+import { siteConfig, skills, techStack, experience, education } from '@/lib/data';
 
 export default function AboutPage() {
   return (
@@ -127,10 +127,43 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
+          </section>
+        </SectionReveal>
 
-            <button className="mt-16 self-start text-[12px] leading-[1] tracking-[0.02em] font-semibold uppercase text-primary-fixed hover:text-primary-fixed-dim transition-colors">
-              [ VIEW FULL TIMELINE ]
-            </button>
+        {/* BOTTOM SECTION — Education Timeline */}
+        <SectionReveal>
+          <section className="p-[28px] flex-1 flex flex-col border-t border-border-primary">
+            <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-12">
+              {`//`} EDUCATION TIMELINE
+            </div>
+
+            <div className="relative max-w-4xl">
+              <div className="absolute left-[5px] top-2 bottom-2 w-px bg-primary-fixed/20" />
+              
+              <div className="flex flex-col gap-12">
+                {education.map((item, index) => (
+                  <div key={index} className="relative pl-8 md:pl-32 flex flex-col md:flex-row group">
+                    <div className="absolute left-0 top-1.5 w-3 h-3 bg-primary-fixed border border-background" />
+                    
+                    <div className="md:absolute md:left-8 font-[family-name:var(--font-mono)] text-[17px] leading-[1.75] font-normal text-primary-fixed mb-1 md:mb-0">
+                      {item.year}
+                    </div>
+                    
+                    <div className="flex flex-col">
+                      <h3 className="text-[12px] leading-[1] tracking-[0.02em] font-semibold uppercase text-on-background mb-1">
+                        {item.institution} {`//`} {item.degree}
+                      </h3>
+                      <span className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-text-muted uppercase mb-3">
+                        {item.location}
+                      </span>
+                      <p className="text-[14px] leading-[1.6] font-normal text-text-dim max-w-2xl">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </section>
         </SectionReveal>
       </main>

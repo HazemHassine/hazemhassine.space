@@ -110,6 +110,8 @@ export default function HeroSection({ siteConfig, projects }) {
           </p>
           <Link 
             href={projects[0].href} 
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors"
           >
             [ VIEW CASE ]
