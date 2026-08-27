@@ -1,9 +1,7 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import PageTransition from "@/components/PageTransition";
-import dynamic from "next/dynamic";
-
-const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
+import ChatWrapper from "@/components/ChatWrapper";
 import "./globals.css";
 import CustomCursor from "../components/CustomCursor";
 
@@ -65,7 +63,7 @@ export default function RootLayout({ children }) {
         <PageTransition>
           {children}
         </PageTransition>
-        <PortfolioChat />
+        <ChatWrapper />
         <Analytics />
       </body>
     </html>
