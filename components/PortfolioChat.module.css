@@ -467,9 +467,23 @@
 
 @media (max-width: 767px) {
   .trigger {
-    right: 14px;
-    bottom: 14px;
-    min-width: 208px;
+    right: 16px;
+    bottom: 16px;
+    min-width: 0;
+    width: 56px;
+    height: 56px;
+    padding: 6px;
+    grid-template-columns: 1fr;
+  }
+
+  .triggerCopy,
+  .statusDot {
+    display: none;
+  }
+
+  .triggerIcon {
+    width: 100%;
+    height: 100%;
   }
 
   .backdrop {
@@ -477,22 +491,27 @@
   }
 
   .panel {
-    right: 10px;
-    bottom: 10px;
-    width: calc(100vw - 20px);
-    height: min(680px, calc(100dvh - 20px));
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 80%);
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100dvh;
+    border: none;
+    box-shadow: none;
   }
 
   .transcript {
-    padding-inline: 14px;
+    padding-inline: 16px;
   }
 
   .messageRow {
-    width: 92%;
+    width: 95%;
   }
 
-  .footer span:last-child {
+  .composer {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .footer {
     display: none;
   }
 }
