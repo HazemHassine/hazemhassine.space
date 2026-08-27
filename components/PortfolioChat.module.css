@@ -269,6 +269,17 @@
   border-left: 2px solid var(--color-primary-fixed);
 }
 
+.markdownContent p {
+  margin: 0;
+}
+.markdownContent p + p {
+  margin-top: 8px;
+}
+.markdownContent a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .userRow .messageBubble {
   border-color: color-mix(in srgb, var(--color-primary-fixed) 38%, var(--color-border-primary));
   background: color-mix(in srgb, var(--color-primary-fixed) 8%, var(--color-surface));
