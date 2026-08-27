@@ -1,0 +1,165 @@
+.portraitStage::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 56% 45%,
+    color-mix(in srgb, var(--color-primary-fixed) 8%, transparent) 0,
+    transparent 48%
+  );
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease-out;
+}
+
+.portraitStage:has(.portraitFrame:hover)::before {
+  opacity: 1;
+}
+
+.portraitFrame {
+  background: var(--color-surface-container-high);
+  box-shadow:
+    10px 10px 0 rgb(0 0 0 / 35%),
+    0 0 0 1px var(--color-border-primary);
+  isolation: isolate;
+  transition:
+    box-shadow 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portraitFrame:hover {
+  box-shadow:
+    14px 14px 0 color-mix(in srgb, var(--color-primary-fixed) 14%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-primary-fixed) 70%, transparent);
+  transform: translate3d(-2px, -2px, 0);
+}
+
+.portraitFade {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+}
+
+.portraitPhoto {
+  filter: grayscale(1) contrast(1.08) brightness(0.86);
+  transform: scale(1.01);
+  transition:
+    filter 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portraitFrame:hover .portraitPhoto {
+  filter: grayscale(0.15) contrast(1.06) brightness(1);
+  transform: scale(1.035);
+}
+
+.portraitGrid {
+  opacity: 0.42;
+  transition: opacity 260ms ease-out;
+}
+
+.portraitFrame:hover .portraitGrid {
+  opacity: 0.14;
+}
+
+.scanBeam,
+.scanStripes {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: -8%;
+  width: 116%;
+  height: 30%;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, -120%, 0) skewY(-4deg);
+  will-change: opacity, transform;
+}
+
+.scanBeam {
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(255 255 255 / 8%) 24%,
+    color-mix(in srgb, var(--color-primary-fixed) 24%, transparent) 53%,
+    rgb(255 255 255 / 10%) 70%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+}
+
+.scanStripes {
+  background: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-primary-fixed) 92%, transparent) 0,
+    color-mix(in srgb, var(--color-primary-fixed) 92%, transparent) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  box-shadow: 0 0 26px color-mix(in srgb, var(--color-primary-fixed) 30%, transparent);
+  mix-blend-mode: screen;
+}
+
+.portraitFrame:hover .scanBeam {
+  animation: portrait-scan 580ms cubic-bezier(0.55, 0, 0.25, 1) both;
+}
+
+.portraitFrame:hover .scanStripes {
+  animation: portrait-scan 510ms 35ms cubic-bezier(0.55, 0, 0.25, 1) both;
+}
+
+.frameCorners {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background:
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) left top / 30px 2px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) left top / 2px 30px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) right top / 30px 2px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) right top / 2px 30px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) left bottom / 30px 2px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) left bottom / 2px 30px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) right bottom / 30px 2px no-repeat,
+    linear-gradient(var(--color-primary-fixed), var(--color-primary-fixed)) right bottom / 2px 30px no-repeat;
+  opacity: 0.62;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+
+.portraitFrame:hover .frameCorners {
+  opacity: 1;
+}
+
+@keyframes portrait-scan {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -120%, 0) skewY(-4deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0.88;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 430%, 0) skewY(-4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portraitStage::before,
+  .portraitFrame,
+  .portraitPhoto,
+  .portraitGrid,
+  .frameCorners {
+    transition: none;
+  }
+
+  .portraitFrame:hover .scanBeam,
+  .portraitFrame:hover .scanStripes {
+    animation: none;
+  }
+}

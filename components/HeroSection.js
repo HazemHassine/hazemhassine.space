@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import styles from './HeroSection.module.css';
 
 export default function HeroSection({ siteConfig, projects }) {
 
@@ -62,7 +63,7 @@ export default function HeroSection({ siteConfig, projects }) {
       </div>
 
       {/* Middle Column */}
-      <div className="min-h-[500px] md:min-h-[600px] min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden">
+      <div className={`${styles.portraitStage} min-h-[500px] md:min-h-[600px] min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden`}>
         {/* Global Grid Background */}
         <div className="grid-background absolute inset-0 pointer-events-none opacity-20"></div>
         
@@ -71,22 +72,25 @@ export default function HeroSection({ siteConfig, projects }) {
         
         {/* The portrait container (Uncropped/Controlled aspect ratio) */}
         <div 
-          className="relative w-[320px] md:w-[460px] aspect-[4/5] z-10 group"
-          style={{
-            maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)'
-          }}
+          className={`${styles.portraitFrame} relative w-[320px] md:w-[460px] aspect-[4/5] z-10`}
         >
-          <Image 
-            src="/hazem.jpeg" 
-            alt="Hazem" 
-            fill 
-            sizes="(max-width: 768px) 320px, 460px"
-            className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
-            priority
-          />
-          {/* Subtle grid texture overlaid directly on the portrait */}
-          <div className="grid-background absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-10"></div>
+          <div className={styles.portraitFade}>
+            <Image
+              src="/hazem-colored.jpeg"
+              alt="Portrait of Hazem Hassine"
+              fill
+              sizes="(max-width: 768px) 320px, 460px"
+              className={`${styles.portraitPhoto} object-cover object-center`}
+              preload
+            />
+
+            {/* Texture and one-shot hover scan */}
+            <div className={`${styles.portraitGrid} grid-background absolute inset-0 pointer-events-none mix-blend-overlay`}></div>
+            <div className={styles.scanBeam} aria-hidden="true"></div>
+            <div className={styles.scanStripes} aria-hidden="true"></div>
+          </div>
+
+          <div className={styles.frameCorners} aria-hidden="true"></div>
         </div>
 
         {/* Accent blocks (Primary colored squares) */}
