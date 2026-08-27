@@ -1,0 +1,502 @@
+.trigger {
+  position: fixed;
+  z-index: 80;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  min-width: 224px;
+  min-height: 54px;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--color-primary-fixed);
+  background: rgb(9 9 9 / 94%);
+  box-shadow: 8px 8px 0 rgb(0 0 0 / 42%);
+  color: var(--color-primary);
+  text-align: left;
+  backdrop-filter: blur(12px);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.trigger:hover {
+  background: var(--color-primary-fixed);
+  box-shadow: 11px 11px 0 rgb(0 0 0 / 55%);
+  color: var(--color-background);
+  transform: translate(-2px, -2px);
+}
+
+.triggerHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
+.triggerIcon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  background: var(--color-primary-fixed);
+  color: var(--color-background);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+.trigger:hover .triggerIcon {
+  background: var(--color-background);
+  color: var(--color-primary-fixed);
+}
+
+.triggerCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-inline: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.triggerCopy small {
+  color: var(--color-text-muted);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.trigger:hover .triggerCopy small {
+  color: rgb(19 19 19 / 70%);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary-fixed);
+  box-shadow: 0 0 10px var(--color-primary-fixed);
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+.trigger:hover .statusDot {
+  background: var(--color-background);
+  box-shadow: none;
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 81;
+  inset: 0;
+  display: none;
+  border: 0;
+  background: rgb(0 0 0 / 72%);
+}
+
+.panel {
+  position: fixed;
+  z-index: 82;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  width: min(460px, calc(100vw - 48px));
+  height: min(720px, calc(100dvh - 48px));
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-primary-fixed);
+  background: rgb(9 9 9 / 97%);
+  box-shadow:
+    14px 14px 0 rgb(0 0 0 / 45%),
+    0 0 50px rgb(204 242 0 / 5%);
+  backdrop-filter: blur(18px);
+  transform-origin: right bottom;
+}
+
+.panel::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(52 52 52 / 10%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(52 52 52 / 10%) 1px, transparent 1px);
+  background-size: 32px 32px;
+  content: '';
+  pointer-events: none;
+}
+
+.header {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-background);
+}
+
+.identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.identity > span:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.identity strong {
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.identity small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+.identity small i {
+  width: 5px;
+  height: 5px;
+  background: var(--color-primary-fixed);
+  box-shadow: 0 0 8px var(--color-primary-fixed);
+}
+
+.avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  border: 1px solid var(--color-primary-fixed);
+  color: var(--color-primary-fixed);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: var(--color-text-muted);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.headerActions button:hover {
+  background: var(--color-surface-container-high);
+  color: var(--color-primary-fixed);
+}
+
+.headerActions span {
+  font-size: 19px;
+}
+
+.transcript {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 18px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-primary) transparent;
+}
+
+.messageRow {
+  display: flex;
+  width: 88%;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.assistantRow {
+  align-self: flex-start;
+}
+
+.userRow {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.messageLabel {
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.messageBubble {
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-surface);
+  color: var(--color-secondary-fixed-dim);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.assistantRow .messageBubble {
+  border-left: 2px solid var(--color-primary-fixed);
+}
+
+.userRow .messageBubble {
+  border-color: color-mix(in srgb, var(--color-primary-fixed) 38%, var(--color-border-primary));
+  background: color-mix(in srgb, var(--color-primary-fixed) 8%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.suggestions button {
+  padding: 9px 10px;
+  border: 1px solid var(--color-border-primary);
+  background: rgb(19 19 19 / 76%);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.suggestions button span {
+  margin-right: 5px;
+  color: var(--color-primary-fixed);
+}
+
+.suggestions button:hover {
+  border-color: var(--color-primary-fixed);
+  color: var(--color-primary);
+  transform: translateX(3px);
+}
+
+.loadingBars {
+  display: flex;
+  width: fit-content;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--color-primary-fixed);
+  background: var(--color-surface);
+}
+
+.loadingBars i {
+  width: 3px;
+  height: 12px;
+  background: var(--color-primary-fixed);
+  animation: loading-bars 720ms ease-in-out infinite alternate;
+}
+
+.loadingBars i:nth-child(2) { animation-delay: 120ms; }
+.loadingBars i:nth-child(3) { animation-delay: 240ms; }
+.loadingBars i:nth-child(4) { animation-delay: 360ms; }
+
+.errorMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--color-danger);
+  background: rgb(147 0 10 / 12%);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.errorMessage span,
+.errorMessage button {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.errorMessage button {
+  width: fit-content;
+}
+
+.composer {
+  padding: 12px;
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-background);
+}
+
+.composer > label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: 1fr 48px;
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-surface);
+  transition: border-color 160ms ease;
+}
+
+.inputRow:focus-within {
+  border-color: var(--color-primary-fixed);
+}
+
+.inputRow textarea {
+  min-height: 54px;
+  max-height: 120px;
+  resize: none;
+  padding: 12px 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.inputRow textarea::placeholder {
+  color: var(--color-text-dim);
+}
+
+.inputRow textarea:disabled {
+  opacity: 0.55;
+}
+
+.inputRow > button {
+  display: grid;
+  margin: 5px;
+  place-items: center;
+  background: var(--color-primary-fixed);
+  color: var(--color-background);
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.inputRow > button:hover:not(:disabled) {
+  background: var(--color-primary);
+}
+
+.inputRow > button:disabled {
+  opacity: 0.25;
+}
+
+.composerMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.05em;
+}
+
+.footer {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-top: 1px solid var(--color-border-muted);
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.05em;
+}
+
+@keyframes loading-bars {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 767px) {
+  .trigger {
+    right: 14px;
+    bottom: 14px;
+    min-width: 208px;
+  }
+
+  .backdrop {
+    display: block;
+  }
+
+  .panel {
+    right: 10px;
+    bottom: 10px;
+    width: calc(100vw - 20px);
+    height: min(680px, calc(100dvh - 20px));
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 80%);
+  }
+
+  .transcript {
+    padding-inline: 14px;
+  }
+
+  .messageRow {
+    width: 92%;
+  }
+
+  .footer span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger,
+  .headerActions button,
+  .suggestions button,
+  .inputRow,
+  .inputRow > button {
+    transition: none;
+  }
+
+  .statusDot,
+  .loadingBars i {
+    animation: none;
+  }
+}
