@@ -102,9 +102,39 @@ export default function Contact() {
                 </div>
               <form
                 className="relative z-10 flex flex-col space-y-6 bg-surface/90 backdrop-blur-sm p-8 border border-border-primary"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  alert("Message submitted! (Placeholder action)");
+                  const form = e.target;
+                  const btn = form.querySelector('button[type="submit"]');
+                  const originalText = btn.innerHTML;
+                  
+                  btn.innerHTML = '[ SENDING... ]';
+                  btn.disabled = true;
+
+                  try {
+                    const res = await fetch('/api/contact', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        name: form.name.value,
+                        email: form.email.value,
+                        message: form.message.value,
+                      }),
+                    });
+
+                    if (res.ok) {
+                      alert("Message sent successfully!");
+                      form.reset();
+                    } else {
+                      const data = await res.json();
+                      alert("Failed to send message: " + data.error);
+                    }
+                  } catch (err) {
+                    alert("An error occurred. Please try again.");
+                  } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                  }
                 }}
               >
                 <div className="flex flex-col">
@@ -114,6 +144,7 @@ export default function Contact() {
                   <input
                     type="text"
                     id="name"
+                    name="name"
                     required
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors"
                     placeholder="John Doe"
@@ -127,6 +158,7 @@ export default function Contact() {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     required
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors"
                     placeholder="john@example.com"
@@ -139,6 +171,7 @@ export default function Contact() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     required
                     rows="5"
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors resize-y"
