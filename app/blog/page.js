@@ -4,6 +4,11 @@ import SectionReveal from '@/components/SectionReveal';
 import { getAllPosts } from '@/lib/markdown';
 import Link from 'next/link';
 
+export const metadata = {
+  title: 'Blog | Hazem Hassine',
+  description: 'Writings on AI, software engineering, agentic systems, and developer tools.',
+};
+
 export default function BlogPage() {
   const posts = getAllPosts();
 
