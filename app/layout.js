@@ -1,7 +1,9 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import PageTransition from "@/components/PageTransition";
-import PortfolioChat from "@/components/PortfolioChat";
+import dynamic from "next/dynamic";
+
+const PortfolioChat = dynamic(() => import("@/components/PortfolioChat"), { ssr: false });
 import "./globals.css";
 import CustomCursor from "../components/CustomCursor";
 
