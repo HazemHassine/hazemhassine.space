@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#0c0c0c" />
+  <text 
+    x="50%" 
+    y="52%" 
+    font-family="system-ui, -apple-system, sans-serif" 
+    font-weight="900" 
+    font-size="140" 
+    fill="#ffffff" 
+    text-anchor="middle" 
+    dominant-baseline="middle">
+    /H/
+  </text>
+</svg>
