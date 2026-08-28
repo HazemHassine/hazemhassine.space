@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
@@ -16,12 +16,25 @@ export default function AboutPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSkillId, setSelectedSkillId] = useState(skillsWithProvenance[0].id);
   const [activeTag, setActiveTag] = useState(null);
+  const hoverTimeoutRef = useRef(null);
 
   const filteredSkills = selectedCategory === 'all'
     ? skillsWithProvenance
     : skillsWithProvenance.filter((s) => s.category === selectedCategory);
 
   const activeSkill = skillsWithProvenance.find((s) => s.id === selectedSkillId) || filteredSkills[0] || skillsWithProvenance[0];
+
+  const handleSkillHover = (skillId) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setSelectedSkillId(skillId);
+    }, 35);
+  };
+
+  const handleSkillClick = (skillId) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setSelectedSkillId(skillId);
+  };
 
   return (
     <>
@@ -126,8 +139,8 @@ export default function AboutPage() {
                     return (
                       <button
                         key={skill.id}
-                        onClick={() => setSelectedSkillId(skill.id)}
-                        onMouseEnter={() => setSelectedSkillId(skill.id)}
+                        onClick={() => handleSkillClick(skill.id)}
+                        onMouseEnter={() => handleSkillHover(skill.id)}
                         className={`relative w-full text-left p-2.5 border transition-all flex items-center justify-between group overflow-hidden ${
                           isSelected
                             ? 'border-primary-fixed text-on-surface'

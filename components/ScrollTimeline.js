@@ -59,16 +59,18 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
     offset: ['start 70%', 'end end'],
   });
 
+  const markerOffsetsRef = useRef([]);
+
   // Calculate exact rail bounds from first square marker to last square marker
   const measureRailBounds = useCallback(() => {
     const validRefs = itemRefs.current.filter(Boolean);
     if (validRefs.length === 0) return;
 
-    const firstEl = validRefs[0];
-    const lastEl = validRefs[validRefs.length - 1];
+    const offsets = validRefs.map((el) => el.offsetTop + 6);
+    markerOffsetsRef.current = offsets;
 
-    const firstMarkerCenterY = firstEl.offsetTop + 6;
-    const lastMarkerCenterY = lastEl.offsetTop + 6;
+    const firstMarkerCenterY = offsets[0];
+    const lastMarkerCenterY = offsets[offsets.length - 1];
     const totalHeight = Math.max(lastMarkerCenterY - firstMarkerCenterY, 50);
 
     setRailBounds({
@@ -81,7 +83,6 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
   const evaluateActiveItems = useCallback(
     (progress) => {
       const currentProgress = progress !== undefined ? progress : scrollYProgress.get();
-      const validRefs = itemRefs.current.filter(Boolean);
 
       // If at top or 0 progress, clear all active items
       if (currentProgress <= 0.005) {
@@ -94,17 +95,14 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
       const currentBeamY = firstY + currentProgress * totalH;
 
       const newActive = new Set();
+      const offsets = markerOffsetsRef.current;
 
-      if (validRefs.length === currentItems.length) {
-        validRefs.forEach((el, index) => {
-          if (el) {
-            const markerCenterY = el.offsetTop + 6;
-            // Activate when beam hits or passes the marker
-            if (currentBeamY >= markerCenterY - 4) {
-              newActive.add(index);
-            }
+      if (offsets.length === currentItems.length) {
+        for (let i = 0; i < offsets.length; i++) {
+          if (currentBeamY >= offsets[i] - 4) {
+            newActive.add(i);
           }
-        });
+        }
       } else {
         // Mathematical fallback
         const total = currentItems.length;
