@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminMarkdownEditor from '@/components/AdminMarkdownEditor';
 import { 
@@ -44,7 +45,7 @@ export default function AdminDashboard() {
           siteConfig,
           projects,
           experience,
-          navigation: initialNavigation, // Keeping these static for now
+          navigation: initialNavigation,
           skills: initialSkills,
           techStack: initialTechStack
         }),
@@ -64,7 +65,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' });
-    window.location.href = '/admin/login';
+    router.push('/admin/login');
   };
 
   const fetchMdPosts = async () => {

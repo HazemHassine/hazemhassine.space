@@ -131,9 +131,6 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
     itemRefs.current = [];
     measureRailBounds();
 
-    // Immediate evaluation
-    evaluateActiveItems(scrollYProgress.get());
-
     // RAF & delayed checks to ensure layout reflow measurements are exact
     const rafId = requestAnimationFrame(() => {
       measureRailBounds();

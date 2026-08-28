@@ -25,7 +25,7 @@ export default function AdminLogin() {
       const data = await res.json();
 
       if (res.ok) {
-        window.location.href = '/admin';
+        router.push('/admin');
       } else {
         setError(data.error || 'Invalid code');
         setCode('');
