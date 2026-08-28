@@ -1,14 +1,14 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 
 export default function ScrollTimeline({ id, title, items, isSubSection = false }) {
   const containerRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start 75%', 'end 50%'],
+    offset: ['start 80%', 'end 60%'],
   });
 
   const beamHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
@@ -25,8 +25,8 @@ export default function ScrollTimeline({ id, title, items, isSubSection = false 
       </div>
 
       <div className="relative max-w-4xl">
-        {/* Static Background Rail */}
-        <div className="absolute left-[5px] top-2 bottom-2 w-px bg-border-primary/40" />
+        {/* Static Background Rail — Centered exactly at 5.5px through 12px (w-3) markers */}
+        <div className="absolute left-[5.5px] top-3 bottom-6 w-px bg-border-primary/40" />
 
         {/* Dynamic Active Scroll Progress Beam */}
         <motion.div
@@ -34,11 +34,11 @@ export default function ScrollTimeline({ id, title, items, isSubSection = false 
             height: beamHeight,
             opacity: beamOpacity,
           }}
-          className="absolute left-[5px] top-2 w-px bg-gradient-to-b from-primary-fixed via-primary-fixed to-primary-fixed-dim shadow-[0_0_12px_#ccf200] z-0 origin-top"
+          className="absolute left-[5.5px] top-3 w-px bg-gradient-to-b from-primary-fixed via-primary-fixed to-primary-fixed-dim shadow-[0_0_12px_#ccf200] z-0 origin-top"
         >
-          {/* Glowing Leading Head */}
-          <div className="absolute -bottom-1 -left-[3.5px] w-2 h-2 rounded-full bg-primary-fixed shadow-[0_0_10px_#ccf200] animate-ping opacity-75" />
-          <div className="absolute -bottom-1 -left-[3.5px] w-2 h-2 rounded-full bg-primary-fixed shadow-[0_0_8px_#ccf200]" />
+          {/* Glowing Leading Head — Square diamond centered with the rail */}
+          <div className="absolute -bottom-1 -left-[2.5px] w-1.5 h-1.5 bg-primary-fixed rotate-45 shadow-[0_0_8px_#ccf200] animate-ping opacity-75" />
+          <div className="absolute -bottom-1 -left-[2.5px] w-1.5 h-1.5 bg-primary-fixed rotate-45 shadow-[0_0_8px_#ccf200]" />
         </motion.div>
 
         {/* Timeline Items */}
@@ -53,19 +53,36 @@ export default function ScrollTimeline({ id, title, items, isSubSection = false 
 }
 
 function TimelineItem({ item }) {
+  const itemRef = useRef(null);
+  const isInView = useInView(itemRef, {
+    margin: '-20% 0px -25% 0px',
+    once: false,
+  });
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      ref={itemRef}
+      initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="relative pl-8 flex flex-col md:flex-row md:items-start gap-2 md:gap-10 group"
     >
-      {/* Milestone Dot Marker */}
-      <div className="absolute left-0 top-1.5 w-3 h-3 bg-surface-container-high border border-border-primary group-hover:bg-primary-fixed group-hover:border-background group-hover:scale-125 group-hover:shadow-[0_0_10px_#ccf200] transition-all duration-300 z-10" />
+      {/* Milestone Marker Square — perfectly aligned and illuminated on scroll */}
+      <div
+        className={`absolute left-0 top-1.5 w-3 h-3 border transition-all duration-300 z-10 ${
+          isInView
+            ? 'bg-primary-fixed border-background scale-110 shadow-[0_0_10px_#ccf200]'
+            : 'bg-surface-container-high border-border-primary scale-100 group-hover:bg-primary-fixed group-hover:border-background group-hover:scale-125 group-hover:shadow-[0_0_10px_#ccf200]'
+        }`}
+      />
 
       {/* Year */}
-      <div className="w-full md:w-[180px] shrink-0 font-[family-name:var(--font-mono)] text-[15px] md:text-[16px] leading-[1.4] font-medium text-text-muted group-hover:text-primary-fixed transition-colors duration-200 pt-0.5">
+      <div
+        className={`w-full md:w-[180px] shrink-0 font-[family-name:var(--font-mono)] text-[15px] md:text-[16px] leading-[1.4] font-medium transition-colors duration-200 pt-0.5 ${
+          isInView ? 'text-primary-fixed font-bold' : 'text-text-muted group-hover:text-primary-fixed'
+        }`}
+      >
         {item.year}
       </div>
 
