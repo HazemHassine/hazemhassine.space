@@ -80,7 +80,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
               {/* Left Column: Text Metadata */}
               <div>
                 <div className="text-[11px] font-mono text-primary-fixed uppercase tracking-widest mb-3">
-                  // {project.category}
+                  {'//'} {project.category}
                 </div>
                 <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-6xl font-extrabold uppercase text-primary tracking-tight leading-[0.95] mb-4">
                   {project.title}
@@ -364,7 +364,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                 {project.technicalDeepDive.map((dive, i) => (
                   <div key={i} className="p-6 md:p-8 bg-surface border border-border-primary">
                     <div className="text-[11px] font-mono text-primary-fixed font-bold uppercase tracking-wider mb-2">
-                      // ENGINEERING RATIONALE 0{i + 1}
+                      {'//'} ENGINEERING RATIONALE 0{i + 1}
                     </div>
                     <h3 className="text-[18px] font-bold text-primary font-[family-name:var(--font-display)] uppercase mb-4">
                       {dive.title}
