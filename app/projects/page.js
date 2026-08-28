@@ -9,7 +9,8 @@ import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
 import TiltCard from '@/components/TiltCard';
-import { projects, siteConfig, getProjectThumbnail } from '@/lib/data';
+import { getProjectThumbnail } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
 const projectCategories = [
   { id: 'all', label: 'ALL PROJECTS' },
@@ -161,6 +162,8 @@ function ProjectCard({ project, index, onTagClick, activeTag }) {
 }
 
 export default function ProjectsPage() {
+  const { projects, siteConfig, pageContent } = useCms();
+  const copy = pageContent?.projects || {};
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeTag, setActiveTag] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -179,7 +182,7 @@ export default function ProjectsPage() {
 
       return matchesCategory && matchesTag && matchesSearch;
     });
-  }, [selectedCategory, activeTag, searchQuery]);
+  }, [projects, selectedCategory, activeTag, searchQuery]);
 
   const handleTagClick = (tag) => {
     setActiveTag((prev) => (prev === tag ? null : tag));
@@ -206,7 +209,7 @@ export default function ProjectsPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-fixed"></span>
                   </span>
-                  <span>SYSTEM TELEMETRY: ALL {projects.length} PROJECTS ONLINE</span>
+                  <span>{copy.telemetryLabel || 'SYSTEM TELEMETRY'}: ALL {projects.length} PROJECTS ONLINE</span>
                 </div>
                 <div className="text-[11px] text-text-dim uppercase font-mono">
                   FILTERED: <strong className="text-primary-fixed">{filteredProjects.length}</strong> / {projects.length}
@@ -216,10 +219,10 @@ export default function ProjectsPage() {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                   <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase text-primary mb-3 leading-tight tracking-tight">
-                    / PROJECTS
+                    {copy.title || '/ PROJECTS'}
                   </h1>
                   <p className="text-body-md text-text-muted max-w-2xl font-mono leading-relaxed">
-                    Production-grade systems, autonomous agent control planes, explainable analytics pipelines, and interactive developer tools.
+                    {copy.introduction || 'Production-grade systems, autonomous agent control planes, explainable analytics pipelines, and interactive developer tools.'}
                   </p>
                 </div>
 
@@ -232,7 +235,7 @@ export default function ProjectsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="SEARCH CODEBASES..."
+                    placeholder={copy.searchPlaceholder || 'SEARCH CODEBASES...'}
                     className="w-full bg-surface border border-border-primary pl-9 pr-8 py-2 text-[12px] font-mono text-primary placeholder:text-text-dim focus:outline-none focus:border-primary-fixed transition-colors"
                   />
                   {searchQuery && (

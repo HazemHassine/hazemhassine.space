@@ -551,7 +551,9 @@ export default function NotFoundGridGame() {
     g.nextWaveDelay = 1.6;
     g.hasActiveBoss = false;
     g.invincibleTimer = 2.0;
+    g.glitchTimer = 0;
 
+    setIsGlitching(false);
     setGameState('easter_transition');
     setEasterEggBanner(true);
     setShooterScore(0);
@@ -605,6 +607,7 @@ export default function NotFoundGridGame() {
     g.invincibleTimer = 0;
     g.glitchTimer = 0;
 
+    setIsGlitching(false);
     setGameState('playing');
     setScore(0);
     setShields(3);
@@ -635,11 +638,13 @@ export default function NotFoundGridGame() {
     g.nextWaveDelay = 1.6;
     g.hasActiveBoss = false;
     g.invincibleTimer = 1.5;
+    g.glitchTimer = 0;
     g.playerX = 0;
     g.playerZ = 6;
     g.targetPlayerX = 0;
     g.targetPlayerZ = 6;
 
+    setIsGlitching(false);
     setGameState('shooter_playing');
     setShooterScore(0);
     setShields(4);
@@ -1662,9 +1667,10 @@ export default function NotFoundGridGame() {
                   g.consecutiveGems = 0;
                   g.multiplier = 1;
                   g.invincibleTimer = 1.4;
-                  g.glitchTimer = 0.35;
+                  g.glitchTimer = 0.25;
                   setShields(g.shields);
                   setIsGlitching(true);
+                  setTimeout(() => setIsGlitching(false), 220);
 
                   if (soundRef.current) soundRef.current.playHit();
                   camera.position.x = (Math.random() - 0.5) * 0.8;
@@ -2081,7 +2087,14 @@ export default function NotFoundGridGame() {
         });
         particleGeom.attributes.position.needsUpdate = true;
 
-        // Invulnerability Blink
+        // Damage Glitch & Invulnerability Blink
+        if (g.glitchTimer > 0) {
+          g.glitchTimer -= delta;
+          if (g.glitchTimer <= 0) {
+            setIsGlitching(false);
+          }
+        }
+
         if (g.invincibleTimer > 0) {
           g.invincibleTimer -= delta;
           shipWireframe.material.opacity =
@@ -2131,9 +2144,9 @@ export default function NotFoundGridGame() {
       {/* 3D WebGL Canvas Container */}
       <div ref={mountRef} className="absolute inset-0 z-0 cursor-crosshair" />
 
-      {/* Glitch Overlay Screen Flash */}
+      {/* Glitch Overlay Screen Flash (Quick Red Damage Vignette) */}
       {isGlitching && (
-        <div className="absolute inset-0 pointer-events-none z-20 bg-red-900/30 mix-blend-screen animate-pulse" />
+        <div className="absolute inset-0 pointer-events-none z-20 bg-red-600/30 mix-blend-screen transition-opacity duration-150" />
       )}
 
       {/* Retro CRT Scanlines & Noise */}
