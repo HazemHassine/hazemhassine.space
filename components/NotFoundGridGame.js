@@ -333,7 +333,7 @@ export default function NotFoundGridGame() {
   const [activePowerup, setActivePowerup] = useState(null);
   const [sectorWave, setSectorWave] = useState(1);
 
-  // Global Leaderboard State
+  // Global Leaderboard State & Cache (45s TTL)
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [leaderboardTab, setLeaderboardTab] = useState('space_shooter');
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -343,6 +343,11 @@ export default function NotFoundGridGame() {
   const [isSubmittingScore, setIsSubmittingScore] = useState(false);
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [submissionRank, setSubmissionRank] = useState(null);
+
+  const leaderboardCacheRef = useRef({
+    space_shooter: { data: [], timestamp: 0 },
+    grid_runner: { data: [], timestamp: 0 },
+  });
 
   // Mutable Game Loop references inside requestAnimationFrame
   const gameRef = useRef({
@@ -426,8 +431,18 @@ export default function NotFoundGridGame() {
     }
   };
 
-  // Fetch leaderboard data from API
-  const fetchLeaderboard = useCallback(async (mode = 'space_shooter') => {
+  // Fetch leaderboard data with in-memory caching (avoids querying Supabase on every click)
+  const fetchLeaderboard = useCallback(async (mode = 'space_shooter', force = false) => {
+    const cache = leaderboardCacheRef.current[mode];
+    const now = Date.now();
+    const CACHE_TTL = 45000; // 45 seconds TTL
+
+    if (!force && cache && cache.data && cache.data.length > 0 && now - cache.timestamp < CACHE_TTL) {
+      setLeaderboardData(cache.data);
+      setIsLoadingLeaderboard(false);
+      return;
+    }
+
     setIsLoadingLeaderboard(true);
     setLeaderboardNotice(null);
     try {
@@ -435,17 +450,18 @@ export default function NotFoundGridGame() {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
         setLeaderboardData(json.data);
+        leaderboardCacheRef.current[mode] = { data: json.data, timestamp: Date.now() };
         if (json.message) {
           setLeaderboardNotice(json.message);
         }
       } else {
         setLeaderboardNotice(json.error || 'Unable to fetch leaderboard.');
-        setLeaderboardData([]);
+        setLeaderboardData(cache ? cache.data : []);
       }
     } catch (err) {
       console.error('Failed to fetch leaderboard:', err);
       setLeaderboardNotice('Network error fetching scores.');
-      setLeaderboardData([]);
+      setLeaderboardData(cache ? cache.data : []);
     } finally {
       setIsLoadingLeaderboard(false);
     }
@@ -456,7 +472,7 @@ export default function NotFoundGridGame() {
     (mode = 'space_shooter') => {
       setLeaderboardTab(mode);
       setShowLeaderboardModal(true);
-      fetchLeaderboard(mode);
+      fetchLeaderboard(mode, false);
     },
     [fetchLeaderboard]
   );
@@ -491,6 +507,10 @@ export default function NotFoundGridGame() {
         setScoreSubmitted(true);
         setSubmissionRank(json.rank || 1);
         if (soundRef.current) soundRef.current.playCollect();
+
+        // Invalidate cache and fetch fresh rankings
+        leaderboardCacheRef.current[mode] = { data: [], timestamp: 0 };
+        fetchLeaderboard(mode, true);
       } else {
         alert(json.error || 'Failed to submit score to leaderboard.');
       }
@@ -2719,7 +2739,7 @@ export default function NotFoundGridGame() {
             {/* Footer */}
             <div className="flex items-center justify-between mt-4 pt-3 border-t border-border-primary text-xs">
               <button
-                onClick={() => fetchLeaderboard(leaderboardTab)}
+                onClick={() => fetchLeaderboard(leaderboardTab, true)}
                 className="text-text-muted hover:text-primary-fixed transition-colors uppercase flex items-center gap-1.5 text-[11px]"
               >
                 <span>↻</span> REFRESH SCORES
