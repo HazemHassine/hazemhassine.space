@@ -12,6 +12,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   const copyToClipboard = (text, index) => {
     navigator.clipboard.writeText(text);
@@ -27,6 +28,8 @@ export default function ProjectShowcaseView({ project, adjacent }) {
     ...(project.screenshots && project.screenshots.length > 0 ? [{ id: 'gallery', label: `// 05. GALLERY (${project.screenshots.length})` }] : []),
     { id: 'cli', label: '// 06. CLI & GETTING STARTED' },
   ];
+
+  const heroImage = project.primaryImage || project.screenshots?.[0]?.src;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-surface-dim grid-background relative font-[family-name:var(--font-mono)] text-primary">
@@ -63,52 +66,83 @@ export default function ProjectShowcaseView({ project, adjacent }) {
             </div>
           </SectionReveal>
 
-          {/* HERO HEADER */}
+          {/* HERO HEADER WITH PREVIEW BANNER */}
           <SectionReveal delay={0.1}>
-            <div className="mb-10">
-              <div className="text-[11px] font-mono text-primary-fixed uppercase tracking-widest mb-3">
-                // {project.category}
-              </div>
-              <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-6xl font-extrabold uppercase text-primary tracking-tight leading-[0.95] mb-4">
-                {project.title}
-              </h1>
-              <p className="text-xl md:text-2xl text-secondary-fixed font-semibold max-w-4xl leading-snug mb-4">
-                {project.subtitle}
-              </p>
-              <p className="text-body-md text-text-muted max-w-3xl leading-relaxed mb-8">
-                {project.headline}
-              </p>
+            <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_0.9fr] gap-8 items-start mb-10">
+              {/* Left Column: Text Metadata */}
+              <div>
+                <div className="text-[11px] font-mono text-primary-fixed uppercase tracking-widest mb-3">
+                  // {project.category}
+                </div>
+                <h1 className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-6xl font-extrabold uppercase text-primary tracking-tight leading-[0.95] mb-4">
+                  {project.title}
+                </h1>
+                <p className="text-xl md:text-2xl text-secondary-fixed font-semibold max-w-4xl leading-snug mb-4">
+                  {project.subtitle}
+                </p>
+                <p className="text-body-md text-text-muted max-w-3xl leading-relaxed mb-6">
+                  {project.headline}
+                </p>
 
-              {/* ACTION BUTTONS & METADATA BAR */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-2.5 bg-primary-fixed text-surface font-bold text-[12px] tracking-wider uppercase hover:bg-white transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(204,242,0,0.2)]"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">code</span>
-                    [ GITHUB REPOSITORY ]
-                  </a>
-                )}
-                {project.liveDemo && (
-                  <a
-                    href={project.liveDemo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-2.5 bg-surface-container border border-primary-fixed text-primary-fixed font-bold text-[12px] tracking-wider uppercase hover:bg-primary-fixed hover:text-surface transition-all flex items-center gap-2"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                    [ LIVE DEMO ]
-                  </a>
-                )}
-                <div className="text-[12px] text-text-dim flex items-center gap-3 ml-auto">
-                  <span>TIMELINE: <strong className="text-text-muted">{project.timeline}</strong></span>
-                  <span className="text-border-primary">|</span>
-                  <span>ROLE: <strong className="text-text-muted">{project.role}</strong></span>
+                {/* ACTION BUTTONS & METADATA BAR */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-primary-fixed text-surface font-bold text-[12px] tracking-wider uppercase hover:bg-white transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(204,242,0,0.2)]"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">code</span>
+                      [ GITHUB REPOSITORY ]
+                    </a>
+                  )}
+                  {project.liveDemo && (
+                    <a
+                      href={project.liveDemo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-surface-container border border-primary-fixed text-primary-fixed font-bold text-[12px] tracking-wider uppercase hover:bg-primary-fixed hover:text-surface transition-all flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                      [ LIVE DEMO ]
+                    </a>
+                  )}
+                  <div className="text-[12px] text-text-dim flex items-center gap-3">
+                    <span>TIMELINE: <strong className="text-text-muted">{project.timeline}</strong></span>
+                    <span className="text-border-primary">|</span>
+                    <span>ROLE: <strong className="text-text-muted">{project.role}</strong></span>
+                  </div>
                 </div>
               </div>
+
+              {/* Right Column: Hero Visual Frame */}
+              {heroImage && (
+                <div 
+                  onClick={() => setLightboxImage(heroImage)}
+                  className="relative group border border-border-primary bg-surface-container-high overflow-hidden cursor-pointer aspect-video md:aspect-[16/10] shadow-xl hover:border-primary-fixed transition-all"
+                  title="Click to view full image"
+                >
+                  <Image
+                    src={heroImage}
+                    alt={`${project.title} Preview`}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 500px"
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                    <span className="text-[10px] font-mono text-primary-fixed uppercase tracking-wider bg-black/70 px-2 py-0.5 border border-border-primary">
+                      [ VISUAL PREVIEW ]
+                    </span>
+                    <span className="text-[11px] text-white flex items-center gap-1 bg-black/70 px-2 py-0.5 border border-border-primary">
+                      <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                      EXPAND
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </SectionReveal>
 
@@ -231,11 +265,36 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                 <div className="p-6 md:p-8 bg-surface border border-border-primary">
                   <h3 className="text-[14px] font-bold uppercase tracking-wider text-primary-fixed mb-3 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">account_tree</span>
-                    TOPOLOGY & ARCHITECTURE
+                    TOPOLOGY & SYSTEM ARCHITECTURE
                   </h3>
                   <p className="text-[13px] text-text-muted leading-relaxed font-mono mb-6">
                     {project.architecture.description}
                   </p>
+
+                  {/* High-Resolution Diagram if available */}
+                  {project.architecture.image && (
+                    <div className="mb-8 border border-border-primary bg-black p-2 relative group">
+                      <div 
+                        onClick={() => setLightboxImage(project.architecture.image)}
+                        className="relative w-full aspect-video md:aspect-[16/9] cursor-pointer overflow-hidden"
+                      >
+                        <Image
+                          src={project.architecture.image}
+                          alt="System Architecture Diagram"
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 1200px) 100vw, 1200px"
+                        />
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 border border-border-primary text-[10px] text-primary-fixed font-mono flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[12px]">zoom_in</span>
+                          CLICK TO ENLARGE DIAGRAM
+                        </div>
+                      </div>
+                      <div className="p-2 text-[11px] text-text-dim text-center font-mono">
+                        [FIGURE 1.0: HIGH-LEVEL ARCHITECTURE PIPELINE & DATA FLOW]
+                      </div>
+                    </div>
+                  )}
 
                   {/* ASCII Diagram Container */}
                   <div className="bg-[#050505] border border-border-primary p-4 md:p-6 overflow-x-auto my-4 rounded-sm">
@@ -335,7 +394,11 @@ export default function ProjectShowcaseView({ project, adjacent }) {
               <div className="flex flex-col gap-6 animate-fadeIn">
                 {/* Main Viewport */}
                 <div className="bg-surface border border-border-primary p-4 md:p-6">
-                  <div className="relative w-full aspect-video md:aspect-[16/9] border border-border-primary bg-black overflow-hidden mb-4">
+                  <div 
+                    onClick={() => setLightboxImage(project.screenshots[activeScreenshot].src)}
+                    className="relative w-full aspect-video md:aspect-[16/9] border border-border-primary bg-black overflow-hidden mb-4 cursor-pointer group"
+                    title="Click to view full size"
+                  >
                     <Image
                       src={project.screenshots[activeScreenshot].src}
                       alt={project.screenshots[activeScreenshot].alt}
@@ -343,6 +406,10 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                       className="object-contain"
                       sizes="(max-width: 1200px) 100vw, 1200px"
                     />
+                    <div className="absolute bottom-3 right-3 bg-black/80 px-2.5 py-1 border border-border-primary text-[10px] text-primary-fixed font-mono flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="material-symbols-outlined text-[14px]">fullscreen</span>
+                      EXPAND FULLSCREEN
+                    </div>
                   </div>
                   <div className="p-3 bg-surface-container-high border border-border-primary flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <span className="text-[12px] text-text-muted font-mono">
@@ -513,6 +580,36 @@ export default function ProjectShowcaseView({ project, adjacent }) {
 
         </main>
       </div>
+
+      {/* FULLSCREEN LIGHTBOX MODAL */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fadeIn"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div 
+            className="relative max-w-6xl w-full max-h-[90vh] aspect-video border border-border-primary bg-black p-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setLightboxImage(null)}
+              className="absolute -top-10 right-0 text-white font-mono text-[12px] hover:text-primary-fixed transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+              [ CLOSE ESC ]
+            </button>
+            <div className="relative w-full h-full">
+              <Image
+                src={lightboxImage}
+                alt="Fullscreen Preview"
+                fill
+                className="object-contain"
+                sizes="(max-width: 1400px) 100vw, 1400px"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
