@@ -9,9 +9,12 @@ import { siteConfig } from "@/lib/data";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
+import { useState } from "react";
+
 const Hero3DObject = dynamic(() => import("@/components/Hero3DObject"), { ssr: false });
 
 export default function Contact() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <>
       <Sidebar />
@@ -105,11 +108,7 @@ export default function Contact() {
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const form = e.target;
-                  const btn = form.querySelector('button[type="submit"]');
-                  const originalText = btn.innerHTML;
-                  
-                  btn.innerHTML = '[ SENDING... ]';
-                  btn.disabled = true;
+                  setIsSubmitting(true);
 
                   try {
                     const res = await fetch('/api/contact', {
@@ -132,8 +131,7 @@ export default function Contact() {
                   } catch (err) {
                     alert("An error occurred. Please try again.");
                   } finally {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
+                    setIsSubmitting(false);
                   }
                 }}
               >
@@ -181,9 +179,11 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="mt-4 bg-primary-fixed text-background px-6 py-4 font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-wider hover:bg-primary transition-colors uppercase self-start"
+                  disabled={isSubmitting}
+                  aria-busy={isSubmitting}
+                  className="mt-4 bg-primary-fixed text-background px-6 py-4 font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-wider hover:bg-primary transition-colors uppercase self-start disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  [ SEND MESSAGE ]
+                  {isSubmitting ? "[ SENDING... ]" : "[ SEND MESSAGE ]"}
                 </button>
               </form>
               </div>
