@@ -32,10 +32,10 @@ export default function AboutPage() {
 
         {/* TOP SECTION — 3 Columns: Bio | Skills Selector | Skill Details */}
         <SectionReveal>
-          <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-border-primary min-h-[580px]">
+          <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-border-primary lg:h-[680px]">
             
             {/* Col 1 — About Me (4 cols) */}
-            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary flex flex-col justify-between">
+            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary flex flex-col justify-between h-full">
               <div>
                 <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
                   {`//`} ABOUT ME
@@ -78,109 +78,111 @@ export default function AboutPage() {
             </div>
 
             {/* Col 2 — Capabilities & Stack (4 cols) with Floating Active Indicator */}
-            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary bg-surface/50 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase">
-                  {`//`} CAPABILITIES & STACK
+            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary bg-surface/50 flex flex-col justify-between h-full">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase">
+                    {`//`} CAPABILITIES & STACK
+                  </div>
+                </div>
+
+                {/* Category Filter Pills with Floating Indicator */}
+                <div className="flex flex-wrap gap-1 mb-5 pb-3 border-b border-border-muted">
+                  {skillCategories.map((cat) => {
+                    const isActive = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => {
+                          setSelectedCategory(cat.id);
+                          const matching = cat.id === 'all' ? skillsWithProvenance : skillsWithProvenance.filter(s => s.category === cat.id);
+                          if (matching.length > 0 && !matching.some(s => s.id === selectedSkillId)) {
+                            setSelectedSkillId(matching[0].id);
+                          }
+                        }}
+                        className="relative text-[10px] px-2.5 py-1 uppercase tracking-wider font-mono transition-colors"
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId="active-category-pill"
+                            className="absolute inset-0 bg-primary-fixed"
+                            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                          />
+                        )}
+                        <span className={`relative z-10 font-medium ${
+                          isActive ? 'text-on-primary-fixed font-bold' : 'text-text-muted hover:text-on-surface'
+                        }`}>
+                          {cat.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Skills Interactive Rows with Floating Active Indicator */}
+                <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[440px] pr-1">
+                  {filteredSkills.map((skill) => {
+                    const isSelected = skill.id === activeSkill.id;
+                    return (
+                      <button
+                        key={skill.id}
+                        onClick={() => setSelectedSkillId(skill.id)}
+                        onMouseEnter={() => setSelectedSkillId(skill.id)}
+                        className={`relative w-full text-left p-2.5 border transition-all flex items-center justify-between group overflow-hidden ${
+                          isSelected
+                            ? 'border-primary-fixed text-on-surface'
+                            : 'border-border-muted hover:border-border-primary hover:bg-surface-hover text-text-muted hover:text-on-surface'
+                        }`}
+                      >
+                        {/* Floating Active Indicator */}
+                        {isSelected && (
+                          <motion.div
+                            layoutId="active-skill-pill"
+                            className="absolute inset-0 bg-primary-fixed/10 border-l-[3px] border-l-primary-fixed shadow-[inset_0_0_15px_rgba(204,242,0,0.05)]"
+                            transition={{ type: 'spring', stiffness: 700, damping: 45 }}
+                          />
+                        )}
+
+                        <div className="relative z-10 flex items-center gap-2.5 min-w-0">
+                          <span className={`material-symbols-outlined text-[18px] transition-colors ${
+                            isSelected ? 'text-primary-fixed' : 'text-text-dim group-hover:text-text-muted'
+                          }`}>
+                            {skill.icon}
+                          </span>
+                          <span className="text-[11px] font-semibold tracking-wider uppercase truncate">
+                            {skill.shortName}
+                          </span>
+                        </div>
+
+                        <div className="relative z-10 flex items-center gap-2 shrink-0">
+                          <span className={`text-[9px] px-1.5 py-0.5 uppercase tracking-wider font-mono border transition-colors ${
+                            isSelected
+                              ? 'border-primary-fixed/40 bg-primary-fixed/20 text-primary-fixed font-bold'
+                              : 'border-border-muted bg-surface text-text-dim'
+                          }`}>
+                            {skill.tag}
+                          </span>
+                          <motion.span
+                            animate={{ x: isSelected ? 2 : 0, opacity: isSelected ? 1 : 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="text-[12px] font-mono text-primary-fixed"
+                          >
+                            →
+                          </motion.span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Category Filter Pills with Floating Indicator */}
-              <div className="flex flex-wrap gap-1 mb-5 pb-3 border-b border-border-muted">
-                {skillCategories.map((cat) => {
-                  const isActive = selectedCategory === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => {
-                        setSelectedCategory(cat.id);
-                        const matching = cat.id === 'all' ? skillsWithProvenance : skillsWithProvenance.filter(s => s.category === cat.id);
-                        if (matching.length > 0 && !matching.some(s => s.id === selectedSkillId)) {
-                          setSelectedSkillId(matching[0].id);
-                        }
-                      }}
-                      className="relative text-[10px] px-2.5 py-1 uppercase tracking-wider font-mono transition-colors"
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="active-category-pill"
-                          className="absolute inset-0 bg-primary-fixed"
-                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                        />
-                      )}
-                      <span className={`relative z-10 font-medium ${
-                        isActive ? 'text-on-primary-fixed font-bold' : 'text-text-muted hover:text-on-surface'
-                      }`}>
-                        {cat.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Skills Interactive Rows with Floating Active Indicator */}
-              <div className="flex flex-col gap-1.5 flex-1 overflow-y-auto max-h-[460px] pr-1">
-                {filteredSkills.map((skill) => {
-                  const isSelected = skill.id === activeSkill.id;
-                  return (
-                    <button
-                      key={skill.id}
-                      onClick={() => setSelectedSkillId(skill.id)}
-                      onMouseEnter={() => setSelectedSkillId(skill.id)}
-                      className={`relative w-full text-left p-2.5 border transition-all flex items-center justify-between group overflow-hidden ${
-                        isSelected
-                          ? 'border-primary-fixed text-on-surface'
-                          : 'border-border-muted hover:border-border-primary hover:bg-surface-hover text-text-muted hover:text-on-surface'
-                      }`}
-                    >
-                      {/* Floating Active Indicator */}
-                      {isSelected && (
-                        <motion.div
-                          layoutId="active-skill-pill"
-                          className="absolute inset-0 bg-primary-fixed/10 border-l-[3px] border-l-primary-fixed shadow-[inset_0_0_15px_rgba(204,242,0,0.05)]"
-                          transition={{ type: 'spring', stiffness: 700, damping: 45 }}
-                        />
-                      )}
-
-                      <div className="relative z-10 flex items-center gap-2.5 min-w-0">
-                        <span className={`material-symbols-outlined text-[18px] transition-colors ${
-                          isSelected ? 'text-primary-fixed' : 'text-text-dim group-hover:text-text-muted'
-                        }`}>
-                          {skill.icon}
-                        </span>
-                        <span className="text-[11px] font-semibold tracking-wider uppercase truncate">
-                          {skill.shortName}
-                        </span>
-                      </div>
-
-                      <div className="relative z-10 flex items-center gap-2 shrink-0">
-                        <span className={`text-[9px] px-1.5 py-0.5 uppercase tracking-wider font-mono border transition-colors ${
-                          isSelected
-                            ? 'border-primary-fixed/40 bg-primary-fixed/20 text-primary-fixed font-bold'
-                            : 'border-border-muted bg-surface text-text-dim'
-                        }`}>
-                          {skill.tag}
-                        </span>
-                        <motion.span
-                          animate={{ x: isSelected ? 2 : 0, opacity: isSelected ? 1 : 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="text-[12px] font-mono text-primary-fixed"
-                        >
-                          →
-                        </motion.span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-border-muted flex items-center justify-between text-[10px] text-text-dim font-mono">
+              <div className="mt-3 pt-3 border-t border-border-muted flex items-center justify-between text-[10px] text-text-dim font-mono">
                 <span>SELECT OR HOVER TO VIEW DETAILS</span>
               </div>
             </div>
 
             {/* Col 3 — Skill Details (4 cols) with Fast AnimatePresence & TiltCards */}
-            <div className="lg:col-span-4 p-[28px] bg-surface-container-lowest flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-4 p-[28px] bg-surface-container-lowest flex flex-col justify-between h-full relative overflow-hidden">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={activeSkill.id}
@@ -190,15 +192,15 @@ export default function AboutPage() {
                   transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
                   className="flex flex-col justify-between h-full"
                 >
-                  <div>
-                    <div className="flex items-center justify-between mb-4 border-b border-border-primary pb-3">
+                  <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex items-center justify-between mb-4 border-b border-border-primary pb-3 shrink-0">
                       <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase flex items-center gap-1.5">
                         <span>{`//`} DETAILS</span>
                       </div>
                     </div>
 
                     {/* Active Skill Title & Tag */}
-                    <div className="mb-4">
+                    <div className="mb-3 shrink-0">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="material-symbols-outlined text-primary-fixed text-[22px]">
                           {activeSkill.icon}
@@ -218,21 +220,21 @@ export default function AboutPage() {
                     </div>
 
                     {/* Summary */}
-                    <p className="text-[12px] leading-[1.6] text-text-muted mb-6 bg-surface/80 p-3 border border-border-muted">
+                    <p className="text-[12px] leading-[1.5] text-text-muted mb-4 bg-surface/80 p-2.5 border border-border-muted shrink-0">
                       {activeSkill.summary}
                     </p>
 
-                    {/* Provenance & Where Used — with TiltCard Magnetic Hover */}
-                    <div className="mb-6">
-                      <div className="text-[10px] font-mono text-primary-fixed uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                    {/* Provenance & Where Used — Fills available column height naturally without cutoff */}
+                    <div className="flex-1 flex flex-col min-h-0">
+                      <div className="text-[10px] font-mono text-primary-fixed uppercase tracking-wider mb-2.5 flex items-center gap-1.5 shrink-0">
                         <span>WHERE I USED THIS:</span>
                       </div>
 
-                      <div className="flex flex-col gap-2.5">
+                      <div className="flex flex-col gap-2.5 overflow-y-auto pr-1 flex-1 min-h-0">
                         {activeSkill.provenance.map((item, idx) => (
                           <TiltCard
                             key={idx}
-                            className="p-3 bg-surface border border-border-primary hover:border-primary-fixed/60 shadow-[0_4px_12px_rgba(0,0,0,0.3)] text-[11px]"
+                            className="p-2.5 bg-surface border border-border-primary hover:border-primary-fixed/60 shadow-[0_4px_12px_rgba(0,0,0,0.3)] text-[11px] shrink-0"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-1.5">
@@ -272,7 +274,7 @@ export default function AboutPage() {
                               {item.role}
                             </div>
                             
-                            <p className="text-[11px] leading-[1.5] text-text-muted mt-1.5">
+                            <p className="text-[11px] leading-[1.4] text-text-muted mt-1">
                               {item.summary}
                             </p>
                           </TiltCard>
@@ -282,7 +284,7 @@ export default function AboutPage() {
                   </div>
 
                   {/* Associated Stack / Interactive Tag Badges */}
-                  <div className="pt-4 border-t border-border-primary">
+                  <div className="pt-4 border-t border-border-primary shrink-0 mt-3">
                     <div className="text-[9px] font-mono text-text-dim uppercase tracking-wider mb-2">
                       ASSOCIATED STACK & TOOLING
                     </div>

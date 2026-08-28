@@ -9,6 +9,7 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
   const railRef = useRef(null);
   const itemRefs = useRef([]);
   const [activeItems, setActiveItems] = useState(() => new Set());
+  const [railBounds, setRailBounds] = useState({ top: 12, height: 400 });
 
   // Formatted Experience Items
   const formattedExperience = experience.map((item) => ({
@@ -50,82 +51,129 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
       ? formattedEducation
       : combinedList;
 
+  // Viewport scroll tracking:
+  // Starts when container reaches comfortable reading zone (70% viewport),
+  // reaches 100% when user reaches the absolute bottom of the page ('end end').
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start center', 'end center'],
+    offset: ['start 70%', 'end end'],
   });
 
-  const beamHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%'], { clamp: true });
-  const beamOpacity = useTransform(scrollYProgress, [0, 0.02, 0.95, 1], [0, 1, 1, 0.8], { clamp: true });
-
-  const evaluateActiveItems = useCallback((progress) => {
-    if (!railRef.current) return;
-    const currentProgress = progress !== undefined ? progress : scrollYProgress.get();
-
-    if (currentProgress <= 0.01) {
-      setActiveItems(new Set());
-      return;
-    }
-
-    const railHeight = railRef.current.offsetHeight;
-    const currentBeamPx = currentProgress * railHeight;
-
-    const newActive = new Set();
+  // Calculate exact rail bounds from first square marker to last square marker
+  const measureRailBounds = useCallback(() => {
     const validRefs = itemRefs.current.filter(Boolean);
+    if (validRefs.length === 0) return;
 
-    if (validRefs.length === currentItems.length) {
-      validRefs.forEach((el, index) => {
-        if (el) {
-          const markerY = el.offsetTop + 6;
-          if (currentBeamPx >= markerY - 6) {
-            newActive.add(index);
+    const firstEl = validRefs[0];
+    const lastEl = validRefs[validRefs.length - 1];
+
+    const firstMarkerCenterY = firstEl.offsetTop + 6;
+    const lastMarkerCenterY = lastEl.offsetTop + 6;
+    const totalHeight = Math.max(lastMarkerCenterY - firstMarkerCenterY, 50);
+
+    setRailBounds({
+      top: firstMarkerCenterY,
+      height: totalHeight,
+    });
+  }, []);
+
+  // Evaluate which items are active based on the current beam position
+  const evaluateActiveItems = useCallback(
+    (progress) => {
+      const currentProgress = progress !== undefined ? progress : scrollYProgress.get();
+      const validRefs = itemRefs.current.filter(Boolean);
+
+      // If at top or 0 progress, clear all active items
+      if (currentProgress <= 0.005) {
+        setActiveItems(new Set());
+        return;
+      }
+
+      const firstY = railBounds.top;
+      const totalH = railBounds.height;
+      const currentBeamY = firstY + currentProgress * totalH;
+
+      const newActive = new Set();
+
+      if (validRefs.length === currentItems.length) {
+        validRefs.forEach((el, index) => {
+          if (el) {
+            const markerCenterY = el.offsetTop + 6;
+            // Activate when beam hits or passes the marker
+            if (currentBeamY >= markerCenterY - 4) {
+              newActive.add(index);
+            }
+          }
+        });
+      } else {
+        // Mathematical fallback
+        const total = currentItems.length;
+        for (let i = 0; i < total; i++) {
+          const threshold = total > 1 ? i / (total - 1) : 0;
+          if (currentProgress >= threshold - 0.03) {
+            newActive.add(i);
           }
         }
-      });
-    } else {
-      // Proportional fallback while refs mount
-      const total = currentItems.length;
-      for (let i = 0; i < total; i++) {
-        const threshold = total > 1 ? i / (total - 1) : 0;
-        if (currentProgress >= threshold - 0.04) {
-          newActive.add(i);
-        }
       }
-    }
 
-    setActiveItems(newActive);
-  }, [currentItems.length, scrollYProgress]);
+      setActiveItems(newActive);
+    },
+    [currentItems.length, railBounds, scrollYProgress]
+  );
 
-  // Handle scroll events
+  // Synchronous scroll tracking
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
     evaluateActiveItems(progress);
   });
 
-  // Re-evaluate immediately when tab changes
+  // Re-measure and re-evaluate when tab changes or items update
   useEffect(() => {
     itemRefs.current = [];
+    measureRailBounds();
+
+    // Immediate evaluation
     evaluateActiveItems(scrollYProgress.get());
 
+    // RAF & delayed checks to ensure layout reflow measurements are exact
     const rafId = requestAnimationFrame(() => {
+      measureRailBounds();
       evaluateActiveItems(scrollYProgress.get());
     });
 
     const timer = setTimeout(() => {
+      measureRailBounds();
       evaluateActiveItems(scrollYProgress.get());
-    }, 60);
+    }, 50);
 
     return () => {
       cancelAnimationFrame(rafId);
       clearTimeout(timer);
     };
-  }, [activeTab, evaluateActiveItems, scrollYProgress]);
+  }, [activeTab, evaluateActiveItems, measureRailBounds, scrollYProgress]);
 
   // Window resize handler
   useEffect(() => {
-    const handleResize = () => evaluateActiveItems(scrollYProgress.get());
+    const handleResize = () => {
+      measureRailBounds();
+      evaluateActiveItems(scrollYProgress.get());
+    };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [evaluateActiveItems, scrollYProgress]);
+  }, [evaluateActiveItems, measureRailBounds, scrollYProgress]);
+
+  const beamHeight = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, railBounds.height],
+    { clamp: true }
+  );
+
+  const beamOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.01, 0.98, 1],
+    [0, 1, 1, 1],
+    { clamp: true }
+  );
 
   return (
     <section
@@ -179,18 +227,25 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
       </div>
 
       <div ref={railRef} className="relative max-w-4xl">
-        {/* Static Background Rail */}
-        <div className="absolute left-[5.5px] top-3 bottom-6 w-px bg-border-primary/40" />
+        {/* Static Background Rail — Spans precisely from center of first square to center of last square */}
+        <div
+          style={{
+            top: `${railBounds.top}px`,
+            height: `${railBounds.height}px`,
+          }}
+          className="absolute left-[5.5px] w-px bg-border-primary/40"
+        />
 
         {/* Dynamic Active Scroll Progress Beam */}
         <motion.div
           style={{
+            top: `${railBounds.top}px`,
             height: beamHeight,
             opacity: beamOpacity,
           }}
-          className="absolute left-[5.5px] top-3 w-px bg-gradient-to-b from-primary-fixed via-primary-fixed to-primary-fixed-dim shadow-[0_0_12px_#ccf200] z-0 origin-top"
+          className="absolute left-[5.5px] w-px bg-primary-fixed shadow-[0_0_10px_#ccf200] z-0 origin-top"
         >
-          {/* Glowing Leading Head */}
+          {/* Glowing Leading Head — Square diamond centered with the rail */}
           <div className="absolute -bottom-1 -left-[2.5px] w-1.5 h-1.5 bg-primary-fixed rotate-45 shadow-[0_0_8px_#ccf200] animate-ping opacity-75" />
           <div className="absolute -bottom-1 -left-[2.5px] w-1.5 h-1.5 bg-primary-fixed rotate-45 shadow-[0_0_8px_#ccf200]" />
         </motion.div>
@@ -215,7 +270,7 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
                   }}
                   className="relative pl-8 flex flex-col md:flex-row md:items-start gap-2 md:gap-10 group"
                 >
-                  {/* Milestone Marker Square */}
+                  {/* Milestone Marker Square — lights up the exact moment the beam hits it */}
                   <div
                     className={`absolute left-0 top-1.5 w-3 h-3 border transition-all duration-200 z-10 ${
                       isActive
