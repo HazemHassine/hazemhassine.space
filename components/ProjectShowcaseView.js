@@ -66,7 +66,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                   className="text-primary-fixed hover:text-primary transition-colors flex items-center gap-1 font-semibold"
                 >
                   <span className="material-symbols-outlined text-[14px]">arrow_back</span>
-                  / TECHNICAL ARCHIVE
+                  / PROJECTS
                 </Link>
                 <span className="text-border-primary">/</span>
                 <span className="text-primary">{project.title}</span>
@@ -573,7 +573,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
               href="/projects" 
               className="text-primary-fixed hover:text-primary transition-colors"
             >
-              [ RETURN TO TECHNICAL ARCHIVE ]
+              [ RETURN TO PROJECTS ]
             </Link>
           </footer>
 

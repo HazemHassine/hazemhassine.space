@@ -118,7 +118,7 @@ export default function ProjectsPage() {
           <SectionReveal delay={0.1}>
             <div className="mb-10">
               <h1 className="font-[family-name:var(--font-display)] text-[28px] sm:text-[32px] font-bold uppercase text-primary mb-4 leading-tight tracking-tight">
-                / TECHNICAL ARCHIVE
+                / PROJECTS
               </h1>
               <p className="text-body-md text-text-muted max-w-2xl">
                 A curated selection of engineering projects, tools, and experiments focusing on full-stack development, system architecture, and AI integrations.
