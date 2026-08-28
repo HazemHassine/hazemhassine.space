@@ -37,6 +37,10 @@ export async function GET() {
       readTime: row.read_time,
       excerpt: row.excerpt,
       content: formatPostWithFrontmatter(row),
+      body: row.content || '',
+      status: row.status || 'published',
+      publishedAt: row.published_at,
+      updatedAt: row.updated_at,
     }));
 
     return NextResponse.json({ posts: formattedPosts });

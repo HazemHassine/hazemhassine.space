@@ -5,10 +5,15 @@ import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
 import Marquee from '@/components/Marquee';
-import { siteConfig, experience, projects } from '@/lib/data';
 import { getAllPosts } from '@/lib/markdown';
+import { getPublishedCmsData } from '@/lib/cms-server';
 
-export default async function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home({ cmsData } = {}) {
+  const cms = cmsData || await getPublishedCmsData();
+  const { siteConfig, experience, projects } = cms;
+  const pageContent = cms.pageContent?.home || {};
   const blogPosts = await getAllPosts();
 
   return (
@@ -21,7 +26,7 @@ export default async function Home() {
         <HeroSection siteConfig={siteConfig} projects={projects} />
 
         {/* MARQUEE SECTION */}
-        <Marquee items={["ORCHESTRATING 13 AGENTS SIMULTANEOUSLY", "WRITING DEVELOPMENT LOOPS", "PROMPT ENGINEERING SURVIVOR", "LLM WHISPERER", "FINE-TUNING THE MULTIVERSE"]} />
+        <Marquee items={pageContent.marquee} />
 
         {/* LOWER GRID SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-[1fr_1.35fr_1fr] flex-grow bg-border-primary gap-[1px]">
@@ -30,7 +35,7 @@ export default async function Home() {
             <SectionReveal>
               <div className="p-5 md:p-[28px] lg:p-8 flex flex-col h-full">
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase mb-8">
-                  / EXPERIENCE
+                  {pageContent.experienceLabel || '/ EXPERIENCE'}
                 </div>
                 <div className="flex-grow flex flex-col">
                   {experience.map((exp, i) => (
@@ -57,7 +62,7 @@ export default async function Home() {
                     href="/about" 
                     className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors"
                   >
-                    [ FULL TIMELINE ]
+                    {pageContent.timelineCta || '[ FULL TIMELINE ]'}
                   </Link>
                 </div>
               </div>
@@ -68,7 +73,7 @@ export default async function Home() {
           <div className="bg-border-primary h-full flex flex-col gap-[1px]">
             <div className="bg-surface p-5 pb-4 md:p-[28px] lg:p-8 md:pb-4">
               <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase">
-                / PROJECTS
+                {pageContent.projectsLabel || '/ PROJECTS'}
               </div>
             </div>
             <SectionReveal delay={0.1}>
@@ -91,7 +96,7 @@ export default async function Home() {
                 href="/projects" 
                 className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors"
               >
-                [ VIEW ALL PROJECTS ]
+                {pageContent.projectsCta || '[ VIEW ALL PROJECTS ]'}
               </Link>
             </div>
           </div>
@@ -101,7 +106,7 @@ export default async function Home() {
             <SectionReveal delay={0.2}>
               <div className="p-5 md:p-[28px] lg:p-8 flex flex-col h-full">
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase mb-8">
-                  / BLOG
+                  {pageContent.blogLabel || '/ BLOG'}
                 </div>
                 <div className="flex-grow flex flex-col gap-6">
                   {blogPosts.slice(0, 3).map((post, i) => (
@@ -116,7 +121,7 @@ export default async function Home() {
                     href="/blog" 
                     className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors"
                   >
-                    [ READ ALL ARTICLES ]
+                    {pageContent.blogCta || '[ READ ALL ARTICLES ]'}
                   </Link>
                 </div>
               </div>

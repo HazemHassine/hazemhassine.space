@@ -118,6 +118,25 @@ html {
   cursor: none !important;
 }
 
+.admin-interface,
+.admin-interface * {
+  cursor: default !important;
+}
+
+.admin-interface a,
+.admin-interface button,
+.admin-interface input[type="color"],
+.admin-interface input[type="file"],
+.admin-interface summary,
+.admin-interface [role="button"] {
+  cursor: pointer !important;
+}
+
+.admin-interface input,
+.admin-interface textarea {
+  cursor: text !important;
+}
+
 body {
   background-color: #050505;
   color: var(--color-on-background);
@@ -269,6 +288,5 @@ body {
 body.hide-chatbot #portfolio-chat-root {
   display: none !important;
 }
-
 
 

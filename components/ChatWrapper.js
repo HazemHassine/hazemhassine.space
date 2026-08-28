@@ -30,7 +30,7 @@ export default function ChatWrapper() {
     return () => observer.disconnect();
   }, [pathname]);
 
-  if (is404 || pathname === '/404' || pathname === '/_not-found') {
+  if (is404 || pathname === '/404' || pathname === '/_not-found' || pathname.startsWith('/admin')) {
     return null;
   }
 

@@ -1,7 +1,9 @@
-export const metadata = {
-  title: 'About | Hazem Hassine',
-  description: 'AI-focused software engineer building agentic systems and thoughtful products. Discover my background and skills.',
-};
+import { getPublishedCmsData } from '@/lib/cms-server';
+
+export async function generateMetadata() {
+  const cms = await getPublishedCmsData();
+  return cms.pageContent?.seo?.pages?.about || {};
+}
 
 export default function AboutLayout({ children }) {
   return <>{children}</>;

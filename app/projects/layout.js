@@ -1,7 +1,9 @@
-export const metadata = {
-  title: 'Projects | Mohamed Hazem Hassine',
-  description: 'A curated selection of engineering projects, tools, and experiments focusing on full-stack development, system architecture, and AI integrations.',
-};
+import { getPublishedCmsData } from '@/lib/cms-server';
+
+export async function generateMetadata() {
+  const cms = await getPublishedCmsData();
+  return cms.pageContent?.seo?.pages?.projects || {};
+}
 
 export default function ProjectsLayout({ children }) {
   return <>{children}</>;

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { siteConfig } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
 export default function ProtectedEmail({ children, className }) {
+  const { siteConfig } = useCms();
   const [isRevealed, setIsRevealed] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [num1, setNum1] = useState(0);

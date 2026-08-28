@@ -4,6 +4,8 @@ import PageTransition from "@/components/PageTransition";
 import ChatWrapper from "@/components/ChatWrapper";
 import "./globals.css";
 import CustomCursor from "../components/CustomCursor";
+import CmsProvider from "@/components/CmsProvider";
+import { getClientCmsData, getPublishedCmsData } from "@/lib/cms-server";
 
 const inter = Inter({
   variable: "--font-display",
@@ -19,36 +21,31 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-export const metadata = {
-  title: "HAZEM HASSINE | Software Engineer",
-  description:
-    "AI-focused software engineer building agentic systems, developer tools, and thoughtful products. MSc Intelligent Interactive Systems at Bielefeld University.",
-  keywords: [
-    "software engineer",
-    "AI",
-    "agentic systems",
-    "developer tools",
-    "portfolio",
-    "Hazem Hassine",
-  ],
-  authors: [{ name: "Hazem Hassine" }],
-  openGraph: {
-    title: "HAZEM HASSINE | Software Engineer",
-    description:
-      "AI-focused software engineer building agentic systems, developer tools, and thoughtful products.",
-    url: "https://hazemhassine.space",
-    siteName: "Hazem Hassine",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "HAZEM HASSINE | Software Engineer",
-    description:
-      "AI-focused software engineer building agentic systems, developer tools, and thoughtful products.",
-  },
-};
+export async function generateMetadata() {
+  const cms = await getPublishedCmsData();
+  const seo = cms.pageContent?.seo || {};
+  const title = seo.siteTitle || "HAZEM HASSINE | Software Engineer";
+  const description = seo.siteDescription || cms.siteConfig?.tagline;
 
-export default function RootLayout({ children }) {
+  return {
+    title,
+    description,
+    keywords: seo.keywords,
+    authors: [{ name: cms.siteConfig?.name || "Hazem Hassine" }],
+    openGraph: {
+      title,
+      description,
+      url: "https://hazemhassine.space",
+      siteName: cms.siteConfig?.name || "Hazem Hassine",
+      type: "website",
+    },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
+
+export default async function RootLayout({ children }) {
+  const cms = await getPublishedCmsData();
+
   return (
     <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable}`}>
       <head>
@@ -63,9 +60,11 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen relative">
         <CustomCursor />
         <div className="noise-overlay" />
-        <PageTransition>
-          {children}
-        </PageTransition>
+        <CmsProvider initialData={getClientCmsData(cms)}>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </CmsProvider>
         <ChatWrapper />
         <Analytics />
       </body>

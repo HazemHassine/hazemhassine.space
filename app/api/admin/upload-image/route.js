@@ -5,6 +5,8 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
+    const requestedBucket = formData.get('bucket');
+    const bucket = requestedBucket === 'cms-media' ? 'cms-media' : 'blog-images';
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -18,9 +20,16 @@ export async function POST(request) {
     const fileName = `${Date.now()}-${originalName}`;
     const contentType = file.type || 'image/jpeg';
 
-    // Upload directly to Supabase Storage bucket 'blog-images'
+    if (!contentType.startsWith('image/') && contentType !== 'application/pdf') {
+      return NextResponse.json({ error: 'Only images and PDF files are allowed' }, { status: 400 });
+    }
+
+    if (buffer.byteLength > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File must be smaller than 10 MB' }, { status: 400 });
+    }
+
     const { error: uploadError } = await supabaseAdmin.storage
-      .from('blog-images')
+      .from(bucket)
       .upload(fileName, buffer, {
         contentType,
         upsert: true,
@@ -33,7 +42,7 @@ export async function POST(request) {
 
     // Get the instant public URL from Supabase Storage
     const { data: { publicUrl } } = supabaseAdmin.storage
-      .from('blog-images')
+      .from(bucket)
       .getPublicUrl(fileName);
 
     return NextResponse.json({ success: true, url: publicUrl });

@@ -12,14 +12,6 @@ import TiltCard from '@/components/TiltCard';
 import { getProjectThumbnail } from '@/lib/data';
 import { useCms } from '@/components/CmsProvider';
 
-const projectCategories = [
-  { id: 'all', label: 'ALL PROJECTS' },
-  { id: 'ai-agents', label: 'AI & AGENTS' },
-  { id: 'dev-tools', label: 'DEV TOOLS & SRE' },
-  { id: 'data', label: 'BIG DATA & OSS' },
-  { id: 'frontend', label: 'FRONTEND & WEBGL' },
-];
-
 function ProjectCard({ project, index, onTagClick, activeTag }) {
   const [imageError, setImageError] = useState(false);
   const thumbnailUrl = getProjectThumbnail(project);
@@ -167,6 +159,13 @@ export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeTag, setActiveTag] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const projectCategories = useMemo(() => [
+    { id: 'all', label: 'ALL PROJECTS' },
+    ...Array.from(new Map(projects.map((project) => [
+      project.category,
+      { id: project.category, label: project.categoryLabel || project.category },
+    ])).values()).filter((category) => category.id),
+  ], [projects]);
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {

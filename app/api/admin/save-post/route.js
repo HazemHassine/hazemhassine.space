@@ -13,7 +13,8 @@ function calculateReadTime(content) {
 
 export async function POST(request) {
   try {
-    const { slug, content } = await request.json();
+    const payload = await request.json();
+    const { slug, content, originalSlug } = payload;
     
     if (!slug || !content) {
       return NextResponse.json({ error: 'Missing slug or content' }, { status: 400 });
@@ -36,10 +37,11 @@ export async function POST(request) {
       .maybeSingle();
 
     const postId = parsed.data.id || existingPost?.id || Date.now().toString();
-    const title = parsed.data.title || cleanSlug;
-    const date = parsed.data.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
-    const readTime = parsed.data.readTime || calculateReadTime(bodyContent);
-    const excerpt = parsed.data.excerpt || parsed.data.summary || parsed.data.description || '';
+    const title = payload.title || parsed.data.title || cleanSlug;
+    const date = payload.date || parsed.data.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+    const readTime = payload.readTime || parsed.data.readTime || calculateReadTime(bodyContent);
+    const excerpt = payload.excerpt || parsed.data.excerpt || parsed.data.summary || parsed.data.description || '';
+    const status = payload.status === 'draft' ? 'draft' : 'published';
 
     // Save to Supabase
     const { error: dbError } = await supabaseAdmin
@@ -52,6 +54,8 @@ export async function POST(request) {
         read_time: readTime,
         excerpt,
         content: bodyContent,
+        status,
+        published_at: status === 'published' ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'slug' });
 
@@ -60,8 +64,15 @@ export async function POST(request) {
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
 
-    // Also update local file in development for offline/local backup
-    if (process.env.NODE_ENV === 'development') {
+    if (originalSlug && originalSlug !== cleanSlug) {
+      const cleanOriginalSlug = originalSlug.replace(/[^a-zA-Z0-9_-]/g, '');
+      if (cleanOriginalSlug) {
+        await supabaseAdmin.from('posts').delete().eq('slug', cleanOriginalSlug);
+      }
+    }
+
+    // Published posts get a local development backup; drafts remain private.
+    if (process.env.NODE_ENV === 'development' && status === 'published') {
       try {
         const contentDirectory = path.join(process.cwd(), 'content', 'blog');
         if (!fs.existsSync(contentDirectory)) {
@@ -74,7 +85,7 @@ export async function POST(request) {
       }
     }
 
-    return NextResponse.json({ success: true, message: 'Saved to Supabase instantly' });
+    return NextResponse.json({ success: true, message: status === 'draft' ? 'Draft saved to Supabase' : 'Post published instantly' });
   } catch (error) {
     console.error('Error saving post:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

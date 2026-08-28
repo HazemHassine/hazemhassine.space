@@ -9,10 +9,11 @@ import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
 import TiltCard from '@/components/TiltCard';
 import ScrollTimeline from '@/components/ScrollTimeline';
-import { siteConfig, experience, education } from '@/lib/data';
-import { skillsWithProvenance, skillCategories } from '@/lib/skillsData';
+import { useCms } from '@/components/CmsProvider';
 
 export default function AboutPage() {
+  const { siteConfig, experience, education, skillsWithProvenance, skillCategories, pageContent } = useCms();
+  const copy = pageContent?.about || {};
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSkillId, setSelectedSkillId] = useState(skillsWithProvenance[0].id);
   const [activeTag, setActiveTag] = useState(null);
@@ -51,11 +52,11 @@ export default function AboutPage() {
             <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary flex flex-col justify-between h-full">
               <div>
                 <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
-                  {`//`} ABOUT ME
+                  {copy.eyebrow || `${'//'} ABOUT ME`}
                 </div>
                 
                 <h1 className="font-[family-name:var(--font-display)] text-[28px] md:text-[32px] leading-[1.1] tracking-[-0.02em] font-bold uppercase mb-6">
-                  I&apos;M HAZEM, A SOFTWARE ENGINEER BASED IN BIELEFELD, GERMANY.
+                  {copy.heading || "I'M HAZEM, A SOFTWARE ENGINEER BASED IN BIELEFELD, GERMANY."}
                 </h1>
                 
                 <div className="flex flex-col gap-4 text-[13px] leading-[1.65] font-normal text-text-muted">
@@ -65,27 +66,30 @@ export default function AboutPage() {
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-border-muted flex flex-col gap-1.5">
-                  <div className="text-[10px] text-text-dim uppercase tracking-wider font-semibold">CURRENT FOCUS</div>
+                  <div className="text-[10px] text-text-dim uppercase tracking-wider font-semibold">{copy.currentFocusLabel || 'CURRENT FOCUS'}</div>
                   <div className="text-[12px] text-on-surface font-medium">
-                    M.Sc. Intelligent Interactive Systems @ Bielefeld University
+                    {copy.currentFocus || 'M.Sc. Intelligent Interactive Systems @ Bielefeld University'}
                   </div>
                 </div>
               </div>
 
               <div className="mt-8 flex items-center gap-3">
-                <motion.button
+                <motion.a
+                  href={copy.cvUrl || '/Hazem_Hassine_CV.pdf'}
+                  target="_blank"
+                  rel="noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="flex items-center gap-2 px-3 py-2 bg-surface-container border border-border-primary text-primary-fixed hover:border-primary-fixed hover:bg-surface-hover transition-colors text-[11px] font-semibold uppercase tracking-wider"
                 >
-                  <span>[ DOWNLOAD CV ]</span>
+                  <span>{copy.cvLabel || '[ DOWNLOAD CV ]'}</span>
                   <span className="material-symbols-outlined text-[15px]">download</span>
-                </motion.button>
+                </motion.a>
                 <Link
                   href="/contact"
                   className="flex items-center gap-2 px-3 py-2 bg-transparent border border-border-muted text-text-muted hover:border-border-primary hover:text-on-surface transition-colors text-[11px] font-semibold uppercase tracking-wider"
                 >
-                  <span>[ CONTACT ]</span>
+                  <span>{copy.contactLabel || '[ CONTACT ]'}</span>
                 </Link>
               </div>
             </div>
@@ -95,7 +99,7 @@ export default function AboutPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase">
-                    {`//`} CAPABILITIES & STACK
+                    {copy.skillsLabel || `${'//'} CAPABILITIES & STACK`}
                   </div>
                 </div>
 

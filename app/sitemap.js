@@ -1,5 +1,5 @@
 import { getAllPosts } from '@/lib/markdown';
-import { getAllProjectSlugs } from '@/lib/projects-data';
+import { getPublishedCmsData } from '@/lib/cms-server';
 
 export default async function sitemap() {
   const baseUrl = 'https://hazemhassine.space';
@@ -11,7 +11,8 @@ export default async function sitemap() {
   }));
 
   // Dynamic project routes
-  const projectSlugs = getAllProjectSlugs();
+  const cms = await getPublishedCmsData();
+  const projectSlugs = (cms.projectDetails || []).map((project) => project.slug);
   const projectRoutes = projectSlugs.map((slug) => ({
     url: `${baseUrl}/projects/${slug}`,
     lastModified: new Date().toISOString(),

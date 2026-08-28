@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function CustomCursor() {
+  const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -58,7 +60,7 @@ export default function CustomCursor() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || pathname === "/admin" || pathname === "/admin/login") return null;
 
   const variants = {
     default: {

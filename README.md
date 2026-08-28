@@ -104,13 +104,23 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 AI_GATEWAY_API_KEY=your_ai_api_key_here
 ```
 
-### 3. Run the development server:
+### 3. Initialize the Supabase CMS
+
+Open **Supabase → SQL Editor → New query**, paste the complete contents of
+[`supabase/cms.sql`](./supabase/cms.sql), and run it. Then sign in at `/admin`
+and choose **Publish everything** once to seed the CMS with the repository's
+current portfolio content.
+
+The CMS keeps drafts private, exposes only published content through RLS,
+records revision history, stores public media, and retains contact-form messages.
+
+### 4. Run the development server:
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Build & Lint:
+### 5. Build & Lint:
 ```bash
 npm run lint
 npm run build

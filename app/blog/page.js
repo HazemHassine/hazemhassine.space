@@ -3,16 +3,19 @@ import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
 import { getAllPosts } from '@/lib/markdown';
 import Link from 'next/link';
+import { getPublishedCmsData } from '@/lib/cms-server';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = {
-  title: 'Blog | Hazem Hassine',
-  description: 'Writings on AI, software engineering, agentic systems, and developer tools.',
-};
+export async function generateMetadata() {
+  const cms = await getPublishedCmsData();
+  return cms.pageContent?.seo?.pages?.blog || {};
+}
 
-export default async function BlogPage() {
+export default async function BlogPage({ cmsData } = {}) {
   const posts = await getAllPosts();
+  const cms = cmsData || await getPublishedCmsData();
+  const copy = cms.pageContent?.blog || {};
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full bg-background">
@@ -25,7 +28,7 @@ export default async function BlogPage() {
             {/* HEADER */}
             <div className="mb-12 border-b border-border-primary pb-4">
               <h1 className="font-[family-name:var(--font-display)] text-[32px] font-bold uppercase text-primary tracking-tight">
-                BLOG / NOTES
+                {copy.title || 'BLOG / NOTES'}
               </h1>
             </div>
 
@@ -61,6 +64,11 @@ export default async function BlogPage() {
                   </Link>
                 </SectionReveal>
               ))}
+              {posts.length === 0 && (
+                <p className="py-12 font-[family-name:var(--font-mono)] text-[13px] text-text-muted">
+                  {copy.emptyState || 'No published articles yet.'}
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+    <div className="admin-interface min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="noise-overlay" />
       
       <div className="relative z-10 w-full max-w-sm border border-border-primary bg-surface p-8 shadow-2xl">

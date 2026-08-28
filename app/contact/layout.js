@@ -1,7 +1,9 @@
-export const metadata = {
-  title: 'Contact | Hazem Hassine',
-  description: 'Get in touch for collaborations, opportunities, or just to say hello.',
-};
+import { getPublishedCmsData } from '@/lib/cms-server';
+
+export async function generateMetadata() {
+  const cms = await getPublishedCmsData();
+  return cms.pageContent?.seo?.pages?.contact || {};
+}
 
 export default function ContactLayout({ children }) {
   return <>{children}</>;

@@ -5,7 +5,7 @@ import TopBar from "@/components/TopBar";
 import MobileMenu from "@/components/MobileMenu";
 import SectionReveal from "@/components/SectionReveal";
 import ProtectedEmail from "@/components/ProtectedEmail";
-import { siteConfig } from "@/lib/data";
+import { useCms } from "@/components/CmsProvider";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
@@ -14,6 +14,8 @@ import { useState } from "react";
 const Hero3DObject = dynamic(() => import("@/components/Hero3DObject"), { ssr: false });
 
 export default function Contact() {
+  const { siteConfig, pageContent } = useCms();
+  const copy = pageContent?.contact || {};
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <>
@@ -26,11 +28,10 @@ export default function Contact() {
           <SectionReveal>
             <div className="mb-12 border-b border-border-primary pb-4">
               <h1 className="font-[family-name:var(--font-display)] text-[32px] font-bold uppercase text-primary tracking-tight">
-                / GET IN TOUCH
+                {copy.eyebrow || '/ GET IN TOUCH'}
               </h1>
               <p className="font-[family-name:var(--font-mono)] text-[14px] text-text-muted max-w-2xl mt-2">
-                Have a project in mind, a question, or just want to say hello? 
-                Drop a message below or reach out directly via email.
+                {copy.introduction || 'Have a project in mind, a question, or just want to say hello? Drop a message below or reach out directly via email.'}
               </p>
             </div>
           </SectionReveal>
@@ -41,9 +42,7 @@ export default function Contact() {
               <div className="flex flex-col space-y-12">
                 <div>
                   <h2 className="font-[family-name:var(--font-display)] text-[64px] md:text-[80px] font-extrabold leading-[0.85] tracking-[-0.04em] text-outline uppercase">
-                    LET&apos;S
-                    <br />
-                    TALK
+                    {(copy.displayTitle || "LET'S\nTALK").split('\n').map((line, index) => <span key={line}>{index > 0 && <br />}{line}</span>)}
                   </h2>
                 </div>
 
@@ -122,7 +121,7 @@ export default function Contact() {
                     });
 
                     if (res.ok) {
-                      alert("Message sent successfully!");
+                      alert(copy.successMessage || "Message sent successfully!");
                       form.reset();
                     } else {
                       const data = await res.json();
@@ -183,7 +182,7 @@ export default function Contact() {
                   aria-busy={isSubmitting}
                   className="mt-4 bg-primary-fixed text-background px-6 py-4 font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-wider hover:bg-primary transition-colors uppercase self-start disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "[ SENDING... ]" : "[ SEND MESSAGE ]"}
+                  {isSubmitting ? "[ SENDING... ]" : (copy.submitLabel || "[ SEND MESSAGE ]")}
                 </button>
               </form>
               </div>
