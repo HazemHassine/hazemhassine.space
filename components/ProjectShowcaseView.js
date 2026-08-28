@@ -45,7 +45,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
           
           {/* BREADCRUMB / TOP NAVIGATION */}
           <SectionReveal delay={0.05}>
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-border-primary mb-8 text-[11px] uppercase tracking-wider text-text-muted">
+            <div className="flex items-center justify-between gap-4 pb-6 border-b border-border-primary mb-8 text-[11px] uppercase tracking-wider text-text-muted">
               <div className="flex items-center gap-2">
                 <Link 
                   href="/projects" 
@@ -56,12 +56,6 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                 </Link>
                 <span className="text-border-primary">/</span>
                 <span className="text-primary">{project.title}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="inline-flex items-center px-2 py-0.5 border border-primary-fixed/40 bg-primary-fixed/10 text-primary-fixed text-[10px] font-bold">
-                  {project.status}
-                </span>
-                <span className="text-text-dim">ID: {project.id}</span>
               </div>
             </div>
           </SectionReveal>
@@ -109,7 +103,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                     </a>
                   )}
                   <div className="text-[12px] text-text-dim flex items-center gap-3">
-                    <span>TIMELINE: <strong className="text-text-muted">{project.timeline}</strong></span>
+                    <span>YEAR: <strong className="text-text-muted">{project.year || project.timeline || "2026"}</strong></span>
                     <span className="text-border-primary">|</span>
                     <span>ROLE: <strong className="text-text-muted">{project.role}</strong></span>
                   </div>
