@@ -2532,7 +2532,7 @@ export default function NotFoundGridGame() {
 
             {scoreSubmitted && (
               <div className="bg-primary-fixed/15 border border-primary-fixed p-2 mb-3 text-xs font-bold text-primary-fixed flex items-center justify-between">
-                <span>★ RECORD SAVED IN SUPABASE!</span>
+                <span>★ RECORD SAVED!</span>
                 {submissionRank && <span>RANK #{submissionRank}</span>}
               </div>
             )}
@@ -2629,7 +2629,7 @@ export default function NotFoundGridGame() {
 
             {scoreSubmitted && (
               <div className="bg-cyan-950/60 border border-cyan-400 p-2 mb-3 text-xs font-bold text-cyan-300 flex items-center justify-between shadow-[0_0_15px_rgba(0,240,255,0.3)]">
-                <span>★ RECORD SAVED IN SUPABASE!</span>
+                <span>★ RECORD SAVED!</span>
                 {submissionRank && <span>RANK #{submissionRank}</span>}
               </div>
             )}
@@ -2677,7 +2677,7 @@ export default function NotFoundGridGame() {
                   GLOBAL PILOT ARCHIVES
                 </h2>
                 <div className="text-[10px] text-text-muted uppercase tracking-widest">
-                  POWERED BY SUPABASE DATABASE
+                  GLOBAL HIGH SCORES
                 </div>
               </div>
               <button
@@ -2730,7 +2730,7 @@ export default function NotFoundGridGame() {
               {isLoadingLeaderboard ? (
                 <div className="py-16 text-center text-text-muted animate-pulse">
                   <div className="text-2xl mb-2">⚡</div>
-                  SYNCING QUANTUM RECORDS FROM SUPABASE...
+                  SYNCING QUANTUM RECORDS...
                 </div>
               ) : leaderboardData.length === 0 ? (
                 <div className="py-16 text-center text-text-muted">
