@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
@@ -13,6 +13,20 @@ export default function ProjectShowcaseView({ project, adjacent }) {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [lightboxImage, setLightboxImage] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setLightboxImage(null);
+      }
+    };
+    if (lightboxImage) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lightboxImage]);
 
   const copyToClipboard = (text, index) => {
     navigator.clipboard.writeText(text);
@@ -104,8 +118,6 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                   )}
                   <div className="text-[12px] text-text-dim flex items-center gap-3">
                     <span>YEAR: <strong className="text-text-muted">{project.year || project.timeline || "2026"}</strong></span>
-                    <span className="text-border-primary">|</span>
-                    <span>ROLE: <strong className="text-text-muted">{project.role}</strong></span>
                   </div>
                 </div>
               </div>
@@ -126,10 +138,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                     className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                    <span className="text-[10px] font-mono text-primary-fixed uppercase tracking-wider bg-black/70 px-2 py-0.5 border border-border-primary">
-                      [ VISUAL PREVIEW ]
-                    </span>
+                  <div className="absolute bottom-3 right-3 flex items-center pointer-events-none">
                     <span className="text-[11px] text-white flex items-center gap-1 bg-black/70 px-2 py-0.5 border border-border-primary">
                       <span className="material-symbols-outlined text-[14px]">zoom_in</span>
                       EXPAND
@@ -161,7 +170,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
             <div className="mb-10 p-5 bg-surface border border-border-primary flex flex-col md:flex-row md:items-center gap-4">
               <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted shrink-0 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[16px] text-primary-fixed">terminal</span>
-                TECHNOLOGY ARSENAL:
+                TECHNOLOGIES:
               </div>
               <div className="flex flex-wrap gap-2">
                 {project.techStack.map((tech, i) => (
@@ -343,10 +352,6 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                       <p className="text-[13px] text-text-muted leading-relaxed font-mono">
                         {cap.description}
                       </p>
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-border-muted text-[10px] font-mono text-text-dim flex items-center justify-between">
-                      <span>VERIFIED FEATURE</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
                     </div>
                   </div>
                 ))}
