@@ -1,4 +1,5 @@
 import { getAllPosts } from '@/lib/markdown';
+import { getAllProjectSlugs } from '@/lib/projects-data';
 
 export default async function sitemap() {
   const baseUrl = 'https://hazemhassine.space';
@@ -9,6 +10,13 @@ export default async function sitemap() {
     lastModified: new Date().toISOString(),
   }));
 
+  // Dynamic project routes
+  const projectSlugs = getAllProjectSlugs();
+  const projectRoutes = projectSlugs.map((slug) => ({
+    url: `${baseUrl}/projects/${slug}`,
+    lastModified: new Date().toISOString(),
+  }));
+
   // Dynamic blog routes
   const posts = getAllPosts();
   const blogRoutes = posts.map((post) => ({
@@ -16,5 +24,5 @@ export default async function sitemap() {
     lastModified: post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
   }));
 
-  return [...routes, ...blogRoutes];
+  return [...routes, ...projectRoutes, ...blogRoutes];
 }

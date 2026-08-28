@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
@@ -14,11 +15,9 @@ function ProjectRowItem({ project, index }) {
 
   return (
     <SectionReveal delay={0.15 + index * 0.08}>
-      <a
+      <Link
         href={project.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="project-row group border-b border-border-primary py-5 md:py-6 px-2 md:px-4 flex flex-col md:flex-row md:items-center gap-5 lg:gap-8 transition-colors duration-300 relative bg-surface hover:bg-surface-hover block w-full"
+        className="project-row group border-b border-border-primary py-5 md:py-6 px-2 md:px-4 flex flex-col md:flex-row md:items-center gap-5 lg:gap-8 transition-colors duration-300 relative bg-surface hover:bg-surface-hover block w-full cursor-pointer"
       >
         {/* Number column */}
         <div className="md:w-10 text-terminal-button text-text-muted group-hover:text-primary-container shrink-0">
@@ -86,7 +85,7 @@ function ProjectRowItem({ project, index }) {
             [ VIEW DETAILS ]
           </span>
         </div>
-      </a>
+      </Link>
     </SectionReveal>
   );
 }

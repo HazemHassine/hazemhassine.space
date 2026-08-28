@@ -77,7 +77,7 @@ export default function Home() {
                   <div key={i} className="bg-surface relative group overflow-hidden flex items-end p-4 min-h-[120px]">
                     <div className="absolute inset-0 bg-surface-container-high grayscale opacity-50 group-hover:opacity-100 transition-opacity"></div>
                     <div className="absolute inset-0 border border-transparent group-hover:border-primary-fixed transition-colors pointer-events-none z-10"></div>
-                    <Link href={project.href} target="_blank" rel="noopener noreferrer" className="relative z-20 w-full h-full flex items-end">
+                    <Link href={project.href} className="relative z-20 w-full h-full flex items-end">
                       <span className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary group-hover:text-primary-fixed transition-colors">
                         {project.title}
                       </span>
