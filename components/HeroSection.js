@@ -33,14 +33,14 @@ export default function HeroSection({ siteConfig, projects }) {
         >
           <motion.h1 
             variants={itemVariants}
-            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-white glitch-static"
+            className="font-[family-name:var(--font-display)] text-[13vw] sm:text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-white glitch-static"
             data-text={siteConfig.title.split(' ').slice(0, -1).join(' ')}
           >
             {siteConfig.title.split(' ').slice(0, -1).join(' ')}
           </motion.h1>
           <motion.h1 
             variants={itemVariants}
-            className="font-[family-name:var(--font-display)] text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-outline glitch-static block"
+            className="font-[family-name:var(--font-display)] text-[13vw] sm:text-[64px] md:text-[120px] font-extrabold leading-[0.85] tracking-[-0.06em] text-outline glitch-static block"
             data-text={siteConfig.title.split(' ').slice(-1)[0]}
           >
             {siteConfig.title.split(' ').slice(-1)[0]}
@@ -63,7 +63,7 @@ export default function HeroSection({ siteConfig, projects }) {
       </div>
 
       {/* Middle Column */}
-      <div className={`${styles.portraitStage} min-h-[500px] md:min-h-[600px] min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden`}>
+      <div className={`${styles.portraitStage} min-h-[500px] md:min-h-[600px] w-full max-w-full md:min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden`}>
         {/* Global Grid Background */}
         <div className="grid-background absolute inset-0 pointer-events-none opacity-20"></div>
         

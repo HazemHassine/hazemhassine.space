@@ -28,7 +28,7 @@ export default async function Home() {
           {/* Experience Column */}
           <div className="bg-surface h-full flex flex-col">
             <SectionReveal>
-              <div className="p-[28px] lg:p-8 flex flex-col h-full">
+              <div className="p-5 md:p-[28px] lg:p-8 flex flex-col h-full">
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase mb-8">
                   / EXPERIENCE
                 </div>
@@ -66,7 +66,7 @@ export default async function Home() {
 
           {/* Projects Grid */}
           <div className="bg-border-primary h-full flex flex-col gap-[1px]">
-            <div className="bg-surface p-[28px] lg:p-8 pb-4">
+            <div className="bg-surface p-5 pb-4 md:p-[28px] lg:p-8 md:pb-4">
               <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase">
                 / PROJECTS
               </div>
@@ -99,7 +99,7 @@ export default async function Home() {
           {/* Blog Column */}
           <div className="bg-surface h-full flex flex-col">
             <SectionReveal delay={0.2}>
-              <div className="p-[28px] lg:p-8 flex flex-col h-full">
+              <div className="p-5 md:p-[28px] lg:p-8 flex flex-col h-full">
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted uppercase mb-8">
                   / BLOG
                 </div>

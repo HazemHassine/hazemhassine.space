@@ -468,7 +468,7 @@
 @media (max-width: 767px) {
   .trigger {
     right: 16px;
-    bottom: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
     min-width: 0;
     width: 56px;
     height: 56px;
