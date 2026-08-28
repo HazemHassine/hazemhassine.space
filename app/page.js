@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <>
       <Sidebar />
-      <main className="md:ml-[150px] min-h-screen flex flex-col">
+      <main className="md:ml-[180px] min-h-screen flex flex-col">
         <TopBar />
         <MobileMenu />
 
@@ -88,7 +88,7 @@ export default function Home() {
             </SectionReveal>
             <div className="bg-surface p-4 text-center mt-auto">
               <Link 
-                href="/work" 
+                href="/projects" 
                 className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors"
               >
                 [ VIEW ALL PROJECTS ]

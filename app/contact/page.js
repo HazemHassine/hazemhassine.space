@@ -18,7 +18,7 @@ export default function Contact() {
   return (
     <>
       <Sidebar />
-      <main className="md:ml-[150px] min-h-screen flex flex-col relative z-10">
+      <main className="md:ml-[180px] min-h-screen flex flex-col relative z-10">
         <TopBar />
         <MobileMenu />
 

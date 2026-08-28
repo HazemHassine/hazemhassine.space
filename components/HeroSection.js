@@ -53,10 +53,10 @@ export default function HeroSection({ siteConfig, projects }) {
           </motion.p>
           <motion.div variants={itemVariants}>
             <Link 
-              href="/work" 
+              href="/projects" 
               className="font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-[0.02em] text-primary-fixed hover:text-primary transition-colors uppercase"
             >
-              [ VIEW WORK ]
+              [ VIEW PROJECTS ]
             </Link>
           </motion.div>
         </motion.div>

@@ -36,7 +36,7 @@ export default async function BlogPost({ params }) {
       <Sidebar />
       <MobileMenu />
 
-      <main className="flex-1 flex flex-col md:ml-[150px] min-h-screen border-l border-border-primary relative z-10 pt-16 md:pt-0">
+      <main className="flex-1 flex flex-col md:ml-[180px] min-h-screen border-l border-border-primary relative z-10 pt-16 md:pt-0">
         <article className="flex-1 px-6 py-12 md:px-12 md:py-20 flex justify-center">
           <div className="flex-1 flex flex-col w-full max-w-3xl">
             
