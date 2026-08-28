@@ -314,22 +314,12 @@ export default function AboutPage() {
           </section>
         </SectionReveal>
 
-        {/* BOTTOM SECTION — Experience Timeline with Active Scroll Progress Beam */}
+        {/* BOTTOM SECTION — Unified Tri-Mode Timeline with Active Scroll Progress Beam */}
         <SectionReveal>
           <ScrollTimeline
-            id="experience"
-            title="// EXPERIENCE TIMELINE"
-            items={experience}
-          />
-        </SectionReveal>
-
-        {/* BOTTOM SECTION — Education Timeline with Active Scroll Progress Beam */}
-        <SectionReveal>
-          <ScrollTimeline
-            id="education"
-            title="// EDUCATION TIMELINE"
-            items={education}
-            isSubSection={true}
+            id="timeline"
+            experience={experience}
+            education={education}
           />
         </SectionReveal>
       </main>
