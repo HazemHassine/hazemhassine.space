@@ -88,8 +88,8 @@ export default function ScrollTimeline({ id, title, items, isSubSection = false 
                 <div
                   className={`absolute left-0 top-1.5 w-3 h-3 border transition-all duration-200 z-10 ${
                     isActive
-                      ? 'bg-primary-fixed border-background scale-110 shadow-[0_0_12px_#ccf200]'
-                      : 'bg-surface-container-high border-border-primary scale-100 group-hover:bg-primary-fixed group-hover:border-background group-hover:scale-125 group-hover:shadow-[0_0_10px_#ccf200]'
+                      ? 'bg-primary-fixed border-primary-fixed scale-110 shadow-[0_0_12px_#ccf200]'
+                      : 'bg-surface-container-high border-border-primary scale-100 group-hover:bg-primary-fixed group-hover:border-primary-fixed group-hover:scale-125 group-hover:shadow-[0_0_10px_#ccf200]'
                   }`}
                 />
 
