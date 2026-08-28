@@ -34,10 +34,17 @@ export async function GET(request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: data || [],
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: data || [],
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        },
+      }
+    );
   } catch (err) {
     console.error('Leaderboard GET error:', err);
     return NextResponse.json(

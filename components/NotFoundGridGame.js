@@ -333,7 +333,7 @@ export default function NotFoundGridGame() {
   const [activePowerup, setActivePowerup] = useState(null);
   const [sectorWave, setSectorWave] = useState(1);
 
-  // Global Leaderboard State
+  // Global Leaderboard State & Cache (45s TTL)
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [leaderboardTab, setLeaderboardTab] = useState('space_shooter');
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -343,6 +343,11 @@ export default function NotFoundGridGame() {
   const [isSubmittingScore, setIsSubmittingScore] = useState(false);
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [submissionRank, setSubmissionRank] = useState(null);
+
+  const leaderboardCacheRef = useRef({
+    space_shooter: { data: [], timestamp: 0 },
+    grid_runner: { data: [], timestamp: 0 },
+  });
 
   // Mutable Game Loop references inside requestAnimationFrame
   const gameRef = useRef({
@@ -426,8 +431,18 @@ export default function NotFoundGridGame() {
     }
   };
 
-  // Fetch leaderboard data from API
-  const fetchLeaderboard = useCallback(async (mode = 'space_shooter') => {
+  // Fetch leaderboard data with in-memory caching (avoids querying Supabase on every click)
+  const fetchLeaderboard = useCallback(async (mode = 'space_shooter', force = false) => {
+    const cache = leaderboardCacheRef.current[mode];
+    const now = Date.now();
+    const CACHE_TTL = 45000; // 45 seconds TTL
+
+    if (!force && cache && cache.data && cache.data.length > 0 && now - cache.timestamp < CACHE_TTL) {
+      setLeaderboardData(cache.data);
+      setIsLoadingLeaderboard(false);
+      return;
+    }
+
     setIsLoadingLeaderboard(true);
     setLeaderboardNotice(null);
     try {
@@ -435,17 +450,18 @@ export default function NotFoundGridGame() {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
         setLeaderboardData(json.data);
+        leaderboardCacheRef.current[mode] = { data: json.data, timestamp: Date.now() };
         if (json.message) {
           setLeaderboardNotice(json.message);
         }
       } else {
         setLeaderboardNotice(json.error || 'Unable to fetch leaderboard.');
-        setLeaderboardData([]);
+        setLeaderboardData(cache ? cache.data : []);
       }
     } catch (err) {
       console.error('Failed to fetch leaderboard:', err);
       setLeaderboardNotice('Network error fetching scores.');
-      setLeaderboardData([]);
+      setLeaderboardData(cache ? cache.data : []);
     } finally {
       setIsLoadingLeaderboard(false);
     }
@@ -456,7 +472,7 @@ export default function NotFoundGridGame() {
     (mode = 'space_shooter') => {
       setLeaderboardTab(mode);
       setShowLeaderboardModal(true);
-      fetchLeaderboard(mode);
+      fetchLeaderboard(mode, false);
     },
     [fetchLeaderboard]
   );
@@ -491,6 +507,10 @@ export default function NotFoundGridGame() {
         setScoreSubmitted(true);
         setSubmissionRank(json.rank || 1);
         if (soundRef.current) soundRef.current.playCollect();
+
+        // Invalidate cache and fetch fresh rankings
+        leaderboardCacheRef.current[mode] = { data: [], timestamp: 0 };
+        fetchLeaderboard(mode, true);
       } else {
         alert(json.error || 'Failed to submit score to leaderboard.');
       }
@@ -2356,26 +2376,30 @@ export default function NotFoundGridGame() {
               vaporwave terrain or warp safely back to known space.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            {/* Action Buttons: Row 1 (Start & Projects on 1 line), Row 2 (Leaderboard underneath) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-3">
               <button
                 onClick={startGame}
-                className="w-full sm:w-auto font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-6 py-3 text-[13px]"
+                className="w-full sm:flex-1 font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-6 py-3 text-[13px] whitespace-nowrap text-center"
               >
-                <span className="hidden sm:inline">[ START GRID MISSION (SPACE / CLICK) ]</span>
+                <span className="hidden sm:inline">[ START GRID MISSION (SPACE) ]</span>
                 <span className="sm:hidden">[ TAP TO START ]</span>
-              </button>
-              <button
-                onClick={() => openLeaderboard('grid_runner')}
-                className="w-full sm:w-auto font-medium uppercase tracking-wider text-primary-fixed hover:text-white transition-colors border border-primary-fixed/60 bg-surface-container-high px-5 py-3 text-[13px]"
-              >
-                [ 🏆 LEADERBOARD ]
               </button>
               <Link
                 href="/projects"
-                className="w-full sm:w-auto font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-5 py-3 text-[13px]"
+                className="w-full sm:w-auto font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-6 py-3 text-[13px] whitespace-nowrap text-center"
               >
                 [ VIEW PROJECTS ]
               </Link>
+            </div>
+
+            <div className="mb-6">
+              <button
+                onClick={() => openLeaderboard('grid_runner')}
+                className="w-full font-medium uppercase tracking-wider text-primary-fixed hover:text-white hover:border-primary-fixed transition-colors border border-primary-fixed/50 bg-surface hover:bg-primary-fixed/10 py-2.5 text-[12px] whitespace-nowrap text-center"
+              >
+                [ 🏆 VIEW GLOBAL LEADERBOARD ]
+              </button>
             </div>
 
             {/* Controls Info Guide — Desktop */}
@@ -2587,15 +2611,12 @@ export default function NotFoundGridGame() {
           <div className="max-w-2xl w-full bg-[#080808] border-2 border-primary-fixed p-5 md:p-7 shadow-[0_0_50px_rgba(204,242,0,0.3)] text-primary">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-border-primary">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
-                <div>
-                  <h2 className="font-[family-name:var(--font-display)] text-lg md:text-xl font-extrabold uppercase tracking-tight text-primary-fixed">
-                    GLOBAL PILOT ARCHIVES
-                  </h2>
-                  <div className="text-[10px] text-text-muted uppercase tracking-widest">
-                    POWERED BY SUPABASE DATABASE
-                  </div>
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-lg md:text-xl font-extrabold uppercase tracking-tight text-primary-fixed">
+                  GLOBAL PILOT ARCHIVES
+                </h2>
+                <div className="text-[10px] text-text-muted uppercase tracking-widest">
+                  POWERED BY SUPABASE DATABASE
                 </div>
               </div>
               <button
@@ -2718,7 +2739,7 @@ export default function NotFoundGridGame() {
             {/* Footer */}
             <div className="flex items-center justify-between mt-4 pt-3 border-t border-border-primary text-xs">
               <button
-                onClick={() => fetchLeaderboard(leaderboardTab)}
+                onClick={() => fetchLeaderboard(leaderboardTab, true)}
                 className="text-text-muted hover:text-primary-fixed transition-colors uppercase flex items-center gap-1.5 text-[11px]"
               >
                 <span>↻</span> REFRESH SCORES
