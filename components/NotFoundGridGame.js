@@ -522,39 +522,6 @@ export default function NotFoundGridGame() {
     }
   };
 
-  // Start original Grid Runner
-  const startGame = useCallback(() => {
-    if (soundRef.current) {
-      soundRef.current.init();
-      soundRef.current.playStart();
-    }
-    const g = gameRef.current;
-    g.state = 'playing';
-    g.score = 0;
-    g.shields = 3;
-    g.multiplier = 1;
-    g.consecutiveGems = 0;
-    g.speed = g.baseSpeed;
-    g.distance = 0;
-    g.playerX = 0;
-    g.targetPlayerX = 0;
-    g.playerY = 0.8;
-    g.playerZ = 0;
-    g.playerVelY = 0;
-    g.isJumping = false;
-    g.invincibleTimer = 0;
-    g.glitchTimer = 0;
-
-    setGameState('playing');
-    setScore(0);
-    setShields(3);
-    setMultiplier(1);
-    setSpeedGhz(1.0);
-    setEasterEggBanner(false);
-    setScoreSubmitted(false);
-    setSubmissionRank(null);
-  }, []);
-
   // Trigger Easter Egg Space Shooter
   const triggerEasterEgg = useCallback(() => {
     const g = gameRef.current;
@@ -598,6 +565,55 @@ export default function NotFoundGridGame() {
       setEasterEggBanner(false);
     }, 4500);
   }, []);
+
+  // Start original Grid Runner
+  const startGame = useCallback(() => {
+    const g = gameRef.current;
+
+    // Mobile / Desktop rapid tap/click detection for secret easter egg
+    const now = Date.now();
+    g.spacePressTimes = (g.spacePressTimes || []).filter((t) => now - t < 2200);
+    g.spacePressTimes.push(now);
+
+    if (
+      g.spacePressTimes.length >= 5 &&
+      g.state !== 'easter_transition' &&
+      g.state !== 'shooter_playing'
+    ) {
+      triggerEasterEgg();
+      return;
+    }
+
+    if (soundRef.current) {
+      soundRef.current.init();
+      soundRef.current.playStart();
+    }
+
+    g.state = 'playing';
+    g.score = 0;
+    g.shields = 3;
+    g.multiplier = 1;
+    g.consecutiveGems = 0;
+    g.speed = g.baseSpeed;
+    g.distance = 0;
+    g.playerX = 0;
+    g.targetPlayerX = 0;
+    g.playerY = 0.8;
+    g.playerZ = 0;
+    g.playerVelY = 0;
+    g.isJumping = false;
+    g.invincibleTimer = 0;
+    g.glitchTimer = 0;
+
+    setGameState('playing');
+    setScore(0);
+    setShields(3);
+    setMultiplier(1);
+    setSpeedGhz(1.0);
+    setEasterEggBanner(false);
+    setScoreSubmitted(false);
+    setSubmissionRank(null);
+  }, [triggerEasterEgg]);
 
   // Restart Space Shooter
   const restartShooter = useCallback(() => {
@@ -1423,6 +1439,20 @@ export default function NotFoundGridGame() {
         const touch = e.touches[0];
         const rect = container.getBoundingClientRect();
         const relX = (touch.clientX - rect.left) / rect.width;
+
+        // Mobile touchscreen rapid tap detection for secret easter egg
+        const now = Date.now();
+        g.spacePressTimes = (g.spacePressTimes || []).filter((t) => now - t < 2200);
+        g.spacePressTimes.push(now);
+
+        if (
+          g.spacePressTimes.length >= 5 &&
+          g.state !== 'easter_transition' &&
+          g.state !== 'shooter_playing'
+        ) {
+          triggerEasterEgg();
+          return;
+        }
 
         if (g.state === 'ready' || g.state === 'gameover') {
           return;
@@ -2323,6 +2353,21 @@ export default function NotFoundGridGame() {
             onTouchStart={(e) => {
               e.stopPropagation();
               const g = gameRef.current;
+
+              // Mobile rapid tap detection for secret easter egg
+              const now = Date.now();
+              g.spacePressTimes = (g.spacePressTimes || []).filter((t) => now - t < 2200);
+              g.spacePressTimes.push(now);
+
+              if (
+                g.spacePressTimes.length >= 5 &&
+                g.state !== 'easter_transition' &&
+                g.state !== 'shooter_playing'
+              ) {
+                triggerEasterEgg();
+                return;
+              }
+
               if (g.state === 'playing' && !g.isJumping) {
                 g.isJumping = true;
                 g.playerVelY = 14;
@@ -2365,7 +2410,22 @@ export default function NotFoundGridGame() {
       {gameState === 'ready' && (
         <div className="absolute inset-0 z-30 flex items-center justify-center p-4 pointer-events-none">
           <div className="max-w-xl w-full bg-surface/90 border border-border-primary p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-2xl">
-            <div className="text-[11px] uppercase tracking-[0.2em] text-primary-fixed mb-2">
+            <div
+              onClick={() => {
+                const g = gameRef.current;
+                const now = Date.now();
+                g.spacePressTimes = (g.spacePressTimes || []).filter((t) => now - t < 2200);
+                g.spacePressTimes.push(now);
+                if (
+                  g.spacePressTimes.length >= 5 &&
+                  g.state !== 'easter_transition' &&
+                  g.state !== 'shooter_playing'
+                ) {
+                  triggerEasterEgg();
+                }
+              }}
+              className="text-[11px] uppercase tracking-[0.2em] text-primary-fixed mb-2 cursor-pointer select-none"
+            >
               404 // ROUTE DISCONNECTED
             </div>
             <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-extrabold uppercase text-primary mb-3 tracking-tight">
