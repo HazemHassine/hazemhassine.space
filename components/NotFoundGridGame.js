@@ -2591,15 +2591,12 @@ export default function NotFoundGridGame() {
           <div className="max-w-2xl w-full bg-[#080808] border-2 border-primary-fixed p-5 md:p-7 shadow-[0_0_50px_rgba(204,242,0,0.3)] text-primary">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-border-primary">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
-                <div>
-                  <h2 className="font-[family-name:var(--font-display)] text-lg md:text-xl font-extrabold uppercase tracking-tight text-primary-fixed">
-                    GLOBAL PILOT ARCHIVES
-                  </h2>
-                  <div className="text-[10px] text-text-muted uppercase tracking-widest">
-                    POWERED BY SUPABASE DATABASE
-                  </div>
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-lg md:text-xl font-extrabold uppercase tracking-tight text-primary-fixed">
+                  GLOBAL PILOT ARCHIVES
+                </h2>
+                <div className="text-[10px] text-text-muted uppercase tracking-widest">
+                  POWERED BY SUPABASE DATABASE
                 </div>
               </div>
               <button
