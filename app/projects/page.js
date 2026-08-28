@@ -17,16 +17,31 @@ function ProjectRowItem({ project, index }) {
     <SectionReveal delay={0.15 + index * 0.08}>
       <Link
         href={project.href}
-        className="project-row group border-b border-border-primary py-5 md:py-6 px-2 md:px-4 flex flex-col md:flex-row md:items-center gap-5 lg:gap-8 transition-colors duration-300 relative bg-surface hover:bg-surface-hover block w-full cursor-pointer"
+        className="project-row group border-b border-border-primary py-5 md:py-6 px-4 md:px-6 flex flex-col md:flex-row md:items-center gap-4 md:gap-6 lg:gap-8 transition-colors duration-300 relative bg-surface hover:bg-surface-hover w-full cursor-pointer"
       >
-        {/* Number column */}
-        <div className="md:w-10 text-terminal-button text-text-muted group-hover:text-primary-container shrink-0">
+        {/* Mobile Top Header: Number & Title Header */}
+        <div className="flex items-center justify-between md:hidden w-full pb-2 border-b border-border-muted">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px] font-mono font-bold text-primary-fixed bg-surface-container-high px-2 py-0.5 border border-border-primary">
+              {project.id}
+            </span>
+            <h2 className="font-[family-name:var(--font-display)] text-lg font-bold uppercase text-primary group-hover:text-primary-fixed transition-colors">
+              {project.title}
+            </h2>
+          </div>
+          <span className="text-[11px] font-mono text-primary-fixed flex items-center gap-1">
+            VIEW [ → ]
+          </span>
+        </div>
+
+        {/* Desktop Number column */}
+        <div className="hidden md:block md:w-10 text-terminal-button font-mono font-bold text-text-muted group-hover:text-primary-fixed shrink-0">
           {project.id}
         </div>
 
         {/* Info column */}
-        <div className="flex-1 min-w-[200px] flex flex-col">
-          <h2 className="font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-container leading-tight mb-1 transition-colors duration-300">
+        <div className="flex-1 min-w-0 flex flex-col">
+          <h2 className="hidden md:block font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-fixed leading-tight mb-1 transition-colors duration-300">
             {project.title}
           </h2>
           <div className="text-[11px] font-mono text-text-muted uppercase mb-2 tracking-wide">
@@ -38,11 +53,11 @@ function ProjectRowItem({ project, index }) {
         </div>
 
         {/* Tech column */}
-        <div className="md:w-40 shrink-0">
-          <ul className="flex flex-col gap-1.5">
+        <div className="w-full md:w-40 shrink-0">
+          <ul className="flex flex-wrap md:flex-col gap-1.5">
             {project.tech.map((tech, techIndex) => (
               <li key={techIndex} className="flex items-center">
-                <span className="w-1 h-1 bg-border-primary rounded-full mr-2 group-hover:bg-primary-container transition-colors duration-300"></span>
+                <span className="w-1 h-1 bg-border-primary rounded-full mr-1.5 group-hover:bg-primary-fixed transition-colors duration-300"></span>
                 <span className="text-[11px] font-mono text-text-muted">
                   {tech}
                 </span>
@@ -51,9 +66,9 @@ function ProjectRowItem({ project, index }) {
           </ul>
         </div>
 
-        {/* Dedicated Thumbnail Column (Vertically Centered between Tech & Details) */}
-        <div className="md:w-48 lg:w-52 shrink-0 flex items-center justify-center">
-          <div className="w-full h-24 md:h-28 relative border border-border-primary bg-surface-container-high overflow-hidden group-hover:border-primary-fixed transition-colors duration-300">
+        {/* Dedicated Thumbnail Column */}
+        <div className="w-full md:w-48 lg:w-52 shrink-0 flex items-center justify-center">
+          <div className="w-full h-36 md:h-28 relative border border-border-primary bg-surface-container-high overflow-hidden group-hover:border-primary-fixed transition-colors duration-300">
             {thumbnailUrl && !imageError ? (
               <Image
                 src={thumbnailUrl}
@@ -71,17 +86,14 @@ function ProjectRowItem({ project, index }) {
                 <span className="font-[family-name:var(--font-mono)] text-[10px] font-bold text-text-muted tracking-wider uppercase truncate max-w-full">
                   {project.title}
                 </span>
-                <span className="font-[family-name:var(--font-mono)] text-[8px] text-text-dim mt-0.5 tracking-wider uppercase">
-                  NO THUMBNAIL IN REPO
-                </span>
               </div>
             )}
           </div>
         </div>
 
-        {/* CTA column */}
-        <div className="md:w-32 shrink-0 flex md:justify-end items-center">
-          <span className="text-terminal-button text-text-muted group-hover:text-primary-container transition-colors duration-300 whitespace-nowrap">
+        {/* Desktop CTA column */}
+        <div className="hidden md:flex md:w-32 shrink-0 md:justify-end items-center">
+          <span className="text-terminal-button text-text-muted group-hover:text-primary-fixed transition-colors duration-300 whitespace-nowrap font-mono">
             [ VIEW DETAILS ]
           </span>
         </div>
@@ -101,11 +113,11 @@ export default function ProjectsPage() {
         <TopBar />
         <MobileMenu />
 
-        <main className="flex-1 p-[28px] md:p-12 lg:p-20 pt-32 md:pt-12 flex flex-col max-w-[1200px] w-full mx-auto min-h-screen">
+        <main className="flex-1 p-[20px] sm:p-[28px] md:p-12 lg:p-20 pt-28 md:pt-12 flex flex-col max-w-[1200px] w-full mx-auto min-h-screen">
           {/* HEADER */}
           <SectionReveal delay={0.1}>
             <div className="mb-10">
-              <h1 className="font-[family-name:var(--font-display)] text-[32px] font-bold uppercase text-primary mb-4 leading-tight tracking-tight">
+              <h1 className="font-[family-name:var(--font-display)] text-[28px] sm:text-[32px] font-bold uppercase text-primary mb-4 leading-tight tracking-tight">
                 / TECHNICAL ARCHIVE
               </h1>
               <p className="text-body-md text-text-muted max-w-2xl">
@@ -123,7 +135,7 @@ export default function ProjectsPage() {
 
           {/* FOOTER */}
           <SectionReveal delay={0.2 + projects.length * 0.08 + 0.1}>
-            <footer className="mt-auto border-t border-border-primary p-[28px] flex justify-between items-center text-text-dim text-meta-label mt-16">
+            <footer className="mt-auto border-t border-border-primary p-[20px] sm:p-[28px] flex justify-between items-center text-text-dim text-meta-label mt-16">
               <div>{siteConfig.copyright}</div>
               <div className="flex gap-6">
                 <span className="cursor-not-allowed hover:text-text-muted transition-colors">PRIVACY POLICY</span>
