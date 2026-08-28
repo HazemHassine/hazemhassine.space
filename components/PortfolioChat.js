@@ -3,21 +3,56 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './PortfolioChat.module.css';
 
 const starterQuestions = [
   'What is Hazem working on?',
-  'Summarize his experience',
-  'Which project uses AI agents?',
+  "Tell me about Arbiter's architecture",
+  'Summarize his experience at Siemens & Imperial',
 ];
 
-function getMessageText(message) {
-  return message.parts
-    .filter((part) => part.type === 'text')
-    .map((part) => part.text)
-    .join('');
+function parseMessageContent(text) {
+  if (!text) return { cleanText: '', suggestions: [] };
+
+  const suggestionsRegex = /<suggestions>([\s\S]*?)<\/suggestions>/i;
+  const match = text.match(suggestionsRegex);
+  let cleanText = text;
+  const suggestions = [];
+
+  if (match) {
+    cleanText = text.replace(suggestionsRegex, '').trim();
+    const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+    let itemMatch;
+    while ((itemMatch = itemRegex.exec(match[1])) !== null) {
+      const q = itemMatch[1].trim();
+      if (q) suggestions.push(q);
+    }
+  } else {
+    cleanText = cleanText.replace(/<suggestions>[\s\S]*$/i, '').trim();
+  }
+
+  return { cleanText, suggestions };
+}
+
+function getMessagePartsData(message) {
+  const textParts = [];
+  const toolParts = [];
+
+  for (const part of message.parts || []) {
+    if (part.type === 'text') {
+      textParts.push(part.text);
+    } else if (part.type?.startsWith('tool-') || part.type === 'tool-invocation') {
+      toolParts.push(part);
+    }
+  }
+
+  const rawText = textParts.join('\n').trim();
+  const { cleanText, suggestions } = parseMessageContent(rawText);
+
+  return { cleanText, rawText, suggestions, toolParts };
 }
 
 export default function PortfolioChat() {
@@ -82,6 +117,114 @@ export default function PortfolioChat() {
     inputRef.current?.focus();
   };
 
+  const renderToolPart = (part, partIdx) => {
+    const toolName = part.type?.replace(/^tool-/, '') || part.toolName;
+    const data = part.output || part.input || part.args || {};
+
+    if (toolName === 'displayProjectCard') {
+      return (
+        <div key={partIdx} className={styles.projectCard}>
+          <div className={styles.projectCardHeader}>
+            <span className={styles.projectCardTag}>{data.category || 'PROJECT'}</span>
+            <span className={styles.projectCardBadge}>VERIFIED SYSTEM</span>
+          </div>
+          <div className={styles.projectCardBody}>
+            <h4 className={styles.projectCardTitle}>{data.title}</h4>
+            <p className={styles.projectCardSubtitle}>{data.subtitle}</p>
+            {data.techStack && data.techStack.length > 0 && (
+              <div className={styles.projectCardTech}>
+                {data.techStack.map((tech, tIdx) => (
+                  <span key={tIdx} className={styles.techBadge}>{tech}</span>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className={styles.projectCardActions}>
+            <Link
+              href={data.showcaseUrl || `/projects/${data.slug}`}
+              className={styles.projectActionPrimary}
+              onClick={() => setIsOpen(false)}
+            >
+              <span>VIEW SHOWCASE</span>
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </Link>
+            {data.githubUrl && (
+              <a
+                href={data.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.projectActionSecondary}
+              >
+                <span>GITHUB</span>
+                <span className="material-symbols-outlined">open_in_new</span>
+              </a>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (toolName === 'recommendNavigation') {
+      return (
+        <div key={partIdx} className={styles.navActionCard}>
+          <div className={styles.navActionInfo}>
+            <span className="material-symbols-outlined">{data.path?.includes('CV') ? 'description' : 'explore'}</span>
+            <div>
+              <strong>{data.label}</strong>
+              <small>{data.description}</small>
+            </div>
+          </div>
+          {data.path?.endsWith('.pdf') ? (
+            <a
+              href={data.path}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.navActionBtn}
+            >
+              <span>OPEN</span>
+              <span className="material-symbols-outlined">download</span>
+            </a>
+          ) : (
+            <Link
+              href={data.path || '/'}
+              className={styles.navActionBtn}
+              onClick={() => setIsOpen(false)}
+            >
+              <span>NAVIGATE</span>
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </Link>
+          )}
+        </div>
+      );
+    }
+
+    if (toolName === 'displaySkillsProvenance') {
+      return (
+        <div key={partIdx} className={styles.skillCard}>
+          <div className={styles.skillCardHeader}>
+            <span className={styles.skillCardCategory}>{data.category}</span>
+            <span className={styles.skillCardTag}>{data.tag}</span>
+          </div>
+          <h4 className={styles.skillCardTitle}>{data.skillName}</h4>
+          <p className={styles.skillCardSummary}>{data.summary}</p>
+          {data.evidence && data.evidence.length > 0 && (
+            <div className={styles.skillEvidenceList}>
+              <span className={styles.evidenceLabel}>VERIFIED PROVENANCE:</span>
+              {data.evidence.map((ev, eIdx) => (
+                <div key={eIdx} className={styles.skillEvidenceItem}>
+                  <strong>{ev.entity} ({ev.role})</strong>
+                  <span>{ev.summary}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <button
@@ -144,7 +287,7 @@ export default function PortfolioChat() {
                 <div className={`${styles.messageRow} ${styles.assistantRow}`}>
                   <span className={styles.messageLabel}>HAZEM_AI / 00</span>
                   <div className={styles.messageBubble}>
-                    I can answer questions about Hazem&apos;s experience, education, projects, and technical work. What would you like to know?
+                    I can answer questions about Hazem&apos;s experience, education, projects, and technical skills. What would you like to explore?
                   </div>
                 </div>
 
@@ -163,10 +306,11 @@ export default function PortfolioChat() {
                 )}
 
                 {messages.map((message, index) => {
-                  const text = getMessageText(message);
-                  if (!text) return null;
-
+                  const { cleanText, suggestions, toolParts } = getMessagePartsData(message);
                   const isUser = message.role === 'user';
+
+                  if (!cleanText && toolParts.length === 0) return null;
+
                   return (
                     <div
                       key={message.id}
@@ -175,35 +319,88 @@ export default function PortfolioChat() {
                       <span className={styles.messageLabel}>
                         {isUser ? 'VISITOR' : 'HAZEM_AI'} / {String(index + 1).padStart(2, '0')}
                       </span>
-                      <div className={styles.messageBubble}>
-                        {isUser ? (
-                          text
-                        ) : (
-                          <div className={styles.markdownContent}>
-                            <ReactMarkdown
-                              components={{
-                                a: ({ node, ...props }) => {
-                                  const isGithub = props.href?.includes('github.com');
-                                  const isLinkedin = props.href?.includes('linkedin.com');
-                                  return (
-                                    <a {...props} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--color-primary-fixed)', textDecoration: 'underline' }}>
-                                      {isGithub && (
-                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                                      )}
-                                      {isLinkedin && (
-                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                                      )}
-                                      {props.children}
-                                    </a>
-                                  );
-                                }
-                              }}
-                            >
-                              {text}
-                            </ReactMarkdown>
+
+                      {cleanText && (
+                        <div className={styles.messageBubble}>
+                          {isUser ? (
+                            cleanText
+                          ) : (
+                            <div className={styles.markdownContent}>
+                              <ReactMarkdown
+                                components={{
+                                  a: ({ node, ...props }) => {
+                                    const isGithub = props.href?.includes('github.com');
+                                    const isLinkedin = props.href?.includes('linkedin.com');
+                                    const isInternal = props.href?.startsWith('/');
+
+                                    if (isInternal) {
+                                      return (
+                                        <Link
+                                          href={props.href}
+                                          style={{ color: 'var(--color-primary-fixed)', textDecoration: 'underline' }}
+                                          onClick={() => setIsOpen(false)}
+                                        >
+                                          {props.children}
+                                        </Link>
+                                      );
+                                    }
+
+                                    return (
+                                      <a
+                                        {...props}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '4px',
+                                          color: 'var(--color-primary-fixed)',
+                                          textDecoration: 'underline',
+                                        }}
+                                      >
+                                        {isGithub && (
+                                          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                        )}
+                                        {isLinkedin && (
+                                          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                                        )}
+                                        {props.children}
+                                      </a>
+                                    );
+                                  },
+                                }}
+                              >
+                                {cleanText}
+                              </ReactMarkdown>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {toolParts.length > 0 && (
+                        <div className={styles.toolPartsContainer}>
+                          {toolParts.map((toolPart, pIdx) => renderToolPart(toolPart, pIdx))}
+                        </div>
+                      )}
+
+                      {!isUser && suggestions.length > 0 && (
+                        <div className={styles.followUpContainer}>
+                          <span className={styles.followUpLabel}>SUGGESTED NEXT:</span>
+                          <div className={styles.followUpList}>
+                            {suggestions.map((suggestion, sIdx) => (
+                              <button
+                                key={sIdx}
+                                type="button"
+                                className={styles.followUpBtn}
+                                onClick={() => submitMessage(suggestion)}
+                                disabled={isBusy}
+                              >
+                                <span>+</span> {suggestion}
+                              </button>
+                            ))}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -264,7 +461,7 @@ export default function PortfolioChat() {
               </form>
 
               <footer className={styles.footer}>
-                <span>ANSWERS FROM PORTFOLIO DATA</span>
+                <span>ANSWERS FROM AUTHORITATIVE PORTFOLIO DOSSIER</span>
               </footer>
             </motion.section>
           </>
@@ -273,3 +470,4 @@ export default function PortfolioChat() {
     </>
   );
 }
+
