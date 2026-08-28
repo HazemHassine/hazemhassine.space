@@ -9,9 +9,12 @@ import { siteConfig } from "@/lib/data";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
+import { useState } from "react";
+
 const Hero3DObject = dynamic(() => import("@/components/Hero3DObject"), { ssr: false });
 
 export default function Contact() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <>
       <Sidebar />
@@ -102,9 +105,34 @@ export default function Contact() {
                 </div>
               <form
                 className="relative z-10 flex flex-col space-y-6 bg-surface/90 backdrop-blur-sm p-8 border border-border-primary"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  alert("Message submitted! (Placeholder action)");
+                  const form = e.target;
+                  setIsSubmitting(true);
+
+                  try {
+                    const res = await fetch('/api/contact', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        name: form.name.value,
+                        email: form.email.value,
+                        message: form.message.value,
+                      }),
+                    });
+
+                    if (res.ok) {
+                      alert("Message sent successfully!");
+                      form.reset();
+                    } else {
+                      const data = await res.json();
+                      alert("Failed to send message: " + data.error);
+                    }
+                  } catch (err) {
+                    alert("An error occurred. Please try again.");
+                  } finally {
+                    setIsSubmitting(false);
+                  }
                 }}
               >
                 <div className="flex flex-col">
@@ -114,6 +142,7 @@ export default function Contact() {
                   <input
                     type="text"
                     id="name"
+                    name="name"
                     required
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors"
                     placeholder="John Doe"
@@ -127,6 +156,7 @@ export default function Contact() {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     required
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors"
                     placeholder="john@example.com"
@@ -139,6 +169,7 @@ export default function Contact() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     required
                     rows="5"
                     className="bg-background border border-border-primary p-3 font-[family-name:var(--font-mono)] text-[14px] text-primary focus:border-primary-fixed focus:outline-none transition-colors resize-y"
@@ -148,9 +179,11 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="mt-4 bg-primary-fixed text-background px-6 py-4 font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-wider hover:bg-primary transition-colors uppercase self-start"
+                  disabled={isSubmitting}
+                  aria-busy={isSubmitting}
+                  className="mt-4 bg-primary-fixed text-background px-6 py-4 font-[family-name:var(--font-mono)] text-[12px] font-semibold tracking-wider hover:bg-primary transition-colors uppercase self-start disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  [ SEND MESSAGE ]
+                  {isSubmitting ? "[ SENDING... ]" : "[ SEND MESSAGE ]"}
                 </button>
               </form>
               </div>

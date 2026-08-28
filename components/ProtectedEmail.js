@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { siteConfig } from '@/lib/data';
 
-export default function ProtectedEmail({ children, className, showTextOnReveal = false }) {
+export default function ProtectedEmail({ children, className }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [num1, setNum1] = useState(0);
@@ -12,8 +12,8 @@ export default function ProtectedEmail({ children, className, showTextOnReveal =
   const [error, setError] = useState(false);
 
   const handleClick = (e) => {
-    if (isRevealed) return; // Let default mailto action happen
-    e.preventDefault();
+    if (isRevealed) return;
+
     setNum1(Math.floor(Math.random() * 10) + 1);
     setNum2(Math.floor(Math.random() * 10) + 1);
     setShowCaptcha(true);
@@ -26,8 +26,6 @@ export default function ProtectedEmail({ children, className, showTextOnReveal =
     if (parseInt(answer) === num1 + num2) {
       setIsRevealed(true);
       setShowCaptcha(false);
-      // Automatically trigger email client
-      window.location.href = `mailto:${siteConfig.email}`;
     } else {
       setError(true);
       setAnswer('');
@@ -36,13 +34,14 @@ export default function ProtectedEmail({ children, className, showTextOnReveal =
 
   return (
     <div className="relative inline-block">
-      <a
-        href={isRevealed ? `mailto:${siteConfig.email}` : "#"}
+      <span
         onClick={handleClick}
-        className={className}
+        className={`${className} ${!isRevealed ? 'cursor-pointer' : 'cursor-text'}`}
+        role={!isRevealed ? "button" : undefined}
+        tabIndex={!isRevealed ? 0 : undefined}
       >
-        {isRevealed && showTextOnReveal ? siteConfig.email : children}
-      </a>
+        {isRevealed ? siteConfig.email : children}
+      </span>
 
       {showCaptcha && (
         <div className="absolute bottom-full mb-2 left-0 min-w-[220px] p-4 bg-surface border border-primary-fixed shadow-2xl z-50 flex flex-col gap-3">
