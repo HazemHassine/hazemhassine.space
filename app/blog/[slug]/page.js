@@ -5,16 +5,19 @@ import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import MobileMenu from '@/components/MobileMenu';
 
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({
+  const posts = await getAllPosts();
+  return (posts || []).map((post) => ({
     slug: post.slug,
   }));
 }
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const post = getPostBySlug(resolvedParams.slug);
+  const post = await getPostBySlug(resolvedParams.slug);
   if (!post) return { title: 'Not Found' };
   
   return {
@@ -25,7 +28,7 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPost({ params }) {
   const resolvedParams = await params;
-  const post = getPostBySlug(resolvedParams.slug);
+  const post = await getPostBySlug(resolvedParams.slug);
 
   if (!post) {
     notFound();

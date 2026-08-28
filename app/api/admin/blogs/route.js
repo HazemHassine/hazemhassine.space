@@ -1,31 +1,45 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabaseAdmin } from '@/lib/supabase';
 
-// Since this route is protected by middleware, we can safely return raw file contents.
+function formatPostWithFrontmatter(row) {
+  if (row.content && row.content.trim().startsWith('---')) {
+    return row.content;
+  }
+  return `---
+id: "${row.id || '001'}"
+title: "${row.title || row.slug}"
+date: "${row.date || 'OCTOBER 15, 2026'}"
+readTime: "${row.read_time || '5 MIN READ'}"
+excerpt: "${(row.excerpt || '').replace(/"/g, '\\"')}"
+---
+
+${row.content || ''}`;
+}
+
 export async function GET() {
   try {
-    const contentDirectory = path.join(process.cwd(), 'content', 'blog');
-    
-    if (!fs.existsSync(contentDirectory)) {
-      return NextResponse.json({ posts: [] });
+    const { data: posts, error } = await supabaseAdmin
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error fetching blogs:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const fileNames = fs.readdirSync(contentDirectory);
-    const posts = fileNames
-      .filter(fileName => fileName.endsWith('.md'))
-      .map(fileName => {
-        const fullPath = path.join(contentDirectory, fileName);
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        const slug = fileName.replace(/\.md$/, '');
-        return {
-          slug,
-          fileName,
-          content: fileContents
-        };
-      });
+    const formattedPosts = (posts || []).map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      fileName: `${row.slug}.md`,
+      title: row.title,
+      date: row.date,
+      readTime: row.read_time,
+      excerpt: row.excerpt,
+      content: formatPostWithFrontmatter(row),
+    }));
 
-    return NextResponse.json({ posts });
+    return NextResponse.json({ posts: formattedPosts });
   } catch (error) {
     console.error('Error fetching blogs:', error);
     return NextResponse.json({ error: 'Failed to fetch blogs' }, { status: 500 });

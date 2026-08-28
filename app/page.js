@@ -8,8 +8,8 @@ import Marquee from '@/components/Marquee';
 import { siteConfig, experience, projects } from '@/lib/data';
 import { getAllPosts } from '@/lib/markdown';
 
-export default function Home() {
-  const blogPosts = getAllPosts();
+export default async function Home() {
+  const blogPosts = await getAllPosts();
 
   return (
     <>

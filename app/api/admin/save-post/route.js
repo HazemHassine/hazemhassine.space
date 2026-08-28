@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import matter from 'gray-matter';
+import { supabaseAdmin } from '@/lib/supabase';
+
+function calculateReadTime(content) {
+  const text = content || '';
+  const wordCount = text.trim().split(/\s+/).length;
+  const time = Math.max(1, Math.ceil(wordCount / 200));
+  return `${time} MIN READ`;
+}
 
 export async function POST(request) {
   try {
@@ -10,73 +19,62 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing slug or content' }, { status: 400 });
     }
 
-    const fileName = `${slug}.md`;
-    const isDev = process.env.NODE_ENV === 'development';
-
-    if (isDev) {
-      // Local development: Write to file system
-      const contentDirectory = path.join(process.cwd(), 'content', 'blog');
-      if (!fs.existsSync(contentDirectory)) {
-        fs.mkdirSync(contentDirectory, { recursive: true });
-      }
-      const filePath = path.join(contentDirectory, fileName);
-      fs.writeFileSync(filePath, content, 'utf8');
-      return NextResponse.json({ success: true, message: 'Saved locally' });
-    } else {
-      // Production on Vercel: Use GitHub API to commit changes
-      const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-      if (!GITHUB_TOKEN) {
-        return NextResponse.json({ error: 'GitHub credentials missing in environment variables' }, { status: 500 });
-      }
-
-      // We need to determine the GitHub owner, repo, and branch. 
-      // For now, we will hardcode this based on standard Vercel environments, 
-      // or require them to be set in env vars.
-      const owner = process.env.GITHUB_OWNER || 'HazemHassine';
-      const repo = process.env.GITHUB_REPO || 'hazemhassine.space';
-      const branch = process.env.GITHUB_BRANCH || 'main';
-      const filePath = `content/blog/${fileName}`;
-
-      // 1. Get the current file (if it exists) to get its SHA for updating
-      const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-      const getRes = await fetch(getUrl, {
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-        }
-      });
-
-      let sha;
-      if (getRes.ok) {
-        const fileData = await getRes.json();
-        sha = fileData.sha;
-      }
-
-      // 2. Commit the updated/new file
-      const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-      const putRes = await fetch(putUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: `Update blog post ${fileName} via Admin Dashboard`,
-          content: Buffer.from(content).toString('base64'),
-          branch: branch,
-          sha: sha // Included if updating an existing file
-        })
-      });
-
-      if (!putRes.ok) {
-        const errorData = await putRes.json();
-        console.error('GitHub API Error:', errorData);
-        return NextResponse.json({ error: 'Failed to push to GitHub' }, { status: 500 });
-      }
-
-      return NextResponse.json({ success: true, message: 'Committed to GitHub successfully. Vercel will rebuild.' });
+    const cleanSlug = slug.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!cleanSlug) {
+      return NextResponse.json({ error: 'Invalid slug' }, { status: 400 });
     }
+
+    // Parse frontmatter
+    const parsed = matter(content);
+    const bodyContent = parsed.content.trim();
+    
+    // Check if post already exists to preserve existing id
+    const { data: existingPost } = await supabaseAdmin
+      .from('posts')
+      .select('id')
+      .eq('slug', cleanSlug)
+      .maybeSingle();
+
+    const postId = parsed.data.id || existingPost?.id || Date.now().toString();
+    const title = parsed.data.title || cleanSlug;
+    const date = parsed.data.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+    const readTime = parsed.data.readTime || calculateReadTime(bodyContent);
+    const excerpt = parsed.data.excerpt || parsed.data.summary || parsed.data.description || '';
+
+    // Save to Supabase
+    const { error: dbError } = await supabaseAdmin
+      .from('posts')
+      .upsert({
+        id: String(postId),
+        slug: cleanSlug,
+        title,
+        date,
+        read_time: readTime,
+        excerpt,
+        content: bodyContent,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'slug' });
+
+    if (dbError) {
+      console.error('Supabase save error:', dbError);
+      return NextResponse.json({ error: dbError.message }, { status: 500 });
+    }
+
+    // Also update local file in development for offline/local backup
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const contentDirectory = path.join(process.cwd(), 'content', 'blog');
+        if (!fs.existsSync(contentDirectory)) {
+          fs.mkdirSync(contentDirectory, { recursive: true });
+        }
+        const filePath = path.join(contentDirectory, `${cleanSlug}.md`);
+        fs.writeFileSync(filePath, content, 'utf8');
+      } catch (fileErr) {
+        console.warn('Could not write local backup file:', fileErr);
+      }
+    }
+
+    return NextResponse.json({ success: true, message: 'Saved to Supabase instantly' });
   } catch (error) {
     console.error('Error saving post:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

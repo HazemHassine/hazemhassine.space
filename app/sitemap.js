@@ -18,8 +18,8 @@ export default async function sitemap() {
   }));
 
   // Dynamic blog routes
-  const posts = getAllPosts();
-  const blogRoutes = posts.map((post) => ({
+  const posts = await getAllPosts();
+  const blogRoutes = (posts || []).map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
   }));

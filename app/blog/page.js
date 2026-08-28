@@ -4,13 +4,15 @@ import SectionReveal from '@/components/SectionReveal';
 import { getAllPosts } from '@/lib/markdown';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Blog | Hazem Hassine',
   description: 'Writings on AI, software engineering, agentic systems, and developer tools.',
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full bg-background">

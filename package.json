@@ -12,6 +12,7 @@
     "@ai-sdk/react": "^3.0.274",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "@supabase/supabase-js": "^2.112.4",
     "@uiw/react-md-editor": "^4.1.2",
     "@vercel/analytics": "^2.0.1",
     "ai": "^6.0.271",
@@ -23,7 +24,8 @@
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
     "resend": "^6.24.0",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "ws": "^8.21.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

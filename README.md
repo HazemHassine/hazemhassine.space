@@ -1,69 +1,123 @@
 # hazemhassine.space
 
-A personal portfolio and blog website built with Next.js (App Router), React, Tailwind CSS, and Framer Motion.
+A high-performance personal engineering space, developer portfolio, and interactive lab built with **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS v4**, **Three.js**, **Framer Motion**, and **Supabase**.
 
-This project serves as a showcase of my personal and professional projects, built with a dark Neo-Brutalist and cyberpunk design aesthetic. It features a monochrome palette with a striking neon primary accent color (`#ccf200`), grid backgrounds, and stark typography.
+Designed with a dark **Neo-Brutalist & Cyberpunk** aesthetic, the site features a monochrome palette with a striking neon accent (`#ccf200`), technical typography (`IBM Plex Mono` & `Inter`), live telemetry, interactive 3D WebGL scenes, and an AI chat assistant.
 
-## Key Features
+---
 
-- **Interactive 3D WebGL Components**: Built using `three`, `@react-three/fiber`, and `@react-three/drei` for dynamic, immersive interactions.
-- **Smooth Route Transitions**: Implemented via Framer Motion's `AnimatePresence` with a custom `<PageTransition>` wrapper and a frozen route context to preserve state during exit animations.
-- **Markdown-Powered Blog**: Write and publish articles seamlessly.
-- **Built-in Admin Editor**: Uses `react-markdown` and `@uiw/react-md-editor` for intuitive content management.
-- **Visual Experience Timeline**: A clean, structured timeline showcasing work experience.
-- **Glitch Typography Effects**: Subtle, randomized monochrome static glitch animations implemented using pure CSS pseudo-elements, clip-path, and data-text attributes.
+## ⚡ Key Features
 
-## Tech Stack & Tags
+- **Instant Blog CMS (Supabase)**: Real-time PostgreSQL database with sub-50ms CRUD operations, Row-Level Security (RLS), and Supabase Storage bucket for instant image hosting without build or redeploy delays.
+- **Admin Control Panel**: Protected by TOTP Two-Factor Authentication and JWT sessions. Features a live Markdown editor with instant post publishing, editing, deletion, and drag-and-drop image uploads.
+- **Interactive 3D WebGL Scenes & Arcade**: Built using `three`, `@react-three/fiber`, and `@react-three/drei` with interactive 3D physics, wireframe grid games, and smooth canvas rendering.
+- **HAZEM_AI Portfolio Assistant**: An embedded AI chatbot powered by Google Gemini (`google/gemini-2.5-flash-lite`) and the Vercel AI SDK, equipped with live context from the portfolio profile and published articles.
+- **Neo-Brutalist Aesthetics & Motion**:
+  - Glitch typography animations using pure CSS pseudo-elements and clip-path.
+  - Page transitions powered by Framer Motion's `AnimatePresence` with custom frozen route contexts.
+  - 3D perspective hover cards (TiltCard physics), magnetic buttons, and custom cursor interactions.
+- **Performance & SEO**: Server components, automated dynamic `sitemap.xml` generation, OpenGraph metadata, and optimized static asset delivery.
 
-tags: `next.js`, `react`, `tailwindcss`, `portfolio`, `blog`, `three.js`, `framer-motion`
+---
 
-- [Next.js](https://nextjs.org/) (App Router)
-- [React](https://reactjs.org/)
-- [Tailwind CSS v4](https://tailwindcss.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Three.js](https://threejs.org/) & [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction)
+## 🛠️ Tech Stack
 
-## Design and Aesthetics
-- **Theme Config**: Custom theme colors and variables are handled via `@theme inline` directly within `app/globals.css`.
-- **Typography**: Uses `Inter` for display and `IBM Plex Mono` for a stark, technical feel.
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Server Actions)
+- **Frontend**: [React 19](https://reactjs.org/), [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations & 3D**: [Framer Motion](https://www.framer.com/motion/), [Three.js](https://threejs.org/), [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/)
+- **Database & Storage**: [Supabase](https://supabase.com/) (PostgreSQL & Storage Buckets)
+- **AI & LLM**: Google Gemini API, [Vercel AI SDK](https://sdk.vercel.ai/)
+- **Auth & Security**: [Jose](https://github.com/panva/jose) (JWT), Node.js Native Crypto (RFC 6238 TOTP)
+- **Markdown**: `react-markdown`, `gray-matter`, `@uiw/react-md-editor`
 
-## Getting Started
+---
 
-First, install dependencies:
+## 🚀 Featured Projects Detail
 
+### 1. **ARBITER** — *Local-First Dev Environment Control Plane*
+- **Category**: Dev Tools & SRE Operator
+- **Tech Stack**: Python, FastAPI, Docker SDK, LangGraph, LangChain v1, SQLite, Pydantic v2, Typer CLI, Next.js
+- **Overview**: An embedded control plane for understanding, correlating, and safely operating complex developer workstations. Solves port collisions, container sprawl, and service dependencies across Docker Compose stacks, standalone containers, and native host processes through deterministic port allocation, 5-tier approval matrices, and rollback-aware configuration editing.
+- **GitHub**: [github.com/HazemHassine/Arbiter](https://github.com/HazemHassine/Arbiter)
+
+### 2. **REPOTRAJECTORY** — *OSS Momentum & Health Analytics Platform*
+- **Category**: Big Data & Open Source Intelligence
+- **Tech Stack**: Python, FastAPI, PostgreSQL, Next.js, GH Archive, Chart.js
+- **Overview**: An explainable research platform for tracking the velocity, contributor momentum, and health of open-source software repositories. Ingests raw GitHub events from GH Archive, maintains durable collection pipelines, and computes transparent, reproducible vitality scores.
+- **GitHub**: [github.com/HazemHassine/github_analysis](https://github.com/HazemHassine/github_analysis)
+
+### 3. **GITAUDIT** — *Evidence-First GitHub Profile Curator*
+- **Category**: AI & Bounded Operations Console
+- **Tech Stack**: Python, FastAPI, PostgreSQL, LangGraph, Playwright
+- **Overview**: An operations console for evaluating authorized GitHub repositories. Analyzes CI/CD runs against exact default-branch commits, tracks historical scans, and executes bounded LangGraph agents to curate evidence-backed portfolio profiles.
+- **GitHub**: [github.com/HazemHassine/github_maintainer](https://github.com/HazemHassine/github_maintainer)
+
+### 4. **FORMA** — *Job Application Workspace & Agentic Assistant*
+- **Category**: AI Agents & Productivity
+- **Tech Stack**: Python, FastAPI, React, SQLite, LangGraph
+- **Overview**: A local-first workspace for managing the job application lifecycle. Connects résumé versioning, application tracking, source-backed company research, and tailored cover-letter generation with bounded LangGraph workflows.
+- **GitHub**: [github.com/HazemHassine/Forma](https://github.com/HazemHassine/Forma)
+
+### 5. **GEMINI-MCP** — *Repository Intelligence MCP Server*
+- **Category**: Model Context Protocol & Developer Tools
+- **Tech Stack**: Python, MCP, Gemini API, LanceDB, SQLite
+- **Overview**: Exposes deep repository intelligence as standard Model Context Protocol (MCP) tools for coding agents. Combines deterministic code navigation with Gemini-assisted planning, AST mapping, and LanceDB semantic retrieval.
+- **GitHub**: [github.com/HazemHassine/Gemini-Mcp](https://github.com/HazemHassine/Gemini-Mcp)
+
+### 6. **RSVP SHIFT** — *Privacy-Focused Speed Reading Extension*
+- **Category**: Frontend & Browser Extensions
+- **Tech Stack**: JavaScript, Chrome Extension Manifest V3, CSS3
+- **Overview**: A lightweight Chrome extension for rapid, distraction-free reading. Uses focus-letter alignment, punctuation-aware timing, and local-only text processing for maximum privacy.
+- **GitHub**: [github.com/HazemHassine/RSVP-Shift](https://github.com/HazemHassine/RSVP-Shift)
+
+### 7. **HAZEMHASSINE.SPACE** — *Personal Space & Interactive Lab*
+- **Category**: Frontend & WebGL Lab
+- **Tech Stack**: Next.js 16, React 19, Tailwind CSS v4, Three.js, Supabase, Framer Motion
+- **Overview**: The current portfolio codebase featuring custom WebGL shaders, live Supabase blog CMS, 2FA admin panel, and an AI chat assistant.
+- **GitHub**: [github.com/HazemHassine/hazemhassine.space](https://github.com/HazemHassine/hazemhassine.space)
+
+---
+
+## ⚙️ Getting Started
+
+### 1. Clone the repository and install dependencies:
 ```bash
+git clone https://github.com/HazemHassine/hazemhassine.space.git
+cd hazemhassine.space
 npm install
 ```
 
-Then, run the development server:
+### 2. Environment Configuration:
+Create a `.env.local` file in the root directory:
 
+```env
+# Authentication & Security
+JWT_SECRET=your_jwt_secret_here
+ADMIN_TOTP_SECRET=your_totp_secret_here
+
+# Supabase (Database & Storage)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# AI Assistant
+AI_GATEWAY_API_KEY=your_ai_api_key_here
+```
+
+### 3. Run the development server:
 ```bash
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-## Build and Lint
-
-To build the project:
-
+### 4. Build & Lint:
 ```bash
+npm run lint
 npm run build
 ```
 
-To run the linter:
+---
 
-```bash
-npm run lint
-```
+## 📄 License
 
-## Learn More
-
-To learn more about the tools used in this project, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) - learn how to build 3D apps in React.
-- [Tailwind CSS v4](https://tailwindcss.com/docs) - learn about the new version of Tailwind CSS.
-- [Framer Motion](https://www.framer.com/motion/) - learn about animation in React.
+© Mohamed Hazem Hassine. All rights reserved.
