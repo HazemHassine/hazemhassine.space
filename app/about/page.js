@@ -276,14 +276,14 @@ export default function AboutPage() {
               
               <div className="flex flex-col gap-12">
                 {experience.map((item, index) => (
-                  <div key={index} className="relative pl-8 md:pl-32 flex flex-col md:flex-row group">
+                  <div key={index} className="relative pl-8 flex flex-col md:flex-row md:items-start gap-2 md:gap-10 group">
                     <div className="absolute left-0 top-1.5 w-3 h-3 bg-primary-fixed border border-background transition-transform group-hover:scale-125" />
                     
-                    <div className="md:absolute md:left-8 font-[family-name:var(--font-mono)] text-[17px] leading-[1.75] font-normal text-primary-fixed mb-1 md:mb-0">
+                    <div className="w-full md:w-[180px] shrink-0 font-[family-name:var(--font-mono)] text-[15px] md:text-[16px] leading-[1.4] font-medium text-primary-fixed pt-0.5">
                       {item.year}
                     </div>
                     
-                    <div className="flex flex-col">
+                    <div className="flex flex-col flex-1">
                       <h3 className="text-[12px] leading-[1] tracking-[0.02em] font-semibold uppercase text-on-background mb-1">
                         {item.company} {`//`} {item.role}
                       </h3>
@@ -313,14 +313,14 @@ export default function AboutPage() {
               
               <div className="flex flex-col gap-12">
                 {education.map((item, index) => (
-                  <div key={index} className="relative pl-8 md:pl-32 flex flex-col md:flex-row group">
-                    <div className="absolute left-0 top-1.5 w-3 h-3 bg-primary-fixed border border-background" />
+                  <div key={index} className="relative pl-8 flex flex-col md:flex-row md:items-start gap-2 md:gap-10 group">
+                    <div className="absolute left-0 top-1.5 w-3 h-3 bg-primary-fixed border border-background transition-transform group-hover:scale-125" />
                     
-                    <div className="md:absolute md:left-8 font-[family-name:var(--font-mono)] text-[17px] leading-[1.75] font-normal text-primary-fixed mb-1 md:mb-0">
+                    <div className="w-full md:w-[180px] shrink-0 font-[family-name:var(--font-mono)] text-[15px] md:text-[16px] leading-[1.4] font-medium text-primary-fixed pt-0.5">
                       {item.year}
                     </div>
                     
-                    <div className="flex flex-col">
+                    <div className="flex flex-col flex-1">
                       <h3 className="text-[12px] leading-[1] tracking-[0.02em] font-semibold uppercase text-on-background mb-1">
                         {item.institution} {`//`} {item.degree}
                       </h3>
