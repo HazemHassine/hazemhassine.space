@@ -2127,7 +2127,7 @@ export default function NotFoundGridGame() {
     gameState === 'shooter_gameover';
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#050505] font-[family-name:var(--font-mono)] select-none">
+    <div className="relative w-full h-screen h-[100dvh] overflow-hidden bg-[#050505] font-[family-name:var(--font-mono)] select-none">
       {/* 3D WebGL Canvas Container */}
       <div ref={mountRef} className="absolute inset-0 z-0 cursor-crosshair" />
 
@@ -2407,9 +2407,10 @@ export default function NotFoundGridGame() {
       )}
 
       {/* CENTER OVERLAY: READY / IDLE STATE (GRID RUNNER) */}
+      {/* CENTER OVERLAY: READY / IDLE STATE (GRID RUNNER) */}
       {gameState === 'ready' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-4 pointer-events-none">
-          <div className="max-w-xl w-full bg-surface/90 border border-border-primary p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-2xl">
+        <div className="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 pointer-events-none overflow-y-auto">
+          <div className="max-w-xl w-full max-h-[88dvh] overflow-y-auto bg-surface/90 border border-border-primary p-4 sm:p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-2xl my-auto">
             <div
               onClick={() => {
                 const g = gameRef.current;
@@ -2424,39 +2425,39 @@ export default function NotFoundGridGame() {
                   triggerEasterEgg();
                 }
               }}
-              className="text-[11px] uppercase tracking-[0.2em] text-primary-fixed mb-2 cursor-pointer select-none"
+              className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-primary-fixed mb-1.5 sm:mb-2 cursor-pointer select-none"
             >
               404 // ROUTE DISCONNECTED
             </div>
-            <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-extrabold uppercase text-primary mb-3 tracking-tight">
+            <h1 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-5xl font-extrabold uppercase text-primary mb-2 sm:mb-3 tracking-tight">
               Oops, there is nothing here.
             </h1>
-            <p className="text-[13px] md:text-[14px] text-text-muted mb-6 max-w-md mx-auto leading-relaxed">
+            <p className="text-[12px] sm:text-[13px] md:text-[14px] text-text-muted mb-4 sm:mb-6 max-w-md mx-auto leading-relaxed">
               The coordinates you requested drifted into the deep noise grid. Pilot through the
               vaporwave terrain or warp safely back to known space.
             </p>
 
             {/* Action Buttons: Row 1 (Start & Projects on 1 line), Row 2 (Leaderboard underneath) */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-3">
+            <div className="flex flex-row items-center justify-center gap-2 mb-2 sm:mb-3">
               <button
                 onClick={startGame}
-                className="w-full sm:flex-1 font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-6 py-3 text-[13px] whitespace-nowrap text-center"
+                className="flex-1 font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-3 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-[13px] whitespace-nowrap text-center"
               >
                 <span className="hidden sm:inline">[ START GRID MISSION (SPACE) ]</span>
                 <span className="sm:hidden">[ TAP TO START ]</span>
               </button>
               <Link
                 href="/projects"
-                className="w-full sm:w-auto font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-6 py-3 text-[13px] whitespace-nowrap text-center"
+                className="font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-3 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-[13px] whitespace-nowrap text-center"
               >
                 [ VIEW PROJECTS ]
               </Link>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <button
                 onClick={() => openLeaderboard('grid_runner')}
-                className="w-full font-medium uppercase tracking-wider text-primary-fixed hover:text-white hover:border-primary-fixed transition-colors border border-primary-fixed/50 bg-surface hover:bg-primary-fixed/10 py-2.5 text-[12px] whitespace-nowrap text-center"
+                className="w-full font-medium uppercase tracking-wider text-primary-fixed hover:text-white hover:border-primary-fixed transition-colors border border-primary-fixed/50 bg-surface hover:bg-primary-fixed/10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] whitespace-nowrap text-center"
               >
                 [ 🏆 VIEW GLOBAL LEADERBOARD ]
               </button>
@@ -2483,30 +2484,30 @@ export default function NotFoundGridGame() {
 
       {/* CENTER OVERLAY: GAME OVER STATE (GRID RUNNER) */}
       {gameState === 'gameover' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-4 pointer-events-none">
-          <div className="max-w-md w-full bg-surface/95 border border-red-500/50 p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-2xl">
-            <div className="text-[11px] uppercase tracking-[0.2em] text-red-400 mb-2 font-bold animate-pulse">
+        <div className="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 pointer-events-none overflow-y-auto">
+          <div className="max-w-md w-full max-h-[88dvh] overflow-y-auto bg-surface/95 border border-red-500/50 p-4 sm:p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-2xl my-auto">
+            <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-red-400 mb-1.5 sm:mb-2 font-bold animate-pulse">
               SIGNAL TERMINATED // SHIELD DEPLETED
             </div>
-            <h2 className="font-[family-name:var(--font-display)] text-3xl font-extrabold uppercase text-primary mb-4 tracking-tight">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl font-extrabold uppercase text-primary mb-3 sm:mb-4 tracking-tight">
               GRID COLLISION
             </h2>
 
-            <div className="bg-surface-container-high border border-border-primary p-4 mb-4 grid grid-cols-2 gap-4 text-left">
+            <div className="bg-surface-container-high border border-border-primary p-3 sm:p-4 mb-3 sm:mb-4 grid grid-cols-2 gap-3 text-left">
               <div>
                 <div className="text-[10px] uppercase text-text-muted">FINAL RECOVERY:</div>
-                <div className="text-2xl font-bold text-primary">{score.toLocaleString()}</div>
+                <div className="text-xl sm:text-2xl font-bold text-primary">{score.toLocaleString()}</div>
               </div>
               <div>
                 <div className="text-[10px] uppercase text-text-muted">ALL-TIME BEST:</div>
-                <div className="text-2xl font-bold text-primary-fixed">{highScore.toLocaleString()}</div>
+                <div className="text-xl sm:text-2xl font-bold text-primary-fixed">{highScore.toLocaleString()}</div>
               </div>
             </div>
 
             {/* Global Leaderboard Submission Form */}
             {score > 0 && !scoreSubmitted && (
-              <div className="bg-surface border border-primary-fixed/40 p-3 mb-4 text-left">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-primary-fixed mb-1.5">
+              <div className="bg-surface border border-primary-fixed/40 p-2.5 sm:p-3 mb-3 sm:mb-4 text-left">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-primary-fixed mb-1">
                   ★ RECORD RUN IN GLOBAL ARCHIVES
                 </div>
                 <div className="flex gap-2">
@@ -2516,55 +2517,55 @@ export default function NotFoundGridGame() {
                     value={pilotCallsign}
                     onChange={(e) => setPilotCallsign(e.target.value.toUpperCase())}
                     placeholder="CALLSIGN (MAX 16)"
-                    className="flex-1 bg-surface-container-highest border border-border-primary px-3 py-1.5 text-xs text-primary font-mono font-bold tracking-wider uppercase focus:outline-none focus:border-primary-fixed"
+                    className="flex-1 bg-surface-container-highest border border-border-primary px-2.5 py-1 text-xs text-primary font-mono font-bold tracking-wider uppercase focus:outline-none focus:border-primary-fixed"
                   />
                   <button
                     disabled={isSubmittingScore}
                     onClick={() => submitScore('grid_runner', score, multiplier)}
-                    className="bg-primary-fixed text-black font-bold text-xs uppercase px-4 py-1.5 hover:bg-white transition-colors disabled:opacity-50"
+                    className="bg-primary-fixed text-black font-bold text-xs uppercase px-3 sm:px-4 py-1 hover:bg-white transition-colors disabled:opacity-50"
                   >
-                    {isSubmittingScore ? 'SAVING...' : '[ SUBMIT ]'}
+                    {isSubmittingScore ? '...' : '[ SUBMIT ]'}
                   </button>
                 </div>
               </div>
             )}
 
             {scoreSubmitted && (
-              <div className="bg-primary-fixed/15 border border-primary-fixed p-2.5 mb-4 text-xs font-bold text-primary-fixed flex items-center justify-between">
-                <span>★ RECORD SAVED IN SUPABASE ARCHIVES!</span>
+              <div className="bg-primary-fixed/15 border border-primary-fixed p-2 mb-3 text-xs font-bold text-primary-fixed flex items-center justify-between">
+                <span>★ RECORD SAVED IN SUPABASE!</span>
                 {submissionRank && <span>RANK #{submissionRank}</span>}
               </div>
             )}
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={startGame}
-                className="w-full font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors py-3 text-[13px]"
+                className="w-full font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors py-2.5 sm:py-3 text-[12px] sm:text-[13px]"
               >
                 [ REBOOT SYSTEM (SPACE) ]
               </button>
               <button
                 onClick={() => openLeaderboard('grid_runner')}
-                className="w-full font-bold uppercase tracking-wider text-primary-fixed hover:text-white border border-primary-fixed/50 hover:bg-primary-fixed/10 transition-colors py-2 text-[12px]"
+                className="w-full font-bold uppercase tracking-wider text-primary-fixed hover:text-white border border-primary-fixed/50 hover:bg-primary-fixed/10 transition-colors py-2 text-[11px] sm:text-[12px]"
               >
                 [ 🏆 VIEW GLOBAL LEADERBOARD ]
               </button>
-              <div className="grid grid-cols-3 gap-2 mt-1">
+              <div className="grid grid-cols-3 gap-2 mt-0.5">
                 <Link
                   href="/"
-                  className="text-center text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-2 bg-surface hover:bg-surface-hover transition-colors"
+                  className="text-center text-[10px] sm:text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-1.5 bg-surface hover:bg-surface-hover transition-colors"
                 >
                   [ HOME ]
                 </Link>
                 <Link
                   href="/projects"
-                  className="text-center text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-2 bg-surface hover:bg-surface-hover transition-colors"
+                  className="text-center text-[10px] sm:text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-1.5 bg-surface hover:bg-surface-hover transition-colors"
                 >
                   [ PROJECTS ]
                 </Link>
                 <Link
                   href="/blog"
-                  className="text-center text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-2 bg-surface hover:bg-surface-hover transition-colors"
+                  className="text-center text-[10px] sm:text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-1.5 bg-surface hover:bg-surface-hover transition-colors"
                 >
                   [ BLOG ]
                 </Link>
@@ -2576,25 +2577,25 @@ export default function NotFoundGridGame() {
 
       {/* CENTER OVERLAY: GAME OVER STATE (SPACE SHOOTER) */}
       {gameState === 'shooter_gameover' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-4 pointer-events-none">
-          <div className="max-w-md w-full bg-surface/95 border-2 border-cyan-400/60 p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-[0_0_40px_rgba(0,240,255,0.3)]">
-            <div className="text-[11px] uppercase tracking-[0.2em] text-cyan-400 mb-2 font-bold animate-pulse">
+        <div className="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 pointer-events-none overflow-y-auto">
+          <div className="max-w-md w-full max-h-[88dvh] overflow-y-auto bg-surface/95 border-2 border-cyan-400/60 p-4 sm:p-6 md:p-8 backdrop-blur-md text-center pointer-events-auto shadow-[0_0_40px_rgba(0,240,255,0.3)] my-auto">
+            <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-cyan-400 mb-1.5 sm:mb-2 font-bold animate-pulse">
               SECTOR OVERRUN // DEFENDER DOWN
             </div>
-            <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl font-extrabold uppercase text-primary mb-4 tracking-tight">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase text-primary mb-3 sm:mb-4 tracking-tight">
               MISSION DEFEAT
             </h2>
 
-            <div className="bg-surface-container-high border border-border-primary p-4 mb-4 grid grid-cols-2 gap-4 text-left">
+            <div className="bg-surface-container-high border border-border-primary p-3 sm:p-4 mb-3 sm:mb-4 grid grid-cols-2 gap-3 text-left">
               <div>
                 <div className="text-[10px] uppercase text-text-muted">SECTOR SCORE:</div>
-                <div className="text-2xl font-bold text-cyan-400">
+                <div className="text-xl sm:text-2xl font-bold text-cyan-400">
                   {shooterScore.toLocaleString()}
                 </div>
               </div>
               <div>
                 <div className="text-[10px] uppercase text-text-muted">BEST DEFENDER:</div>
-                <div className="text-2xl font-bold text-primary-fixed">
+                <div className="text-xl sm:text-2xl font-bold text-primary-fixed">
                   {shooterHighScore.toLocaleString()}
                 </div>
               </div>
@@ -2602,8 +2603,8 @@ export default function NotFoundGridGame() {
 
             {/* Global Leaderboard Submission Form */}
             {shooterScore > 0 && !scoreSubmitted && (
-              <div className="bg-cyan-950/40 border border-cyan-400/50 p-3 mb-4 text-left shadow-[0_0_15px_rgba(0,240,255,0.2)]">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-cyan-300 mb-1.5">
+              <div className="bg-cyan-950/40 border border-cyan-400/50 p-2.5 sm:p-3 mb-3 sm:mb-4 text-left shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-cyan-300 mb-1">
                   ★ RECORD DEFENDER RUN IN ARCHIVES
                 </div>
                 <div className="flex gap-2">
@@ -2613,48 +2614,48 @@ export default function NotFoundGridGame() {
                     value={pilotCallsign}
                     onChange={(e) => setPilotCallsign(e.target.value.toUpperCase())}
                     placeholder="CALLSIGN (MAX 16)"
-                    className="flex-1 bg-[#050505] border border-cyan-400/60 px-3 py-1.5 text-xs text-cyan-300 font-mono font-bold tracking-wider uppercase focus:outline-none focus:border-cyan-300"
+                    className="flex-1 bg-[#050505] border border-cyan-400/60 px-2.5 py-1 text-xs text-cyan-300 font-mono font-bold tracking-wider uppercase focus:outline-none focus:border-cyan-300"
                   />
                   <button
                     disabled={isSubmittingScore}
                     onClick={() => submitScore('space_shooter', shooterScore, sectorWave)}
-                    className="bg-cyan-400 text-black font-bold text-xs uppercase px-4 py-1.5 hover:bg-white transition-colors disabled:opacity-50"
+                    className="bg-cyan-400 text-black font-bold text-xs uppercase px-3 sm:px-4 py-1 hover:bg-white transition-colors disabled:opacity-50"
                   >
-                    {isSubmittingScore ? 'SAVING...' : '[ SUBMIT ]'}
+                    {isSubmittingScore ? '...' : '[ SUBMIT ]'}
                   </button>
                 </div>
               </div>
             )}
 
             {scoreSubmitted && (
-              <div className="bg-cyan-950/60 border border-cyan-400 p-2.5 mb-4 text-xs font-bold text-cyan-300 flex items-center justify-between shadow-[0_0_15px_rgba(0,240,255,0.3)]">
-                <span>★ RECORD SAVED IN SUPABASE ARCHIVES!</span>
+              <div className="bg-cyan-950/60 border border-cyan-400 p-2 mb-3 text-xs font-bold text-cyan-300 flex items-center justify-between shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                <span>★ RECORD SAVED IN SUPABASE!</span>
                 {submissionRank && <span>RANK #{submissionRank}</span>}
               </div>
             )}
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={restartShooter}
-                className="w-full font-bold uppercase tracking-wider text-black bg-cyan-400 hover:bg-white transition-colors py-3 text-[13px] shadow-[0_0_15px_rgba(0,240,255,0.4)]"
+                className="w-full font-bold uppercase tracking-wider text-black bg-cyan-400 hover:bg-white transition-colors py-2.5 sm:py-3 text-[12px] sm:text-[13px] shadow-[0_0_15px_rgba(0,240,255,0.4)]"
               >
                 [ REDEPLOY FIGHTER (SPACE) ]
               </button>
               <button
                 onClick={() => openLeaderboard('space_shooter')}
-                className="w-full font-bold uppercase tracking-wider text-cyan-400 hover:text-white border border-cyan-400/50 hover:bg-cyan-400/10 transition-colors py-2 text-[12px]"
+                className="w-full font-bold uppercase tracking-wider text-cyan-400 hover:text-white border border-cyan-400/50 hover:bg-cyan-400/10 transition-colors py-2 text-[11px] sm:text-[12px]"
               >
                 [ 🏆 VIEW GLOBAL LEADERBOARD ]
               </button>
               <button
                 onClick={returnToGrid}
-                className="w-full font-medium uppercase tracking-wider text-primary-fixed border border-primary-fixed/50 hover:bg-primary-fixed/10 transition-colors py-2 text-[12px]"
+                className="w-full font-medium uppercase tracking-wider text-primary-fixed border border-primary-fixed/50 hover:bg-primary-fixed/10 transition-colors py-1.5 text-[11px] sm:text-[12px]"
               >
                 [ ← RETURN TO 404 GRID ]
               </button>
               <Link
                 href="/"
-                className="text-center text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-2 bg-surface hover:bg-surface-hover transition-colors"
+                className="text-center text-[10px] sm:text-[11px] uppercase text-text-muted hover:text-primary border border-border-primary py-1.5 bg-surface hover:bg-surface-hover transition-colors"
               >
                 [ WARP HOME ]
               </Link>
