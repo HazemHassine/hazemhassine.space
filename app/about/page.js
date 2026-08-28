@@ -138,7 +138,7 @@ export default function AboutPage() {
                         <motion.div
                           layoutId="active-skill-pill"
                           className="absolute inset-0 bg-primary-fixed/10 border-l-[3px] border-l-primary-fixed shadow-[inset_0_0_15px_rgba(204,242,0,0.05)]"
-                          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                          transition={{ type: 'spring', stiffness: 700, damping: 45 }}
                         />
                       )}
 
@@ -179,15 +179,15 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Col 3 — Skill Details (4 cols) with AnimatePresence & TiltCards */}
+            {/* Col 3 — Skill Details (4 cols) with Fast AnimatePresence & TiltCards */}
             <div className="lg:col-span-4 p-[28px] bg-surface-container-lowest flex flex-col justify-between relative overflow-hidden">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={activeSkill.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
                   className="flex flex-col justify-between h-full"
                 >
                   <div>
