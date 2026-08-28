@@ -121,7 +121,7 @@ export default function HeroSection({ siteConfig, projects }) {
         </div>
         <div className="self-end font-[family-name:var(--font-mono)] text-[12px] text-text-muted flex flex-col items-end gap-2 mt-12">
           <div className="w-8 h-[1px] bg-border-primary"></div>
-          01 / 06
+          01 / {projects.length < 10 ? `0${projects.length}` : projects.length}
         </div>
       </div>
     </section>

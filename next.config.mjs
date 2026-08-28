@@ -27,6 +27,9 @@ const nextConfig = {
       { source: '/gemni-mcp', destination: '/projects/gemini-mcp' },
       { source: '/rsvp-shift', destination: '/projects/rsvp-shift' },
       { source: '/rsvpshift', destination: '/projects/rsvp-shift' },
+      { source: '/portfolio', destination: '/projects/portfolio' },
+      { source: '/hazemhassine-space', destination: '/projects/portfolio' },
+      { source: '/hazemhassine.space', destination: '/projects/portfolio' },
     ];
   },
 };
