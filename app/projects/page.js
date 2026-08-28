@@ -12,9 +12,14 @@ import TiltCard from '@/components/TiltCard';
 import { getProjectThumbnail } from '@/lib/data';
 import { useCms } from '@/components/CmsProvider';
 
+const IN_PROGRESS_PROJECTS = new Set(['arbiter', 'repotrajectory', 'gitaudit']);
+
 function ProjectCard({ project, index, onTagClick, activeTag }) {
   const [imageError, setImageError] = useState(false);
   const thumbnailUrl = getProjectThumbnail(project);
+  const projectStatus = project.status || (
+    IN_PROGRESS_PROJECTS.has(project.slug) ? 'STILL IN PROGRESS' : null
+  );
 
   return (
     <motion.div
@@ -59,12 +64,18 @@ function ProjectCard({ project, index, onTagClick, activeTag }) {
 
             {/* Main Info Column */}
             <div className="flex-1 min-w-0 flex flex-col">
-              <div className="hidden md:flex items-center gap-3 mb-1">
-                <h2 className="font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-fixed leading-tight transition-colors duration-300">
+              <div className="flex flex-wrap items-center gap-2.5 mb-1">
+                <h2 className="hidden md:block font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-fixed leading-tight transition-colors duration-300">
                   {project.title}
                 </h2>
+                {projectStatus && (
+                  <span className="inline-flex items-center gap-1.5 border border-primary-fixed/60 bg-primary-fixed/10 px-2 py-0.5 text-[9px] font-mono font-bold tracking-wider text-primary-fixed">
+                    <span className="h-1.5 w-1.5 bg-primary-fixed" aria-hidden="true"></span>
+                    {projectStatus}
+                  </span>
+                )}
                 {project.categoryLabel && (
-                  <span className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 border border-border-primary text-text-dim group-hover:border-primary-fixed/40 group-hover:text-primary-fixed/80 transition-colors">
+                  <span className="hidden md:inline-flex text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 border border-border-primary text-text-dim group-hover:border-primary-fixed/40 group-hover:text-primary-fixed/80 transition-colors">
                     {project.categoryLabel}
                   </span>
                 )}
