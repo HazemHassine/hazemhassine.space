@@ -265,3 +265,10 @@ body {
   98%, 100% { opacity: 0; transform: none; clip-path: none; }
 }
 
+/* Hide floating AI assistant on 404 page */
+body.hide-chatbot #portfolio-chat-root {
+  display: none !important;
+}
+
+
+
