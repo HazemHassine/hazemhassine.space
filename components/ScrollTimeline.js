@@ -8,11 +8,11 @@ export default function ScrollTimeline({ id, title, items, isSubSection = false 
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start 80%', 'end 60%'],
+    offset: ['start center', 'end center'],
   });
 
-  const beamHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-  const beamOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0.8]);
+  const beamHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%'], { clamp: true });
+  const beamOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0.8], { clamp: true });
 
   return (
     <section
