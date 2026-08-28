@@ -39,7 +39,7 @@ export default function AboutPage() {
   return (
     <>
       <Sidebar />
-      <main className="md:ml-[150px] min-h-screen flex flex-col pt-16 md:pt-0">
+      <main className="md:ml-[180px] min-h-screen flex flex-col pt-16 md:pt-0">
         <TopBar />
         <MobileMenu />
 

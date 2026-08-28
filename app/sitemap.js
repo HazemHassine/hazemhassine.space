@@ -4,7 +4,7 @@ export default async function sitemap() {
   const baseUrl = 'https://hazemhassine.space';
 
   // Static routes
-  const routes = ['', '/about', '/work', '/blog', '/contact'].map((route) => ({
+  const routes = ['', '/about', '/projects', '/blog', '/contact'].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date().toISOString(),
   }));

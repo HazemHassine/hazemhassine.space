@@ -9,7 +9,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 hidden h-screen w-[150px] flex-col justify-between border-r border-border-primary bg-background px-6 py-[28px] md:flex z-40">
+    <aside className="fixed left-0 top-0 hidden h-screen w-[180px] flex-col justify-between border-r border-border-primary bg-background px-6 py-[28px] md:flex z-40">
       <div className="flex flex-col gap-12">
         <Link href="/" className="flex flex-col gap-1">
           <span className="font-[family-name:var(--font-display)] text-[32px] font-bold leading-none">
@@ -26,7 +26,7 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`font-[family-name:var(--font-mono)] text-[13px] tracking-wider uppercase transition-all duration-200 ${
+                className={`font-[family-name:var(--font-mono)] text-[13px] tracking-wider uppercase whitespace-nowrap transition-all duration-200 ${
                   isActive
                     ? 'translate-x-1 font-bold text-primary-fixed'
                     : 'text-on-secondary-container hover:translate-x-1 hover:text-primary-fixed'

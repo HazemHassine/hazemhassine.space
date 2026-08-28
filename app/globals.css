@@ -66,7 +66,7 @@
   /* ===== SPACING ===== */
   --spacing-container-padding: 28px;
   --spacing-section-margin: 80px;
-  --spacing-sidebar-width: 150px;
+  --spacing-sidebar-width: 180px;
   --spacing-grid-gap: 1px;
   --spacing-article-max-width: 760px;
 
@@ -180,10 +180,6 @@ body {
 }
 
 /* ===== PROJECT ROW HOVER ===== */
-.project-row:hover .project-preview {
-  opacity: 1;
-  transform: scale(1.03);
-}
 .project-row:hover {
   border-color: var(--color-primary-fixed) !important;
 }
@@ -197,11 +193,6 @@ body {
   opacity: 0;
   transform: scale(0.95);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.project-preview {
-  opacity: 0;
-  transition: all 0.5s ease-out;
 }
 
 /* ===== MDEditor BRUTALIST OVERRIDES ===== */

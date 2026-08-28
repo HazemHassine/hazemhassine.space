@@ -1,8 +1,8 @@
 export const metadata = {
-  title: 'Work & Projects | Hazem Hassine',
+  title: 'Projects | Mohamed Hazem Hassine',
   description: 'A curated selection of engineering projects, tools, and experiments focusing on full-stack development, system architecture, and AI integrations.',
 };
 
-export default function WorkLayout({ children }) {
+export default function ProjectsLayout({ children }) {
   return <>{children}</>;
 }
