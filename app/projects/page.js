@@ -60,6 +60,7 @@ function ProjectRowItem({ project, index }) {
                 src={thumbnailUrl}
                 alt={`${project.title} Preview`}
                 fill
+                priority={index < 2}
                 sizes="(max-width: 768px) 100vw, 220px"
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 onError={() => setImageError(true)}
