@@ -2356,26 +2356,30 @@ export default function NotFoundGridGame() {
               vaporwave terrain or warp safely back to known space.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            {/* Action Buttons: Row 1 (Start & Projects on 1 line), Row 2 (Leaderboard underneath) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-3">
               <button
                 onClick={startGame}
-                className="w-full sm:w-auto font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-6 py-3 text-[13px]"
+                className="w-full sm:flex-1 font-bold uppercase tracking-wider text-black bg-primary-fixed hover:bg-white transition-colors px-6 py-3 text-[13px] whitespace-nowrap text-center"
               >
-                <span className="hidden sm:inline">[ START GRID MISSION (SPACE / CLICK) ]</span>
+                <span className="hidden sm:inline">[ START GRID MISSION (SPACE) ]</span>
                 <span className="sm:hidden">[ TAP TO START ]</span>
-              </button>
-              <button
-                onClick={() => openLeaderboard('grid_runner')}
-                className="w-full sm:w-auto font-medium uppercase tracking-wider text-primary-fixed hover:text-white transition-colors border border-primary-fixed/60 bg-surface-container-high px-5 py-3 text-[13px]"
-              >
-                [ 🏆 LEADERBOARD ]
               </button>
               <Link
                 href="/projects"
-                className="w-full sm:w-auto font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-5 py-3 text-[13px]"
+                className="w-full sm:w-auto font-medium uppercase tracking-wider text-text-muted hover:text-primary hover:border-primary transition-colors border border-border-primary bg-surface-container-high px-6 py-3 text-[13px] whitespace-nowrap text-center"
               >
                 [ VIEW PROJECTS ]
               </Link>
+            </div>
+
+            <div className="mb-6">
+              <button
+                onClick={() => openLeaderboard('grid_runner')}
+                className="w-full font-medium uppercase tracking-wider text-primary-fixed hover:text-white hover:border-primary-fixed transition-colors border border-primary-fixed/50 bg-surface hover:bg-primary-fixed/10 py-2.5 text-[12px] whitespace-nowrap text-center"
+              >
+                [ 🏆 VIEW GLOBAL LEADERBOARD ]
+              </button>
             </div>
 
             {/* Controls Info Guide — Desktop */}
