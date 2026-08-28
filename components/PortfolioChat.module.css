@@ -173,10 +173,11 @@
 }
 
 .identity small i {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   background: var(--color-primary-fixed);
-  box-shadow: 0 0 8px var(--color-primary-fixed);
+  box-shadow: 0 0 10px var(--color-primary-fixed);
+  animation: status-pulse 1.8s ease-in-out infinite;
 }
 
 .avatar {

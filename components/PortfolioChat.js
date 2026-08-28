@@ -268,7 +268,7 @@ export default function PortfolioChat() {
                   <span className={styles.avatar} aria-hidden="true">H/</span>
                   <span>
                     <strong>/ HAZEM_AI</strong>
-                    <small><i></i> ONLINE VIA AI GATEWAY</small>
+                    <small><i></i> ONLINE</small>
                   </span>
                 </div>
                 <div className={styles.headerActions}>
@@ -459,10 +459,6 @@ export default function PortfolioChat() {
                   <span>{input.length} / 500</span>
                 </div>
               </form>
-
-              <footer className={styles.footer}>
-                <span>ANSWERS FROM AUTHORITATIVE PORTFOLIO DOSSIER</span>
-              </footer>
             </motion.section>
           </>
         )}
