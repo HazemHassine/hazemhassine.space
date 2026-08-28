@@ -5,7 +5,7 @@ export async function proxy(request) {
   const path = request.nextUrl.pathname;
 
   // Paths that require authentication
-  const isProtectedPath = path.startsWith('/admin') || path.startsWith('/api/admin/save');
+  const isProtectedPath = (path.startsWith('/admin') || path.startsWith('/api/admin')) && path !== '/api/admin/login';
   
   // Public paths inside /admin
   const isPublicPath = path === '/admin/login';
@@ -39,6 +39,6 @@ export async function proxy(request) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/api/admin/save'
+    '/api/admin/:path*'
   ],
 };

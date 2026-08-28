@@ -15,6 +15,7 @@ import {
 } from '@/lib/data';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('config');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const [mdPosts, setMdPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [loadingPosts, setLoadingPosts] = useState(false);
+  const [deletingSlug, setDeletingSlug] = useState(null);
 
   const tabs = [
     { id: 'config', label: 'Site Config' },
@@ -104,6 +106,36 @@ export default function AdminDashboard() {
       setMessage('Failed to save post. Check console.');
     }
     setSaving(false);
+  };
+
+  const handleDeleteMdPost = async (slug) => {
+    if (!slug) return;
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${slug}.md"? This action cannot be undone.`);
+    if (!confirmDelete) return;
+
+    setDeletingSlug(slug);
+    setMessage('');
+    try {
+      const res = await fetch('/api/admin/delete-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Post deleted successfully! ' + (data.message || ''));
+        if (selectedPost && selectedPost.slug === slug) {
+          setSelectedPost(null);
+        }
+        fetchMdPosts();
+      } else {
+        setMessage('Error: ' + data.error);
+      }
+    } catch (err) {
+      setMessage('Failed to delete post. Check console.');
+      console.error(err);
+    }
+    setDeletingSlug(null);
   };
 
   return (
@@ -361,13 +393,24 @@ export default function AdminDashboard() {
                         </button>
                         <h2 className="text-[20px] font-bold text-primary-fixed uppercase">Editing Post</h2>
                       </div>
-                      <button 
-                        onClick={handleSaveMdPost}
-                        disabled={saving}
-                        className="bg-primary-fixed text-background px-6 py-2 font-bold tracking-wider hover:bg-primary transition-colors text-[12px] uppercase disabled:opacity-50"
-                      >
-                        {saving ? 'Saving...' : 'Save Post'}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {mdPosts.some(p => p.slug === selectedPost.slug) && (
+                          <button 
+                            onClick={() => handleDeleteMdPost(selectedPost.slug)}
+                            disabled={deletingSlug === selectedPost.slug || saving}
+                            className="px-4 py-2 border border-red-900/50 text-red-400 hover:bg-red-900/20 transition-colors text-[12px] uppercase disabled:opacity-50"
+                          >
+                            {deletingSlug === selectedPost.slug ? 'Deleting...' : 'Delete Post'}
+                          </button>
+                        )}
+                        <button 
+                          onClick={handleSaveMdPost}
+                          disabled={saving || deletingSlug === selectedPost.slug}
+                          className="bg-primary-fixed text-background px-6 py-2 font-bold tracking-wider hover:bg-primary transition-colors text-[12px] uppercase disabled:opacity-50"
+                        >
+                          {saving ? 'Saving...' : 'Save Post'}
+                        </button>
+                      </div>
                     </div>
                     
                     <div className="flex flex-col gap-2">
@@ -412,12 +455,21 @@ export default function AdminDashboard() {
                         {mdPosts.map((post) => (
                           <div key={post.slug} className="flex justify-between items-center border border-border-primary p-4 hover:bg-surface-hover transition-colors">
                             <span className="font-mono text-[14px]">{post.slug}.md</span>
-                            <button 
-                              onClick={() => setSelectedPost(post)}
-                              className="text-[11px] uppercase text-primary-fixed hover:text-primary transition-colors"
-                            >
-                              [ Edit ]
-                            </button>
+                            <div className="flex items-center gap-3">
+                              <button 
+                                onClick={() => setSelectedPost(post)}
+                                className="text-[11px] uppercase text-primary-fixed hover:text-primary transition-colors"
+                              >
+                                [ Edit ]
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteMdPost(post.slug)}
+                                disabled={deletingSlug === post.slug}
+                                className="text-[11px] uppercase text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+                              >
+                                {deletingSlug === post.slug ? '[ Deleting... ]' : '[ Delete ]'}
+                              </button>
+                            </div>
                           </div>
                         ))}
                         {mdPosts.length === 0 && (
