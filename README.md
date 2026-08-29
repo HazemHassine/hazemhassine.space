@@ -110,8 +110,11 @@ SUPABASE_SERVICE_ROLE_KEY=
 ADMIN_TOTP_SECRET=
 JWT_SECRET=
 
-# AI Gateway — server only
+# AI / LLM — server only (Google AI Studio or Vercel AI Gateway)
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.5-flash
 AI_GATEWAY_API_KEY=
+VERCEL_OIDC_TOKEN=
 
 # Contact email — server only
 RESEND_API_KEY=
@@ -119,7 +122,7 @@ RESEND_API_KEY=
 
 `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are intentionally exposed to the browser. Keep the service-role, authentication, AI, and email credentials server-side.
 
-The chat endpoint accepts either `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN`. Use an AI Gateway API key for local and self-hosted environments; supported Vercel deployments can provide the OIDC token automatically.
+The chat endpoint supports direct Google Gemini API keys via `GEMINI_API_KEY` (or `GOOGLE_GENERATIVE_AI_API_KEY`) from Google AI Studio, or Vercel AI Gateway via `AI_GATEWAY_API_KEY` / `VERCEL_OIDC_TOKEN`. Direct Google AI Studio keys provide fast, free access to `gemini-3.5-flash`.
 
 `ADMIN_TOTP_SECRET` must be a Base32 secret configured in the authenticator used for admin login. Use a separate, high-entropy value for `JWT_SECRET`.
 

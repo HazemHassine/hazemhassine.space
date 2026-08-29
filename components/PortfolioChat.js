@@ -49,7 +49,11 @@ function getMessagePartsData(message) {
     }
   }
 
-  const rawText = textParts.join('\n').trim();
+  const rawText = (
+    textParts.length > 0
+      ? textParts.join('\n')
+      : (typeof message.content === 'string' ? message.content : '')
+  ).trim();
   const { cleanText, suggestions } = parseMessageContent(rawText);
 
   return { cleanText, rawText, suggestions, toolParts };
@@ -416,8 +420,10 @@ export default function PortfolioChat() {
 
                 {error && (
                   <div className={styles.errorMessage} role="alert">
-                    <span>CONNECTION_ERROR</span>
-                    The assistant is unavailable right now. Check the Gateway configuration or try again shortly.
+                    <span>CONNECTION_NOTICE</span>
+                    {error.message && !error.message.includes('[object Object]')
+                      ? error.message
+                      : 'The portfolio assistant is temporarily unavailable. Please verify API configuration or try again shortly.'}
                     <button type="button" onClick={clearError}>[ DISMISS ]</button>
                   </div>
                 )}
