@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  outputFileTracingIncludes: {
+    '/*': ['./content/blog/**/*'],
+  },
   images: {
     remotePatterns: [
       {

@@ -126,6 +126,36 @@ npm run lint
 npm run build
 ```
 
+### 6. Run with Docker
+
+The production image uses Next.js standalone output and runs as a non-root user.
+Create `.env.local` as described above, then build and start the service:
+
+```bash
+docker compose --env-file .env.local up --build -d
+```
+
+Open [http://localhost:3000](http://localhost:3000) and verify the container is
+healthy:
+
+```bash
+docker compose ps
+```
+
+Stop the service with:
+
+```bash
+docker compose down
+```
+
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are supplied as
+build arguments because Next.js embeds public variables in the browser bundle.
+Server-only credentials such as `SUPABASE_SERVICE_ROLE_KEY`, `JWT_SECRET`,
+`ADMIN_TOTP_SECRET`, `AI_GATEWAY_API_KEY`, and `RESEND_API_KEY` are passed only
+at runtime through `.env.local`; they are not copied into the image. Put a
+reverse proxy with TLS and appropriate request limits in front of the container
+for an internet-facing deployment.
+
 ---
 
 ## 📄 License
