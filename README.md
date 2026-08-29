@@ -1,163 +1,186 @@
 # hazemhassine.space
 
-A high-performance personal engineering space, developer portfolio, and interactive lab built with **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS v4**, **Three.js**, **Framer Motion**, and **Supabase**.
+This repository contains the source code for my personal portfolio and interactive engineering site. It brings together professional background, technical project case studies, long-form writing, interactive WebGL experiences, and an AI portfolio assistant in a Next.js application.
 
-Designed with a dark **Neo-Brutalist & Cyberpunk** aesthetic, the site features a monochrome palette with a striking neon accent (`#ccf200`), technical typography (`IBM Plex Mono` & `Inter`), live telemetry, interactive 3D WebGL scenes, and an AI chat assistant.
+**Live site:** [https://hazemhassine.space](https://hazemhassine.space)
 
----
+> Building your own portfolio? Start with [developer-portfolio-template](https://github.com/HazemHassine/developer-portfolio-template), the reusable version without my personal content. This repository is the personal implementation that powers the live site.
 
-## ⚡ Key Features
+[![Next.js 16](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=000000)](https://react.dev/)
+[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Three.js](https://img.shields.io/badge/Three.js-000000?logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
-- **Blog CMS (Supabase)**: PostgreSQL-backed content management with Row-Level Security (RLS) and Supabase Storage for image hosting without requiring a site rebuild for each content update.
-- **Admin Control Panel**: Protected by TOTP Two-Factor Authentication and JWT sessions. Features a live Markdown editor with instant post publishing, editing, deletion, and drag-and-drop image uploads.
-- **Interactive 3D WebGL Scenes & Arcade**: Built using `three`, `@react-three/fiber`, and `@react-three/drei` with interactive 3D physics, wireframe grid games, and smooth canvas rendering.
-- **HAZEM_AI Portfolio Assistant**: An embedded AI chatbot powered by Google Gemini (`google/gemini-2.5-flash-lite`) and the Vercel AI SDK, equipped with live context from the portfolio profile and published articles.
-- **Neo-Brutalist Aesthetics & Motion**:
-  - Glitch typography animations using pure CSS pseudo-elements and clip-path.
-  - Page transitions powered by Framer Motion's `AnimatePresence` with custom frozen route contexts.
-  - 3D perspective hover cards (TiltCard physics), magnetic buttons, and custom cursor interactions.
-- **Performance & SEO**: Server components, automated dynamic `sitemap.xml` generation, OpenGraph metadata, and optimized static asset delivery.
+The interface uses a restrained neo-brutalist and cyberpunk-inspired visual language, with custom motion and interactive 3D elements.
 
----
+## Features
 
-## 🛠️ Tech Stack
+- Portfolio, experience, education, and data-driven project case-study pages.
+- Supabase-backed blog with published-post filtering and repository Markdown fallbacks.
+- Structured content management with private drafts, page previews, publishing, and revision restoration.
+- Protected administration interface with TOTP authentication and signed JWT cookie sessions.
+- Markdown article editing, image and document uploads, a media library, and a contact inbox.
+- Interactive Three.js scenes through React Three Fiber, plus route and interface motion with Framer Motion.
+- Portfolio-scoped AI assistant using Google Gemini through the Vercel AI SDK.
+- Contact delivery through Resend, optional Supabase message persistence, dynamic metadata, Open Graph data, and sitemap generation.
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Server Actions)
-- **Frontend**: [React 19](https://reactjs.org/), [Tailwind CSS v4](https://tailwindcss.com/)
-- **Animations & 3D**: [Framer Motion](https://www.framer.com/motion/), [Three.js](https://threejs.org/), [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/)
-- **Database & Storage**: [Supabase](https://supabase.com/) (PostgreSQL & Storage Buckets)
-- **AI & LLM**: Google Gemini API, [Vercel AI SDK](https://sdk.vercel.ai/)
-- **Auth & Security**: [Jose](https://github.com/panva/jose) (JWT), Node.js Native Crypto (RFC 6238 TOTP)
-- **Markdown**: `react-markdown`, `gray-matter`, `@uiw/react-md-editor`
+## Tech Stack
 
----
+| Area | Technologies |
+| --- | --- |
+| Framework | Next.js 16.3.3 (App Router), React 19.2.8 |
+| Styling | Tailwind CSS 4, CSS Modules |
+| Motion | Framer Motion 13 |
+| 3D / WebGL | Three.js, React Three Fiber, Drei |
+| Data and storage | Supabase, PostgreSQL, Supabase Storage |
+| AI | Vercel AI SDK 6, Google Gemini via Vercel AI Gateway |
+| Authentication | TOTP with Node.js Crypto, JWT with `jose` |
+| Content | Markdown, `gray-matter`, `react-markdown`, `@uiw/react-md-editor` |
+| Email and analytics | Resend, Vercel Analytics |
+| Deployment | Vercel, Next.js standalone output, Docker Compose |
 
-## 🚀 Featured Projects Detail
+## Architecture
 
-### 1. **ARBITER** — *Local-First Dev Environment Control Plane*
-- **Category**: Dev Tools & SRE Operator
-- **Tech Stack**: Python, FastAPI, Docker SDK, LangGraph, LangChain v1, SQLite, Pydantic v2, Typer CLI, Next.js
-- **Overview**: A safety-oriented control plane for understanding and operating complex developer workstations. Addresses port collisions, container sprawl, and service dependencies across Docker Compose stacks, standalone containers, and native host processes through deterministic port allocation, 5-tier approval matrices, and rollback-aware configuration editing.
-- **GitHub**: [github.com/HazemHassine/Arbiter](https://github.com/HazemHassine/Arbiter)
+Next.js serves the public pages, dynamic metadata, and server route handlers. Published site content, blog posts, revisions, media metadata, and contact messages are stored in Supabase; repository defaults and local Markdown files allow the public site to render when Supabase is not configured or cannot be reached.
 
-### 2. **REPOTRAJECTORY** — *OSS Momentum & Health Analytics Platform*
-- **Category**: Big Data & Open Source Intelligence
-- **Tech Stack**: Python, FastAPI, PostgreSQL, Next.js, GH Archive, Chart.js
-- **Overview**: An explainable research platform for tracking the velocity, contributor momentum, and health of open-source software repositories. Ingests raw GitHub events from GH Archive, maintains durable collection pipelines, and computes transparent, reproducible vitality scores.
-- **GitHub**: [github.com/HazemHassine/github_analysis](https://github.com/HazemHassine/github_analysis)
+The protected admin interface uses server-side Supabase service-role access for content, post, media, and inbox operations. The chat route builds a constrained context from portfolio and blog data before streaming a Gemini response through the Vercel AI SDK. Contact submissions are validated, optionally persisted to Supabase, and delivered through Resend.
 
-### 3. **GITAUDIT** — *Evidence-First GitHub Profile Curator*
-- **Category**: AI & Bounded Operations Console
-- **Tech Stack**: Python, FastAPI, PostgreSQL, LangGraph, Playwright
-- **Overview**: An operations console for evaluating authorized GitHub repositories. Analyzes CI/CD runs against exact default-branch commits, tracks historical scans, and executes bounded LangGraph agents to curate evidence-backed portfolio profiles.
-- **GitHub**: [github.com/HazemHassine/github_maintainer](https://github.com/HazemHassine/github_maintainer)
+```mermaid
+flowchart LR
+    Browser --> Next[Next.js App Router]
+    Admin[Protected admin interface] --> Next
+    Next --> Database[(Supabase PostgreSQL)]
+    Next --> Storage[Supabase Storage]
+    Next --> AI[Vercel AI Gateway / Gemini]
+    Next --> Email[Resend]
+```
 
-### 4. **FORMA** — *Job Application Workspace & Agentic Assistant*
-- **Category**: AI Agents & Productivity
-- **Tech Stack**: Python, FastAPI, React, SQLite, LangGraph
-- **Overview**: A local-first workspace for managing the job application lifecycle. Connects résumé versioning, application tracking, source-backed company research, and tailored cover-letter generation with bounded LangGraph workflows.
-- **GitHub**: [github.com/HazemHassine/Forma](https://github.com/HazemHassine/Forma)
+## Project Structure
 
-### 5. **GEMINI-MCP** — *Repository Intelligence MCP Server*
-- **Category**: Model Context Protocol & Developer Tools
-- **Tech Stack**: Python, MCP, Gemini API, LanceDB, SQLite
-- **Overview**: Exposes deep repository intelligence as standard Model Context Protocol (MCP) tools for coding agents. Combines deterministic code navigation with Gemini-assisted planning, AST mapping, and LanceDB semantic retrieval.
-- **GitHub**: [github.com/HazemHassine/Gemini-Mcp](https://github.com/HazemHassine/Gemini-Mcp)
+```text
+.
+├── app/                 # App Router pages, metadata, and route handlers
+├── components/          # UI, motion, WebGL, chat, and admin components
+├── content/blog/        # Repository Markdown fallback for blog posts
+├── lib/                 # CMS, data access, Markdown, and AI context logic
+├── public/              # Static assets and project media
+├── supabase/cms.sql     # CMS schema, RLS policies, and storage setup
+├── Dockerfile           # Multi-stage container image
+└── compose.yaml         # Local container orchestration
+```
 
-### 6. **RSVP SHIFT** — *Privacy-Focused Speed Reading Extension*
-- **Category**: Frontend & Browser Extensions
-- **Tech Stack**: JavaScript, Chrome Extension Manifest V3, CSS3
-- **Overview**: A lightweight Chrome extension for rapid, distraction-free reading. Uses focus-letter alignment, punctuation-aware timing, and local-only text processing for maximum privacy.
-- **GitHub**: [github.com/HazemHassine/RSVP-Shift](https://github.com/HazemHassine/RSVP-Shift)
+## Getting Started
 
-### 7. **HAZEMHASSINE.SPACE** — *Personal Space & Interactive Lab*
-- **Category**: Frontend & WebGL Lab
-- **Tech Stack**: Next.js 16, React 19, Tailwind CSS v4, Three.js, Supabase, Framer Motion
-- **Overview**: The current portfolio codebase featuring custom WebGL shaders, live Supabase blog CMS, 2FA admin panel, and an AI chat assistant.
-- **GitHub**: [github.com/HazemHassine/hazemhassine.space](https://github.com/HazemHassine/hazemhassine.space)
+These instructions run this personal implementation. For a portfolio intended for customization, use [developer-portfolio-template](https://github.com/HazemHassine/developer-portfolio-template) instead.
 
----
+### Prerequisites
 
-## ⚙️ Getting Started
+- Node.js 20.9 or newer and npm. The container setup uses Node.js 22.
+- A Supabase project for CMS persistence, blog publishing, media storage, and the contact inbox.
+- Vercel AI Gateway credentials for the portfolio assistant.
+- A Resend account for contact-form email delivery.
+- A TOTP authenticator for administrative access.
+- Docker with Compose support if using the container workflow.
 
-### 1. Clone the repository and install dependencies:
+The public pages can fall back to repository content without Supabase. Supabase is required for CMS persistence, while the AI and contact-email credentials are needed only for their respective features.
+
+### Installation
+
 ```bash
 git clone https://github.com/HazemHassine/hazemhassine.space.git
 cd hazemhassine.space
 npm install
 ```
 
-### 2. Environment Configuration:
-Create a `.env.local` file in the root directory:
+### Environment Variables
+
+Create `.env.local` in the repository root with credentials from your own service accounts:
 
 ```env
-# Authentication & Security
-JWT_SECRET=your_jwt_secret_here
-ADMIN_TOTP_SECRET=your_totp_secret_here
+# Supabase — public browser configuration
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
-# Supabase (Database & Storage)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+# Supabase — server only
+SUPABASE_SERVICE_ROLE_KEY=
 
-# AI Assistant
-AI_GATEWAY_API_KEY=your_ai_api_key_here
+# Admin authentication — server only
+ADMIN_TOTP_SECRET=
+JWT_SECRET=
+
+# AI Gateway — server only
+AI_GATEWAY_API_KEY=
+
+# Contact email — server only
+RESEND_API_KEY=
 ```
 
-### 3. Initialize the Supabase CMS
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are intentionally exposed to the browser. Keep the service-role, authentication, AI, and email credentials server-side.
 
-Open **Supabase → SQL Editor → New query**, paste the complete contents of
-[`supabase/cms.sql`](./supabase/cms.sql), and run it. Then sign in at `/admin`
-and choose **Publish everything** once to seed the CMS with the repository's
-current portfolio content.
+The chat endpoint accepts either `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN`. Use an AI Gateway API key for local and self-hosted environments; supported Vercel deployments can provide the OIDC token automatically.
 
-The CMS keeps drafts private, exposes only published content through RLS,
-records revision history, stores public media, and retains contact-form messages.
+`ADMIN_TOTP_SECRET` must be a Base32 secret configured in the authenticator used for admin login. Use a separate, high-entropy value for `JWT_SECRET`.
 
-### 4. Run the development server:
+## CMS Setup
+
+1. Create your own Supabase project.
+2. Open its SQL Editor and run [`supabase/cms.sql`](./supabase/cms.sql).
+3. Configure the Supabase and admin variables in `.env.local`.
+4. Start the application and sign in to the local or self-hosted `/admin` route with your authenticator code.
+5. Select **Publish everything** once to seed the CMS from the repository defaults.
+
+The SQL setup creates the CMS documents and revisions, published blog posts, contact inbox, and media buckets. Row Level Security exposes published content and public media while keeping drafts, revisions, and contact messages out of public queries. Administrative writes use protected server routes and the Supabase service-role key.
+
+## Development
+
+Start the local development server:
+
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Build & Lint:
-```bash
-npm run lint
-npm run build
-```
+Open [http://localhost:3000](http://localhost:3000).
 
-### 6. Run with Docker
+## Scripts
 
-The production image uses Next.js standalone output and runs as a non-root user.
-Create `.env.local` as described above, then build and start the service:
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server on `127.0.0.1:3000` |
+| `npm run build` | Create a Next.js build |
+| `npm run start` | Start the built application with Next.js |
+| `npm run lint` | Run ESLint |
+
+## Docker
+
+The container setup builds the Next.js standalone server on Node.js 22 Alpine, runs it as a non-root user, and checks `/robots.txt` for container health.
+
+Create `.env.local`, then build and start the service:
 
 ```bash
 docker compose --env-file .env.local up --build -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and verify the container is
-healthy:
+Check its status and stop it with:
 
 ```bash
 docker compose ps
-```
-
-Stop the service with:
-
-```bash
 docker compose down
 ```
 
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are supplied as
-build arguments because Next.js embeds public variables in the browser bundle.
-Server-only credentials such as `SUPABASE_SERVICE_ROLE_KEY`, `JWT_SECRET`,
-`ADMIN_TOTP_SECRET`, `AI_GATEWAY_API_KEY`, and `RESEND_API_KEY` are passed only
-at runtime through `.env.local`; they are not copied into the image. Put a
-reverse proxy with TLS and appropriate request limits in front of the container
-for an internet-facing deployment.
+The two `NEXT_PUBLIC_*` Supabase values are passed as build arguments because Next.js embeds them in the browser bundle. Server-only credentials are provided at runtime through `.env.local` and are not copied into the image.
 
----
+## Deployment
 
-## 📄 License
+The live site is deployed on Vercel and includes Vercel Analytics. Configure the required environment variables in the deployment project before building. The standalone Docker image provides an alternative for environments that can run containers.
 
-© Mohamed Hazem Hassine. All rights reserved.
+## Security Notes
+
+- Never commit `.env.local` or expose server-only credentials to client code.
+- Generate unique, high-entropy values for the TOTP and JWT secrets and rotate them if they are exposed.
+- Keep `SUPABASE_SERVICE_ROLE_KEY` server-side and review the RLS policies when changing the database schema.
+- Restrict administrative access and monitor the protected API routes in deployed environments.
+- Use HTTPS and appropriate reverse-proxy request limits for internet-facing container deployments.
+
+These controls reduce common deployment risks but do not constitute a security guarantee. Review the application and infrastructure for your own environment before exposing administrative functionality.
