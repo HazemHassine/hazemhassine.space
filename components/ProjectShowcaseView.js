@@ -444,10 +444,10 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                   <div className="p-6 bg-surface-container-low border border-primary-fixed/40">
                     <div className="flex items-center gap-2 text-primary-fixed font-bold text-[13px] uppercase mb-2">
                       <span className="material-symbols-outlined text-[18px]">security</span>
-                      STRICT SYSTEM INVARIANTS & SAFETY GUARANTEES
+                      ENGINEERING CONSTRAINTS & SAFETY CONTROLS
                     </div>
                     <p className="text-[12px] text-text-muted font-mono leading-relaxed">
-                      All operations are strictly sandboxed. There is zero arbitrary remote execution, zero unverified state transitions, and every mutated configuration maintains point-in-time rollback capability.
+                      Projects use scoped interfaces, validation, human review where appropriate, and rollback or recovery mechanisms when supported. These controls are designed to reduce operational risk, with coverage depending on each project&apos;s implementation and maturity.
                     </p>
                   </div>
                 </motion.div>

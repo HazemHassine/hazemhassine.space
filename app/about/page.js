@@ -74,17 +74,6 @@ export default function AboutPage() {
               </div>
 
               <div className="mt-8 flex items-center gap-3">
-                <motion.a
-                  href={copy.cvUrl || '/Hazem_Hassine_CV.pdf'}
-                  target="_blank"
-                  rel="noreferrer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-2 px-3 py-2 bg-surface-container border border-border-primary text-primary-fixed hover:border-primary-fixed hover:bg-surface-hover transition-colors text-[11px] font-semibold uppercase tracking-wider"
-                >
-                  <span>{copy.cvLabel || '[ DOWNLOAD CV ]'}</span>
-                  <span className="material-symbols-outlined text-[15px]">download</span>
-                </motion.a>
                 <Link
                   href="/contact"
                   className="flex items-center gap-2 px-3 py-2 bg-transparent border border-border-muted text-text-muted hover:border-border-primary hover:text-on-surface transition-colors text-[11px] font-semibold uppercase tracking-wider"

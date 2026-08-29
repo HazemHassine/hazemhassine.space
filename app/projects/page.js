@@ -232,7 +232,7 @@ export default function ProjectsPage() {
                     {copy.title || '/ PROJECTS'}
                   </h1>
                   <p className="text-body-md text-text-muted max-w-2xl font-mono leading-relaxed">
-                    {copy.introduction || 'Production-grade systems, autonomous agent control planes, explainable analytics pipelines, and interactive developer tools.'}
+                    {copy.introduction || 'Engineered AI systems, agent-enabled control planes, explainable analytics pipelines, and interactive developer tools.'}
                   </p>
                 </div>
 

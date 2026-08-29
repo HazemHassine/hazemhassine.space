@@ -8,7 +8,7 @@ Designed with a dark **Neo-Brutalist & Cyberpunk** aesthetic, the site features 
 
 ## ⚡ Key Features
 
-- **Instant Blog CMS (Supabase)**: Real-time PostgreSQL database with sub-50ms CRUD operations, Row-Level Security (RLS), and Supabase Storage bucket for instant image hosting without build or redeploy delays.
+- **Blog CMS (Supabase)**: PostgreSQL-backed content management with Row-Level Security (RLS) and Supabase Storage for image hosting without requiring a site rebuild for each content update.
 - **Admin Control Panel**: Protected by TOTP Two-Factor Authentication and JWT sessions. Features a live Markdown editor with instant post publishing, editing, deletion, and drag-and-drop image uploads.
 - **Interactive 3D WebGL Scenes & Arcade**: Built using `three`, `@react-three/fiber`, and `@react-three/drei` with interactive 3D physics, wireframe grid games, and smooth canvas rendering.
 - **HAZEM_AI Portfolio Assistant**: An embedded AI chatbot powered by Google Gemini (`google/gemini-2.5-flash-lite`) and the Vercel AI SDK, equipped with live context from the portfolio profile and published articles.
@@ -37,7 +37,7 @@ Designed with a dark **Neo-Brutalist & Cyberpunk** aesthetic, the site features 
 ### 1. **ARBITER** — *Local-First Dev Environment Control Plane*
 - **Category**: Dev Tools & SRE Operator
 - **Tech Stack**: Python, FastAPI, Docker SDK, LangGraph, LangChain v1, SQLite, Pydantic v2, Typer CLI, Next.js
-- **Overview**: An embedded control plane for understanding, correlating, and safely operating complex developer workstations. Solves port collisions, container sprawl, and service dependencies across Docker Compose stacks, standalone containers, and native host processes through deterministic port allocation, 5-tier approval matrices, and rollback-aware configuration editing.
+- **Overview**: A safety-oriented control plane for understanding and operating complex developer workstations. Addresses port collisions, container sprawl, and service dependencies across Docker Compose stacks, standalone containers, and native host processes through deterministic port allocation, 5-tier approval matrices, and rollback-aware configuration editing.
 - **GitHub**: [github.com/HazemHassine/Arbiter](https://github.com/HazemHassine/Arbiter)
 
 ### 2. **REPOTRAJECTORY** — *OSS Momentum & Health Analytics Platform*

@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 
-export default function Marquee({ items = ["OPEN TO WORK", "AVAILABLE FOR FREELANCE", "CREATIVE DEVELOPER"] }) {
+export default function Marquee({ items = ["BUILDING AGENTIC WORKFLOWS", "RAG SYSTEMS", "DEVELOPER TOOLING", "HUMAN-IN-THE-LOOP AI", "SHIPPING TOO MANY SIDE PROJECTS"] }) {
   // We don't need to duplicate too many times if the items array is already populated, but for safety:
   const repeatedItems = [...items, ...items, ...items, ...items];
   
