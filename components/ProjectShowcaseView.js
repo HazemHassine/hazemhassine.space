@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,20 +30,28 @@ export default function ProjectShowcaseView({ project, adjacent }) {
     };
   }, [lightboxImage]);
 
-  const copyToClipboard = (text, index) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
-
-  const tabs = [
+  const tabs = useMemo(() => [
     { id: 'overview', label: '// 01. OVERVIEW & PROBLEM' },
     { id: 'architecture', label: '// 02. SYSTEM ARCHITECTURE' },
     { id: 'capabilities', label: '// 03. KEY CAPABILITIES' },
     { id: 'technical', label: '// 04. DEEP DIVE & SAFETY' },
     ...(project.screenshots && project.screenshots.length > 0 ? [{ id: 'gallery', label: `// 05. GALLERY (${project.screenshots.length})` }] : []),
     { id: 'cli', label: '// 06. CLI & GETTING STARTED' },
-  ];
+  ], [project.screenshots]);
+
+  useEffect(() => {
+    const handleSelectTab = (e) => {
+      const { tabId } = e.detail || {};
+      if (tabId) {
+        const cleanTab = tabId.replace(/^(tab|showcase)-/, '').toLowerCase();
+        if (tabs.some((t) => t.id === cleanTab)) {
+          setActiveTab(cleanTab);
+        }
+      }
+    };
+    window.addEventListener('portfolio:select-showcase-tab', handleSelectTab);
+    return () => window.removeEventListener('portfolio:select-showcase-tab', handleSelectTab);
+  }, [tabs]);
 
   const heroImage = project.primaryImage || project.screenshots?.[0]?.src;
 
@@ -168,7 +176,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
 
           {/* STATS TICKER GRID WITH TILTCARDS */}
           <SectionReveal delay={0.15}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
+            <div data-highlight-id="showcase-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
               {project.stats.map((stat, i) => (
                 <TiltCard 
                   key={i} 
@@ -187,7 +195,7 @@ export default function ProjectShowcaseView({ project, adjacent }) {
 
           {/* TECHNOLOGIES CHIPS WITH MOTION */}
           <SectionReveal delay={0.18}>
-            <div className="mb-10 p-5 bg-surface border border-border-primary flex flex-col md:flex-row md:items-center gap-4">
+            <div data-highlight-id="showcase-tech" className="mb-10 p-5 bg-surface border border-border-primary flex flex-col md:flex-row md:items-center gap-4">
               <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted shrink-0 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[16px] text-primary-fixed">terminal</span>
                 TECHNOLOGIES:
@@ -209,12 +217,13 @@ export default function ProjectShowcaseView({ project, adjacent }) {
 
           {/* NAVIGATION TABS WITH GLIDING SPRING INDICATOR */}
           <SectionReveal delay={0.2}>
-            <div className="flex flex-wrap gap-1.5 p-1.5 bg-surface border border-border-primary mb-8 overflow-x-auto">
+            <div data-highlight-id="showcase-tabs" className="flex flex-wrap gap-1.5 p-1.5 bg-surface border border-border-primary mb-8 overflow-x-auto">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
+                    data-highlight-id={`tab-${tab.id}`}
                     onClick={() => setActiveTab(tab.id)}
                     className="relative px-4 py-2.5 text-[11px] font-mono font-bold uppercase tracking-wider transition-colors shrink-0"
                   >

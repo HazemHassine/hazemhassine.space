@@ -4,15 +4,95 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './PortfolioChat.module.css';
 
-const starterQuestions = [
-  'What is Hazem working on?',
-  "Tell me about Arbiter's architecture",
-  'Summarize his experience at Siemens & Imperial',
-];
+function getStarterQuestions(pathname = '/') {
+  if (pathname === '/about') {
+    return [
+      'Summarize his experience at Siemens & Imperial',
+      'What are Hazem\'s core skills & tech stack?',
+      'Tell me about his Master\'s degree in Germany',
+    ];
+  }
+  if (pathname === '/projects') {
+    return [
+      'Which projects focus on Agentic AI & RAG?',
+      'Tell me about Arbiter vs Forma',
+      'What is RepoTrajectory and what did Hazem build?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/arbiter')) {
+    return [
+      'How does Arbiter evaluate agent drift?',
+      'What is Arbiter\'s dual-sandbox architecture?',
+      'What technologies power Arbiter?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/repotrajectory')) {
+    return [
+      'How does RepoTrajectory analyze Git repositories?',
+      'What algorithms does RepoTrajectory use?',
+      'Show me the RepoTrajectory GitHub repository',
+    ];
+  }
+  if (pathname?.startsWith('/projects/gitaudit')) {
+    return [
+      'What security checks does GitAudit perform?',
+      'How does automated security triage work in GitAudit?',
+      'What is GitAudit\'s tech stack?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/forma')) {
+    return [
+      'What makes Forma\'s design system unique?',
+      'What components does Forma provide?',
+      'How is Forma architected?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/gemini-mcp')) {
+    return [
+      'What tools does Gemini-MCP expose?',
+      'How does Model Context Protocol work in Gemini-MCP?',
+      'How do I run Gemini-MCP locally?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/rsvp-shift')) {
+    return [
+      'How does RSVP-Shift handle scheduling?',
+      'What is the full-stack architecture of RSVP-Shift?',
+      'How does the relay backend work?',
+    ];
+  }
+  if (pathname?.startsWith('/projects/portfolio')) {
+    return [
+      'How is this portfolio website built?',
+      'Tell me about the 3D WebGL scenes',
+      'How does the local CMS work?',
+    ];
+  }
+  if (pathname === '/contact') {
+    return [
+      'What collaboration opportunities is Hazem open to?',
+      'How can I reach Hazem directly?',
+      'Where can I download Hazem\'s CV?',
+    ];
+  }
+  if (pathname?.startsWith('/blog')) {
+    return [
+      'What technical topics does Hazem write about?',
+      'Summarize his latest blog post',
+      'What research in AI is Hazem focusing on?',
+    ];
+  }
+  return [
+    'What is Hazem working on right now?',
+    'Tell me about Arbiter\'s architecture',
+    'Summarize his experience at Siemens & Imperial',
+  ];
+}
 
 function parseMessageContent(text) {
   if (!text) return { cleanText: '', suggestions: [] };
@@ -60,10 +140,97 @@ function getMessagePartsData(message) {
 }
 
 export default function PortfolioChat() {
+  const pathname = usePathname() || '/';
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
+  const [activeSpotlight, setActiveSpotlight] = useState(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const seenSpotlightsRef = useRef(new Set());
+  const spotlightTimeoutRef = useRef(null);
+
+  const starterQuestions = useMemo(() => getStarterQuestions(pathname), [pathname]);
+
+  const triggerSpotlight = (targetId) => {
+    if (typeof window === 'undefined' || !targetId) return;
+
+    const cleanId = String(targetId).trim();
+
+    // If target relates to a skill, also dispatch select-skill event
+    if (cleanId.startsWith('skill-')) {
+      window.dispatchEvent(new CustomEvent('portfolio:select-skill', { detail: { skillId: cleanId } }));
+    }
+
+    // If target relates to showcase tabs, also dispatch select-showcase-tab event
+    if (cleanId.startsWith('tab-') || cleanId.startsWith('showcase-')) {
+      window.dispatchEvent(new CustomEvent('portfolio:select-showcase-tab', { detail: { tabId: cleanId } }));
+    }
+
+    const element = document.querySelector(`[data-highlight-id="${cleanId}"], #${CSS.escape(cleanId)}`);
+    if (!element) return;
+
+    // Smooth center into view
+    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+
+    const calcRect = () => {
+      const rect = element.getBoundingClientRect();
+      return {
+        id: cleanId,
+        top: Math.max(0, rect.top - 8),
+        left: Math.max(0, rect.left - 8),
+        width: rect.width + 16,
+        height: rect.height + 16,
+      };
+    };
+
+    setActiveSpotlight(calcRect());
+
+    // Update after smooth scroll settles
+    const timer1 = setTimeout(() => {
+      setActiveSpotlight(calcRect());
+    }, 250);
+    const timer2 = setTimeout(() => {
+      setActiveSpotlight(calcRect());
+    }, 500);
+
+    element.classList.remove('chat-spotlight-active');
+    void element.offsetWidth; // force DOM reflow
+    element.classList.add('chat-spotlight-active');
+
+    if (spotlightTimeoutRef.current) clearTimeout(spotlightTimeoutRef.current);
+    spotlightTimeoutRef.current = setTimeout(() => {
+      setActiveSpotlight(null);
+      element.classList.remove('chat-spotlight-active');
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    }, 4500);
+  };
+
+  // Keep spotlight cutout in sync during scrolling and window resizing
+  useEffect(() => {
+    if (!activeSpotlight?.id) return undefined;
+    const element = document.querySelector(`[data-highlight-id="${activeSpotlight.id}"], #${CSS.escape(activeSpotlight.id)}`);
+    if (!element) return undefined;
+
+    const handleUpdate = () => {
+      const rect = element.getBoundingClientRect();
+      setActiveSpotlight((prev) => (prev ? {
+        ...prev,
+        top: Math.max(0, rect.top - 8),
+        left: Math.max(0, rect.left - 8),
+        width: rect.width + 16,
+        height: rect.height + 16,
+      } : null));
+    };
+
+    window.addEventListener('scroll', handleUpdate, { passive: true });
+    window.addEventListener('resize', handleUpdate, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleUpdate);
+      window.removeEventListener('resize', handleUpdate);
+    };
+  }, [activeSpotlight?.id]);
+
   const {
     clearError,
     error,
@@ -73,10 +240,27 @@ export default function PortfolioChat() {
     status,
     stop,
   } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: '/api/chat', body: { pathname } }),
   });
 
   const isBusy = status === 'submitted' || status === 'streaming';
+
+  useEffect(() => {
+    for (const msg of messages) {
+      for (const part of msg.parts || []) {
+        const toolName = part.type?.replace(/^tool-/, '') || part.toolName;
+        if (toolName === 'spotlightPageElement') {
+          const data = part.output || part.input || part.args || {};
+          const targetId = data.targetId;
+          const partKey = `${msg.id}-${targetId}`;
+          if (targetId && !seenSpotlightsRef.current.has(partKey)) {
+            seenSpotlightsRef.current.add(partKey);
+            triggerSpotlight(targetId);
+          }
+        }
+      }
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -105,7 +289,7 @@ export default function PortfolioChat() {
 
     clearError();
     setInput('');
-    sendMessage({ text: question });
+    sendMessage({ text: question }, { body: { pathname } });
   };
 
   const handleSubmit = (event) => {
@@ -117,6 +301,7 @@ export default function PortfolioChat() {
     stop();
     clearError();
     setMessages([]);
+    seenSpotlightsRef.current.clear();
     setInput('');
     inputRef.current?.focus();
   };
@@ -231,6 +416,50 @@ export default function PortfolioChat() {
 
   return (
     <>
+      {/* Screen Dimming Spotlight Cutout Overlay */}
+      <AnimatePresence>
+        {activeSpotlight && (
+          <motion.div
+            key="chat-spotlight-dimming-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => {
+              if (spotlightTimeoutRef.current) clearTimeout(spotlightTimeoutRef.current);
+              setActiveSpotlight(null);
+            }}
+            className="fixed inset-0 z-[70] cursor-pointer"
+            title="Click anywhere to dismiss spotlight"
+          >
+            <motion.div
+              layout
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                position: 'fixed',
+                top: activeSpotlight.top,
+                left: activeSpotlight.left,
+                width: activeSpotlight.width,
+                height: activeSpotlight.height,
+                borderRadius: '4px',
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.76), 0 0 32px rgba(220, 254, 76, 0.9), inset 0 0 18px rgba(220, 254, 76, 0.2)',
+                border: '2px solid var(--color-primary-fixed, #dcfe4c)',
+                pointerEvents: 'none',
+              }}
+            >
+              {/* Cyber Corner Marks */}
+              <span style={{ position: 'absolute', top: -3, left: -3, width: 8, height: 8, borderTop: '2px solid var(--color-primary-fixed, #dcfe4c)', borderLeft: '2px solid var(--color-primary-fixed, #dcfe4c)' }} />
+              <span style={{ position: 'absolute', top: -3, right: -3, width: 8, height: 8, borderTop: '2px solid var(--color-primary-fixed, #dcfe4c)', borderRight: '2px solid var(--color-primary-fixed, #dcfe4c)' }} />
+              <span style={{ position: 'absolute', bottom: -3, left: -3, width: 8, height: 8, borderBottom: '2px solid var(--color-primary-fixed, #dcfe4c)', borderLeft: '2px solid var(--color-primary-fixed, #dcfe4c)' }} />
+              <span style={{ position: 'absolute', bottom: -3, right: -3, width: 8, height: 8, borderBottom: '2px solid var(--color-primary-fixed, #dcfe4c)', borderRight: '2px solid var(--color-primary-fixed, #dcfe4c)' }} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <button
         type="button"
         className={`${styles.trigger} ${isOpen ? styles.triggerHidden : ''}`}

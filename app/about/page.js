@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
@@ -18,6 +18,24 @@ export default function AboutPage() {
   const [selectedSkillId, setSelectedSkillId] = useState(skillsWithProvenance[0].id);
   const [activeTag, setActiveTag] = useState(null);
   const hoverTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleSelectSkill = (e) => {
+      const { skillId } = e.detail || {};
+      if (skillId) {
+        const cleanId = skillId.replace(/^skill-/, '').toLowerCase();
+        const matched = skillsWithProvenance.find(
+          (s) => s.id.toLowerCase() === cleanId || s.shortName.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanId
+        );
+        if (matched) {
+          setSelectedCategory('all');
+          setSelectedSkillId(matched.id);
+        }
+      }
+    };
+    window.addEventListener('portfolio:select-skill', handleSelectSkill);
+    return () => window.removeEventListener('portfolio:select-skill', handleSelectSkill);
+  }, [skillsWithProvenance]);
 
   const filteredSkills = selectedCategory === 'all'
     ? skillsWithProvenance
@@ -49,7 +67,7 @@ export default function AboutPage() {
           <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-border-primary lg:h-[680px]">
             
             {/* Col 1 — About Me (4 cols) */}
-            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary flex flex-col justify-between h-full">
+            <div data-highlight-id="about-bio" className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary flex flex-col justify-between h-full">
               <div>
                 <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase mb-8">
                   {copy.eyebrow || `${'//'} ABOUT ME`}
@@ -84,7 +102,7 @@ export default function AboutPage() {
             </div>
 
             {/* Col 2 — Capabilities & Stack (4 cols) with Floating Active Indicator */}
-            <div className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary bg-surface/50 flex flex-col justify-between h-full">
+            <div data-highlight-id="about-skills" className="lg:col-span-4 p-[28px] border-b lg:border-b-0 lg:border-r border-border-primary bg-surface/50 flex flex-col justify-between h-full">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-[11px] leading-[1.2] tracking-[0.04em] font-medium text-primary-fixed uppercase">
@@ -132,6 +150,7 @@ export default function AboutPage() {
                     return (
                       <button
                         key={skill.id}
+                        data-highlight-id={`skill-${skill.id}`}
                         onClick={() => handleSkillClick(skill.id)}
                         onMouseEnter={() => handleSkillHover(skill.id)}
                         className={`relative w-full text-left p-2.5 border transition-all flex items-center justify-between group overflow-hidden ${
@@ -188,7 +207,7 @@ export default function AboutPage() {
             </div>
 
             {/* Col 3 — Skill Details (4 cols) with Fast AnimatePresence & TiltCards */}
-            <div className="lg:col-span-4 p-[28px] bg-surface-container-lowest flex flex-col justify-between h-full relative overflow-hidden">
+            <div data-highlight-id="about-skill-details" className="lg:col-span-4 p-[28px] bg-surface-container-lowest flex flex-col justify-between h-full relative overflow-hidden">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={activeSkill.id}
@@ -324,11 +343,13 @@ export default function AboutPage() {
 
         {/* BOTTOM SECTION — Unified Tri-Mode Timeline with Active Scroll Progress Beam */}
         <SectionReveal>
-          <ScrollTimeline
-            id="timeline"
-            experience={experience}
-            education={education}
-          />
+          <div data-highlight-id="about-timeline">
+            <ScrollTimeline
+              id="timeline"
+              experience={experience}
+              education={education}
+            />
+          </div>
         </SectionReveal>
       </main>
     </>

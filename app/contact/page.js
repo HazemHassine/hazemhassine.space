@@ -39,7 +39,7 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 max-w-6xl">
             {/* Left Column: Contact Info */}
             <SectionReveal delay={0.1}>
-              <div className="flex flex-col space-y-12">
+              <div data-highlight-id="contact-details" className="flex flex-col space-y-12">
                 <div>
                   <h2 className="font-[family-name:var(--font-display)] text-[64px] md:text-[80px] font-extrabold leading-[0.85] tracking-[-0.04em] text-outline uppercase">
                     {(copy.displayTitle || "LET'S\nTALK").split('\n').map((line, index) => <span key={line}>{index > 0 && <br />}{line}</span>)}
@@ -103,6 +103,7 @@ export default function Contact() {
                   <Hero3DObject />
                 </div>
               <form
+                data-highlight-id="contact-form"
                 className="relative z-10 flex flex-col space-y-6 bg-surface/90 backdrop-blur-sm p-8 border border-border-primary"
                 onSubmit={async (e) => {
                   e.preventDefault();
