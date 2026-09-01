@@ -42,7 +42,7 @@ export default async function BlogPage({ cmsData } = {}) {
                   >
                     <div className="flex items-center justify-between gap-4 w-full">
                       <div className="flex min-w-0 flex-1 items-center space-x-8">
-                        <span className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted w-12">
+                        <span className="w-12 shrink-0 font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-text-muted">
                           {(index + 1).toString().padStart(3, '0')}
                         </span>
                         <span className="min-w-0 font-[family-name:var(--font-mono)] text-[17px] font-medium tracking-wide text-secondary-fixed-dim group-hover:text-primary leading-[1.75]">
