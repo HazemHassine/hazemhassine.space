@@ -6,6 +6,7 @@ import "./globals.css";
 import CustomCursor from "../components/CustomCursor";
 import CmsProvider from "@/components/CmsProvider";
 import { getClientCmsData, getPublishedCmsData } from "@/lib/cms-server";
+import { createPageMetadata, SITE_URL } from "@/lib/seo";
 
 const inter = Inter({
   variable: "--font-display",
@@ -28,18 +29,14 @@ export async function generateMetadata() {
   const description = seo.siteDescription || cms.siteConfig?.tagline;
 
   return {
-    title,
-    description,
-    keywords: seo.keywords,
-    authors: [{ name: cms.siteConfig?.name || "Hazem Hassine" }],
-    openGraph: {
+    metadataBase: new URL(SITE_URL),
+    ...createPageMetadata({
       title,
       description,
-      url: "https://hazemhassine.space",
       siteName: cms.siteConfig?.name || "Hazem Hassine",
-      type: "website",
-    },
-    twitter: { card: "summary_large_image", title, description },
+    }),
+    keywords: seo.keywords,
+    authors: [{ name: cms.siteConfig?.name || "Hazem Hassine" }],
   };
 }
 

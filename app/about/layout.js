@@ -1,8 +1,10 @@
 import { getPublishedCmsData } from '@/lib/cms-server';
+import { createPageMetadata } from '@/lib/seo';
 
 export async function generateMetadata() {
   const cms = await getPublishedCmsData();
-  return cms.pageContent?.seo?.pages?.about || {};
+  const seo = cms.pageContent?.seo?.pages?.about || {};
+  return createPageMetadata({ ...seo, pathname: '/about', siteName: cms.siteConfig?.name });
 }
 
 export default function AboutLayout({ children }) {

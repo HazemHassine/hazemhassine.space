@@ -4,12 +4,14 @@ import SectionReveal from '@/components/SectionReveal';
 import { getAllPosts } from '@/lib/markdown';
 import Link from 'next/link';
 import { getPublishedCmsData } from '@/lib/cms-server';
+import { createPageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
   const cms = await getPublishedCmsData();
-  return cms.pageContent?.seo?.pages?.blog || {};
+  const seo = cms.pageContent?.seo?.pages?.blog || {};
+  return createPageMetadata({ ...seo, pathname: '/blog', siteName: cms.siteConfig?.name });
 }
 
 export default async function BlogPage({ cmsData } = {}) {

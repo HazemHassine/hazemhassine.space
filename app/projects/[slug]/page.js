@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { projectsDetail, getAllProjectSlugs } from '@/lib/projects-data';
 import ProjectShowcaseView from '@/components/ProjectShowcaseView';
 import { getPublishedCmsData } from '@/lib/cms-server';
+import { createPageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,15 +39,13 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  return {
-    title: `${project.title} — ${project.subtitle} | HAZEM HASSINE`,
+  const title = `${project.title} — ${project.subtitle} | HAZEM HASSINE`;
+  return createPageMetadata({
+    title,
     description: project.summary,
-    openGraph: {
-      title: `${project.title} — ${project.subtitle}`,
-      description: project.summary,
-      images: project.screenshots?.[0]?.src ? [project.screenshots[0].src] : undefined,
-    },
-  };
+    pathname: `/projects/${project.slug}`,
+    image: project.screenshots?.[0]?.src || project.image,
+  });
 }
 
 export default async function ProjectPage({ params, cmsData } = {}) {

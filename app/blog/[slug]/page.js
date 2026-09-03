@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import MobileMenu from '@/components/MobileMenu';
+import { createPageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
@@ -20,10 +21,13 @@ export async function generateMetadata({ params }) {
   const post = await getPostBySlug(resolvedParams.slug);
   if (!post) return { title: 'Not Found' };
   
-  return {
+  return createPageMetadata({
     title: `${post.title} | HAZEM HASSINE`,
     description: post.summary,
-  };
+    pathname: `/blog/${post.slug}`,
+    type: 'article',
+    image: post.image || post.coverImage,
+  });
 }
 
 export default async function BlogPost({ params }) {
