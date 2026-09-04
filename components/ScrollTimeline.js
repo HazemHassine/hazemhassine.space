@@ -2,12 +2,70 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import dynamic from 'next/dynamic';
+import { getExperienceArtifactProfile } from '@/lib/experience-artifacts';
+import previewStyles from './Experience3DPreview.module.css';
+
+const ExperienceWireframeScene = dynamic(
+  () => import('@/components/ExperienceWireframeScene'),
+  { ssr: false }
+);
+
+function haveSameValues(first, second) {
+  return first.size === second.size && [...first].every((value) => second.has(value));
+}
+
+function TimelineArtifactPreview({ profile, inspectedPart, onInspect, reducedMotion }) {
+  return (
+    <aside
+      className="fixed right-6 top-20 z-30 hidden w-[390px] overflow-hidden border border-border-primary bg-surface shadow-[16px_16px_0_rgba(0,0,0,0.24)] xl:block"
+      aria-live="polite"
+    >
+      <div className={`${previewStyles.sceneStage} relative h-[300px]`}>
+        <div className={previewStyles.stageGrid} aria-hidden="true" />
+        <ExperienceWireframeScene
+          mode={profile.mode}
+          reducedMotion={reducedMotion}
+          onInspect={onInspect}
+        />
+
+        {inspectedPart && (
+          <div className="pointer-events-none absolute bottom-4 left-4 right-4 border-l-2 border-primary-fixed bg-black/85 px-4 py-3 backdrop-blur-sm">
+            <div className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-fixed">
+              {inspectedPart.label}
+            </div>
+            <p className="font-mono text-[10px] leading-[1.55] text-text-muted">
+              {inspectedPart.description}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="border-t border-border-primary p-4">
+        <div className="mb-1 flex items-center justify-between gap-3">
+          <h3 className="font-[family-name:var(--font-display)] text-[18px] font-bold uppercase leading-none text-primary">
+            {profile.title}
+          </h3>
+          <span className="shrink-0 bg-primary-fixed px-1.5 py-1 font-mono text-[8px] font-bold tracking-[0.08em] text-on-primary-fixed">
+            {profile.signal}
+          </span>
+        </div>
+        <p className="font-mono text-[10px] leading-[1.55] text-text-muted">{profile.note}</p>
+      </div>
+    </aside>
+  );
+}
 
 export default function ScrollTimeline({ id = 'timeline', experience = [], education = [] }) {
   const [activeTab, setActiveTab] = useState('experience');
+  const [hoveredExperience, setHoveredExperience] = useState(null);
+  const [inspectedPart, setInspectedPart] = useState(null);
+  const [canRenderPreview, setCanRenderPreview] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const containerRef = useRef(null);
   const railRef = useRef(null);
   const itemRefs = useRef([]);
+  const previewTimeoutRef = useRef(null);
   const [activeItems, setActiveItems] = useState(() => new Set());
   const [railBounds, setRailBounds] = useState({ top: 12, height: 400 });
 
@@ -51,6 +109,51 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
       ? formattedEducation
       : combinedList;
 
+  const hoveredProfile = hoveredExperience
+    ? getExperienceArtifactProfile(hoveredExperience.company, hoveredExperience.index)
+    : null;
+
+  const cancelPreviewClose = useCallback(() => {
+    if (previewTimeoutRef.current) {
+      clearTimeout(previewTimeoutRef.current);
+      previewTimeoutRef.current = null;
+    }
+  }, []);
+
+  const openPreview = useCallback((item, index) => {
+    cancelPreviewClose();
+    setInspectedPart(null);
+    setHoveredExperience({ ...item, index });
+  }, [cancelPreviewClose]);
+
+  const closePreviewSoon = useCallback(() => {
+    cancelPreviewClose();
+    previewTimeoutRef.current = setTimeout(() => {
+      setHoveredExperience(null);
+      setInspectedPart(null);
+    }, 700);
+  }, [cancelPreviewClose]);
+
+  useEffect(() => () => cancelPreviewClose(), [cancelPreviewClose]);
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 1280px)');
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreferences = () => {
+      setCanRenderPreview(desktopQuery.matches);
+      setReduceMotion(motionQuery.matches);
+    };
+
+    updatePreferences();
+    desktopQuery.addEventListener('change', updatePreferences);
+    motionQuery.addEventListener('change', updatePreferences);
+
+    return () => {
+      desktopQuery.removeEventListener('change', updatePreferences);
+      motionQuery.removeEventListener('change', updatePreferences);
+    };
+  }, []);
+
   // Viewport scroll tracking:
   // Starts when container reaches comfortable reading zone (70% viewport),
   // reaches 100% when user reaches the absolute bottom of the page ('end end').
@@ -86,7 +189,7 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
 
       // If at top or 0 progress, clear all active items
       if (currentProgress <= 0.005) {
-        setActiveItems(new Set());
+        setActiveItems((previous) => (previous.size === 0 ? previous : new Set()));
         return;
       }
 
@@ -114,7 +217,9 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
         }
       }
 
-      setActiveItems(newActive);
+      setActiveItems((previous) => (
+        haveSameValues(previous, newActive) ? previous : newActive
+      ));
     },
     [currentItems.length, railBounds, scrollYProgress]
   );
@@ -263,6 +368,12 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
                   ref={(el) => {
                     itemRefs.current[index] = el;
                   }}
+                  onPointerEnter={() => {
+                    if (item.company) openPreview(item, index);
+                  }}
+                  onPointerLeave={() => {
+                    if (item.company) closePreviewSoon();
+                  }}
                   className="relative pl-8 flex flex-col md:flex-row md:items-start gap-2 md:gap-10 group"
                 >
                   {/* Milestone Marker Square — lights up the exact moment the beam hits it */}
@@ -309,12 +420,22 @@ export default function ScrollTimeline({ id = 'timeline', experience = [], educa
                       {item.description}
                     </p>
                   </div>
+
+                  {canRenderPreview && item.company && hoveredExperience?.company === item.company && hoveredProfile && (
+                    <TimelineArtifactPreview
+                      profile={hoveredProfile}
+                      inspectedPart={inspectedPart}
+                      onInspect={setInspectedPart}
+                      reducedMotion={reduceMotion}
+                    />
+                  )}
                 </div>
               );
             })}
           </motion.div>
         </AnimatePresence>
       </div>
+
     </section>
   );
 }
