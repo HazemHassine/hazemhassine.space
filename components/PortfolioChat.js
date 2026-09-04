@@ -144,10 +144,112 @@ export default function PortfolioChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [activeSpotlight, setActiveSpotlight] = useState(null);
+  const [selectionToolbar, setSelectionToolbar] = useState(null);
+  const [quotedSelection, setQuotedSelection] = useState(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const seenSpotlightsRef = useRef(new Set());
   const spotlightTimeoutRef = useRef(null);
+
+  // Monitor text selection across the page
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const updateSelectionToolbar = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectionToolbar(null);
+        return;
+      }
+
+      const text = selection.toString().trim();
+      if (!text || text.length < 2 || text.length > 1500) {
+        setSelectionToolbar(null);
+        return;
+      }
+
+      // Check if selection is within the chat container or form elements
+      const anchorNode = selection.anchorNode;
+      const focusNode = selection.focusNode;
+      const getClosest = (n) => (n?.nodeType === Node.ELEMENT_NODE ? n : n?.parentElement);
+      const elAnchor = getClosest(anchorNode);
+      const elFocus = getClosest(focusNode);
+
+      if (
+        elAnchor?.closest('#portfolio-chat-root, input, textarea, select, button, [role="button"]') ||
+        elFocus?.closest('#portfolio-chat-root, input, textarea, select, button, [role="button"]')
+      ) {
+        setSelectionToolbar(null);
+        return;
+      }
+
+      if (selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      if (!rect || (rect.width === 0 && rect.height === 0)) {
+        setSelectionToolbar(null);
+        return;
+      }
+
+      const toolbarHeight = 36;
+      const toolbarWidth = 145;
+      const spaceAbove = rect.top;
+      const top = spaceAbove > toolbarHeight + 10
+        ? rect.top - toolbarHeight - 8
+        : rect.bottom + 8;
+      const left = Math.max(
+        12,
+        Math.min(window.innerWidth - toolbarWidth - 12, rect.left + rect.width / 2 - toolbarWidth / 2)
+      );
+
+      setSelectionToolbar({
+        text,
+        top,
+        left,
+      });
+    };
+
+    let timer = null;
+    const debouncedCheck = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(updateSelectionToolbar, 30);
+    };
+
+    const handleSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectionToolbar(null);
+      } else {
+        debouncedCheck();
+      }
+    };
+
+    const handleScrollOrResize = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectionToolbar(null);
+      } else {
+        debouncedCheck();
+      }
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    document.addEventListener('mouseup', debouncedCheck);
+    document.addEventListener('touchend', debouncedCheck);
+    document.addEventListener('keyup', debouncedCheck);
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
+    window.addEventListener('resize', handleScrollOrResize, { passive: true });
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      document.removeEventListener('selectionchange', handleSelectionChange);
+      document.removeEventListener('mouseup', debouncedCheck);
+      document.removeEventListener('touchend', debouncedCheck);
+      document.removeEventListener('keyup', debouncedCheck);
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, []);
 
   const starterQuestions = useMemo(() => getStarterQuestions(pathname), [pathname]);
 
@@ -283,6 +385,43 @@ export default function PortfolioChat() {
     }
   }, [isOpen, messages, status]);
 
+  const handleAskSelection = (selectedText) => {
+    const cleanText = (selectedText || selectionToolbar?.text || '').trim();
+    if (!cleanText) return;
+    setQuotedSelection(cleanText);
+    setIsOpen(true);
+    setSelectionToolbar(null);
+    if (typeof window !== 'undefined') {
+      window.getSelection()?.removeAllRanges();
+    }
+  };
+
+  const handleOpenChat = () => {
+    if (typeof window !== 'undefined') {
+      const selection = window.getSelection();
+      const text = selection && !selection.isCollapsed ? selection.toString().trim() : '';
+      if (text && text.length >= 2) {
+        setQuotedSelection(text);
+        setSelectionToolbar(null);
+      }
+    }
+    setIsOpen(true);
+  };
+
+  const handleQuoteQuickAsk = (actionType) => {
+    if (!quotedSelection || isBusy) return;
+    let prompt = '';
+    if (actionType === 'explain') {
+      prompt = `Can you explain this excerpt from the page and how it relates to Hazem?\n\n"${quotedSelection}"`;
+    } else if (actionType === 'experience') {
+      prompt = `How does Hazem's background, skills, or projects relate to this excerpt:\n\n"${quotedSelection}"?`;
+    } else if (actionType === 'summarize') {
+      prompt = `Summarize the significance of this excerpt from the page in Hazem's portfolio:\n\n"${quotedSelection}"`;
+    }
+    setQuotedSelection(null);
+    submitMessage(prompt);
+  };
+
   const submitMessage = useCallback((text) => {
     const question = text.trim();
     if (!question || isBusy) return;
@@ -298,7 +437,7 @@ export default function PortfolioChat() {
   });
 
   useEffect(() => {
-    const handleOpenChat = (event) => {
+    const handleOpenChatEvent = (event) => {
       setIsOpen(true);
       const prompt = event.detail?.prompt;
       if (prompt) {
@@ -308,12 +447,23 @@ export default function PortfolioChat() {
       }
     };
 
-    window.addEventListener('open-portfolio-chat', handleOpenChat);
-    return () => window.removeEventListener('open-portfolio-chat', handleOpenChat);
+    window.addEventListener('open-portfolio-chat', handleOpenChatEvent);
+    return () => window.removeEventListener('open-portfolio-chat', handleOpenChatEvent);
   }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!input.trim() && quotedSelection) {
+      handleQuoteQuickAsk('explain');
+      return;
+    }
+    if (quotedSelection) {
+      const userPrompt = input.trim();
+      const quote = quotedSelection;
+      setQuotedSelection(null);
+      submitMessage(`Regarding the selected text "${quote}":\n\n${userPrompt}`);
+      return;
+    }
     submitMessage(input);
   };
 
@@ -322,6 +472,7 @@ export default function PortfolioChat() {
     clearError();
     setMessages([]);
     seenSpotlightsRef.current.clear();
+    setQuotedSelection(null);
     setInput('');
     inputRef.current?.focus();
   };
@@ -543,10 +694,44 @@ export default function PortfolioChat() {
         )}
       </AnimatePresence>
 
+      {/* Floating Text Selection "Ask Hazem_AI" Pill */}
+      <AnimatePresence>
+        {selectionToolbar && (
+          <motion.button
+            key="chat-selection-toolbar"
+            type="button"
+            className={styles.selectionToolbar}
+            style={{
+              top: selectionToolbar.top,
+              left: selectionToolbar.left,
+            }}
+            initial={{ opacity: 0, scale: 0.9, y: 4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 2 }}
+            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onClick={() => handleAskSelection(selectionToolbar.text)}
+            aria-label="Ask Hazem AI about selected text"
+          >
+            <span className={styles.selectionToolbarIcon} aria-hidden="true">H/</span>
+            <span>ASK HAZEM_AI</span>
+            <span className={`material-symbols-outlined ${styles.selectionToolbarArrow}`} aria-hidden="true">
+              arrow_outward
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       <button
         type="button"
         className={`${styles.trigger} ${isOpen ? styles.triggerHidden : ''}`}
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpenChat}
         aria-label="Ask Hazem's portfolio assistant"
         aria-expanded={isOpen}
       >
@@ -744,6 +929,56 @@ export default function PortfolioChat() {
 
               <form className={styles.composer} onSubmit={handleSubmit}>
                 <label htmlFor="portfolio-chat-input">YOUR QUESTION</label>
+
+                {quotedSelection && (
+                  <div className={styles.quotedBanner}>
+                    <div className={styles.quotedHeader}>
+                      <div className={styles.quotedTag}>
+                        <span className="material-symbols-outlined">format_quote</span>
+                        <span>QUOTED EXCERPT</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.quotedDismissBtn}
+                        onClick={() => setQuotedSelection(null)}
+                        aria-label="Dismiss quoted text"
+                        title="Dismiss quoted text"
+                      >
+                        <span className="material-symbols-outlined">close</span>
+                      </button>
+                    </div>
+                    <div className={styles.quotedTextPreview}>
+                      &ldquo;{quotedSelection.length > 220 ? `${quotedSelection.slice(0, 217)}…` : quotedSelection}&rdquo;
+                    </div>
+                    <div className={styles.quotedActions}>
+                      <button
+                        type="button"
+                        className={styles.quoteActionBtn}
+                        onClick={() => handleQuoteQuickAsk('explain')}
+                        disabled={isBusy}
+                      >
+                        <span>+</span> Explain this
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.quoteActionBtn}
+                        onClick={() => handleQuoteQuickAsk('experience')}
+                        disabled={isBusy}
+                      >
+                        <span>+</span> Hazem&apos;s experience
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.quoteActionBtn}
+                        onClick={() => handleQuoteQuickAsk('summarize')}
+                        disabled={isBusy}
+                      >
+                        <span>+</span> Summarize
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className={styles.inputRow}>
                   <textarea
                     ref={inputRef}
@@ -758,13 +993,17 @@ export default function PortfolioChat() {
                     }}
                     maxLength={500}
                     rows={2}
-                    placeholder="Ask about experience, projects, skills..."
+                    placeholder={
+                      quotedSelection
+                        ? 'Ask about this selection, click a quick prompt, or press Enter...'
+                        : 'Ask about experience, projects, skills...'
+                    }
                     disabled={isBusy}
                   />
                   <button
                     type={isBusy ? 'button' : 'submit'}
                     onClick={isBusy ? stop : undefined}
-                    disabled={!isBusy && input.trim().length === 0}
+                    disabled={!isBusy && input.trim().length === 0 && !quotedSelection}
                     aria-label={isBusy ? 'Stop response' : 'Send message'}
                   >
                     <span className="material-symbols-outlined">
