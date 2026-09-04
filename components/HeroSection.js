@@ -23,9 +23,9 @@ export default function HeroSection({ siteConfig, projects }) {
   };
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto_0.6fr] border-b border-border-primary">
+    <section className={`${styles.heroGrid} grid grid-cols-1 border-b border-border-primary`}>
       {/* Left Column */}
-      <div className="p-[28px] lg:p-12 relative z-20">
+      <div className={`${styles.introColumn} p-[28px] lg:p-8 2xl:p-12 relative z-20`}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -63,7 +63,7 @@ export default function HeroSection({ siteConfig, projects }) {
       </div>
 
       {/* Middle Column */}
-      <div className={`${styles.portraitStage} min-h-[500px] md:min-h-[600px] w-full max-w-full md:min-w-[300px] lg:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 md:p-12 overflow-hidden`}>
+      <div className={`${styles.portraitStage} min-h-[500px] md:min-h-[600px] w-full max-w-full md:min-w-[300px] 2xl:min-w-[500px] border-r border-border-primary relative flex items-center justify-center p-6 lg:p-8 2xl:p-12 overflow-hidden`}>
         {/* Global Grid Background */}
         <div className="grid-background absolute inset-0 pointer-events-none opacity-20"></div>
         
@@ -72,7 +72,7 @@ export default function HeroSection({ siteConfig, projects }) {
         
         {/* The portrait container (Uncropped/Controlled aspect ratio) */}
         <div 
-          className={`${styles.portraitFrame} relative w-[320px] md:w-[460px] aspect-[4/5] z-10`}
+          className={`${styles.portraitFrame} relative w-full max-w-[320px] md:max-w-[460px] aspect-[4/5] z-10`}
         >
           <div className={styles.portraitFade}>
             <Image
@@ -101,7 +101,7 @@ export default function HeroSection({ siteConfig, projects }) {
       </div>
 
       {/* Right Column */}
-      <div className="p-[28px] lg:p-12 bg-surface-dim flex flex-col justify-between">
+      <div className={`${styles.projectFeature} p-[28px] lg:p-8 2xl:p-12 bg-surface-dim flex flex-col justify-between`}>
         <div>
           <div className="font-[family-name:var(--font-mono)] text-[11px] font-medium tracking-[0.04em] leading-[1.2] text-primary-fixed mb-4">
             SELECTED PROJECT
