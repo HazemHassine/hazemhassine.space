@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { getPortfolioContext } from '@/lib/portfolio-context';
 import { projectsDetail } from '@/lib/projects-data';
 import { skillsWithProvenance } from '@/lib/skillsData';
+import { VAULT_CARDS } from '@/lib/vault/vault-cards';
 
 export const maxDuration = 60;
 
@@ -53,7 +54,8 @@ CORE RULES:
   1. One direct opening sentence answering the core question.
   2. 2 to 4 concise bullet points highlighting key technical mechanics, layers, or evidence (1 brief sentence per bullet).
   3. Optional one-line takeaway or route link (e.g. [Arbiter Showcase](/projects/arbiter)).
-- DUAL RESPONSE (TEXT + INTERACTIVE TOOLS): Provide this crisp text answer AND invoke the appropriate tools (spotlightPageElement, displayProjectCard, recommendNavigation, displaySkillsProvenance) to attach interactive cards/buttons.
+- DUAL RESPONSE (TEXT + INTERACTIVE TOOLS): Provide this crisp text answer AND invoke the appropriate tools (spotlightPageElement, displayProjectCard, displayContextCard, recommendNavigation, displaySkillsProvenance) to attach interactive cards/buttons.
+- GROUNDING IN VERIFIED VAULT DATA: Whenever discussing Hazem's technical systems, telemetry metrics, or research, invoke displayContextCard to ground the answer in authentic facts and metrics.
 - Treat the profile as the only source of truth. Never invent dates, achievements, employers, project details, contact details, or personal facts.
 - If the answer is not in the profile, say you do not have that information and suggest the /contact page or CV download when appropriate.
 - Politely redirect unrelated questions back to Hazem's work, education, experience, projects, writing, or skills.
@@ -179,7 +181,8 @@ export async function POST(request) {
     return jsonError('A user question is required.', 400);
   }
 
-  const portfolioContext = await getPortfolioContext();
+  const userQuestion = getText(messages.at(-1));
+  const portfolioContext = await getPortfolioContext(userQuestion, activePage);
 
   const result = streamText({
     model,
@@ -278,6 +281,47 @@ export async function POST(request) {
             };
           }
           return params;
+        },
+      }),
+      displayContextCard: tool({
+        description: 'Display an authoritative Context Vault knowledge card for verified metrics, deep architectures, research milestones, or engineering ethos. Ground answers in verified proof and concrete metrics.',
+        parameters: z.object({
+          cardId: z.string().optional().describe('ID of the vault card (e.g. proj-arbiter, proj-forma, exp-siemens, exp-basira, metric-siemens-400k, metric-arbiter-risk, skill-langgraph)'),
+          title: z.string().describe('Descriptive card title'),
+          entity: z.string().describe('Target entity or organization (e.g. Siemens, Arbiter, FedLIMIT / Basira)'),
+          category: z.string().optional().describe('Card category (e.g. Projects & Systems, Metrics & Scale, Tech Arsenal, Research ML)'),
+          content: z.string().describe('Concrete factual summary with technical mechanics'),
+          metrics: z.array(z.string()).optional().describe('Key quantifiable metrics or benchmarks'),
+          tags: z.array(z.string()).optional().describe('Key technology or topic tags'),
+          showcaseUrl: z.string().nullable().optional().describe('Link to internal showcase page if applicable'),
+        }),
+        execute: async (params) => {
+          if (params.cardId) {
+            const card = VAULT_CARDS.find((c) => c.id === params.cardId);
+            if (card) {
+              return {
+                id: card.id,
+                title: card.title,
+                entity: card.entity,
+                category: card.category,
+                content: card.content,
+                metrics: card.metrics || [],
+                tags: card.tags || [],
+                showcaseUrl: card.showcaseUrl || null,
+                githubUrl: card.githubUrl || null,
+              };
+            }
+          }
+          return {
+            id: params.cardId || 'custom-vault-card',
+            title: params.title,
+            entity: params.entity,
+            category: params.category || 'experience_project',
+            content: params.content,
+            metrics: params.metrics || [],
+            tags: params.tags || [],
+            showcaseUrl: params.showcaseUrl || null,
+          };
         },
       }),
     },

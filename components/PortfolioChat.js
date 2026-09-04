@@ -5,7 +5,7 @@ import { DefaultChatTransport } from 'ai';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './PortfolioChat.module.css';
 
@@ -283,14 +283,34 @@ export default function PortfolioChat() {
     }
   }, [isOpen, messages, status]);
 
-  const submitMessage = (text) => {
+  const submitMessage = useCallback((text) => {
     const question = text.trim();
     if (!question || isBusy) return;
 
     clearError();
     setInput('');
     sendMessage({ text: question }, { body: { pathname } });
-  };
+  }, [clearError, isBusy, pathname, sendMessage]);
+
+  const submitMessageRef = useRef(submitMessage);
+  useEffect(() => {
+    submitMessageRef.current = submitMessage;
+  });
+
+  useEffect(() => {
+    const handleOpenChat = (event) => {
+      setIsOpen(true);
+      const prompt = event.detail?.prompt;
+      if (prompt) {
+        setTimeout(() => {
+          submitMessageRef.current?.(prompt);
+        }, 150);
+      }
+    };
+
+    window.addEventListener('open-portfolio-chat', handleOpenChat);
+    return () => window.removeEventListener('open-portfolio-chat', handleOpenChat);
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -405,6 +425,69 @@ export default function PortfolioChat() {
                   <span>{ev.summary}</span>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (toolName === 'displayContextCard') {
+      const categoryColor =
+        data.category === 'achievement_metric'
+          ? '#00ff9d'
+          : data.category === 'experience_project'
+            ? '#00f0ff'
+            : data.category === 'skills_arsenal'
+              ? '#ffb74d'
+              : data.category === 'education_credential'
+                ? '#b388ff'
+                : '#ffffff';
+
+      return (
+        <div key={partIdx} className={styles.vaultCard}>
+          <div className={styles.vaultCardHeader}>
+            <span
+              className={styles.vaultCardTag}
+              style={{ color: categoryColor, borderColor: `${categoryColor}40` }}
+            >
+              {data.entity || 'CONTEXT VAULT'}
+            </span>
+            <span className={styles.vaultCardBadge}>VERIFIED FACT</span>
+          </div>
+          <h4 className={styles.vaultCardTitle}>{data.title}</h4>
+          <p className={styles.vaultCardContent}>{data.content}</p>
+          {data.metrics && data.metrics.length > 0 && (
+            <div className={styles.vaultCardMetrics}>
+              {data.metrics.map((m, mIdx) => (
+                <span key={mIdx} className={styles.metricPill}>
+                  {m}
+                </span>
+              ))}
+            </div>
+          )}
+          {(data.showcaseUrl || data.githubUrl) && (
+            <div className={styles.vaultCardActions}>
+              {data.showcaseUrl && (
+                <Link
+                  href={data.showcaseUrl}
+                  className={styles.vaultActionPrimary}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span>SHOWCASE</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </Link>
+              )}
+              {data.githubUrl && (
+                <a
+                  href={data.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.vaultActionSecondary}
+                >
+                  <span>SOURCE CODE</span>
+                  <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                </a>
+              )}
             </div>
           )}
         </div>
