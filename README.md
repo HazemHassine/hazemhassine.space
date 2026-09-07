@@ -17,14 +17,15 @@ The interface uses a restrained neo-brutalist and cyberpunk-inspired visual lang
 
 ## Features
 
-- Portfolio, experience, education, and data-driven project case-study pages.
-- Supabase-backed blog with published-post filtering and repository Markdown fallbacks.
-- Structured content management with private drafts, page previews, publishing, and revision restoration.
-- Protected administration interface with TOTP authentication and signed JWT cookie sessions.
-- Markdown article editing, image and document uploads, a media library, and a contact inbox.
-- Interactive Three.js scenes through React Three Fiber, plus route and interface motion with Framer Motion.
-- Portfolio-scoped AI assistant using Google Gemini through the Vercel AI SDK.
-- Contact delivery through Resend, optional Supabase message persistence, dynamic metadata, Open Graph data, and sitemap generation.
+- **Dynamic Portfolio & Case Studies**: Comprehensive experience, education, and data-driven project case-study pages enhanced with 3D TiltCard physics, gliding spring tabs, and live telemetry.
+- **Interactive 3D Elements**: Seamless Three.js scenes integrated through React Three Fiber, alongside custom route and interface motion powered by Framer Motion.
+- **Hazem_AI Portfolio Assistant**: A portfolio-scoped AI assistant utilizing Google Gemini via the Vercel AI SDK. Features page text selection and direct querying for context-aware interactions.
+- **Void Grid Cyber Glider**: An interactive, cyberpunk-inspired mini-game built directly into the 404 page for a unique error-handling experience.
+- **Mobile-Optimized Interface**: Refined typography, custom interactive cursor, and responsive layout ensure a striking experience across all devices.
+- **Supabase-Backed Blog**: A robust blogging engine with published-post filtering and localized repository Markdown fallbacks.
+- **Content Management System**: Structured management with private drafts, page previews, publishing capabilities, and revision restoration.
+- **Protected Administration**: A secure interface guarded by TOTP authentication and signed JWT cookie sessions, enabling Markdown article editing, media library management, and inbox review.
+- **Contact Delivery**: Reliable message routing via Resend, optional Supabase persistence, dynamic metadata configuration, Open Graph data, and automatic sitemap generation.
 
 ## Tech Stack
 
