@@ -2,14 +2,15 @@
 
 import React, { useRef, useEffect } from 'react';
 
-export default function Marquee({ items = ["OPEN TO WORK", "AVAILABLE FOR FREELANCE", "CREATIVE DEVELOPER"] }) {
+export default function Marquee({ items = ["BUILDING AGENTIC WORKFLOWS", "RAG SYSTEMS", "DEVELOPER TOOLING", "HUMAN-IN-THE-LOOP AI", "SHIPPING TOO MANY SIDE PROJECTS"] }) {
   // We don't need to duplicate too many times if the items array is already populated, but for safety:
   const repeatedItems = [...items, ...items, ...items, ...items];
   
+  const BASE_SPEED = 0.0075; // Slower, calmer marquee drift speed
   const containerRef = useRef(null);
   const percentRef = useRef(0);
-  const velocityRef = useRef(0.015); // Slightly slower than before
-  const targetVelocityRef = useRef(0.015);
+  const velocityRef = useRef(BASE_SPEED);
+  const targetVelocityRef = useRef(BASE_SPEED);
   const lastTimeRef = useRef(0);
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Marquee({ items = ["OPEN TO WORK", "AVAILABLE FOR FREELA
     <div 
       className="w-full overflow-hidden border-y border-border-primary bg-surface py-3 flex group"
       onMouseEnter={() => { targetVelocityRef.current = 0; }}
-      onMouseLeave={() => { targetVelocityRef.current = 0.015; }}
+      onMouseLeave={() => { targetVelocityRef.current = BASE_SPEED; }}
     >
       {/* 
         We use w-max to ensure the container is exactly as wide as both blocks combined. 

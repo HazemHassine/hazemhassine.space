@@ -1,6 +1,25 @@
 import { notFound } from 'next/navigation';
-import { projectsDetail, getAllProjectSlugs, getProjectDetail, getAdjacentProjects } from '@/lib/projects-data';
+import { projectsDetail, getAllProjectSlugs } from '@/lib/projects-data';
 import ProjectShowcaseView from '@/components/ProjectShowcaseView';
+import { getPublishedCmsData } from '@/lib/cms-server';
+import { createPageMetadata } from '@/lib/seo';
+
+export const dynamic = 'force-dynamic';
+
+function findProject(projects, slug) {
+  if (!slug) return null;
+  const normalized = slug.toLowerCase().trim();
+  return projects.find((project) => project.slug === normalized || project.aliases?.includes(normalized)) || null;
+}
+
+function findAdjacent(projects, slug) {
+  const index = projects.findIndex((project) => project.slug === slug || project.aliases?.includes(slug));
+  if (index === -1 || projects.length === 0) return { prev: null, next: null };
+  return {
+    prev: index > 0 ? projects[index - 1] : projects.at(-1),
+    next: index < projects.length - 1 ? projects[index + 1] : projects[0],
+  };
+}
 
 export async function generateStaticParams() {
   const slugs = getAllProjectSlugs();
@@ -11,7 +30,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const project = getProjectDetail(resolvedParams.slug);
+  const cms = await getPublishedCmsData();
+  const project = findProject(cms.projectDetails || projectsDetail, resolvedParams.slug);
   
   if (!project) {
     return {
@@ -19,26 +39,26 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  return {
-    title: `${project.title} — ${project.subtitle} | HAZEM HASSINE`,
+  const title = `${project.title} — ${project.subtitle} | HAZEM HASSINE`;
+  return createPageMetadata({
+    title,
     description: project.summary,
-    openGraph: {
-      title: `${project.title} — ${project.subtitle}`,
-      description: project.summary,
-      images: project.screenshots?.[0]?.src ? [project.screenshots[0].src] : undefined,
-    },
-  };
+    pathname: `/projects/${project.slug}`,
+    image: project.screenshots?.[0]?.src || project.image,
+  });
 }
 
-export default async function ProjectPage({ params }) {
+export default async function ProjectPage({ params, cmsData } = {}) {
   const resolvedParams = await params;
-  const project = getProjectDetail(resolvedParams.slug);
+  const cms = cmsData || await getPublishedCmsData();
+  const allProjects = cms.projectDetails || projectsDetail;
+  const project = findProject(allProjects, resolvedParams.slug);
 
   if (!project) {
     notFound();
   }
 
-  const adjacent = getAdjacentProjects(project.slug);
+  const adjacent = findAdjacent(allProjects, project.slug);
 
   return <ProjectShowcaseView project={project} adjacent={adjacent} />;
 }

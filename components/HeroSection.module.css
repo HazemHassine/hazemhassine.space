@@ -1,3 +1,51 @@
+.heroGrid {
+  grid-template-areas:
+    'intro'
+    'portrait'
+    'project';
+}
+
+.introColumn {
+  grid-area: intro;
+}
+
+.portraitStage {
+  grid-area: portrait;
+}
+
+.projectFeature {
+  grid-area: project;
+}
+
+/*
+ * The sidebar reduces the usable page width on desktop. At browser zoom levels,
+ * a three-column hero can otherwise leave too little room for the project card.
+ * Keep the portrait and intro side-by-side here, and give the selected project a
+ * full-width row below them until the content area can support all three columns.
+ */
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+    grid-template-areas:
+      'intro portrait'
+      'project project';
+  }
+
+  .projectFeature {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr) auto minmax(280px, 0.6fr);
+    grid-template-areas: 'intro portrait project';
+  }
+}
+
 .portraitStage::before {
   position: absolute;
   inset: 0;

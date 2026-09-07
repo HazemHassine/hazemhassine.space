@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProtectedEmail from '@/components/ProtectedEmail';
-import { navigation, siteConfig } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
 export function MobileMenuTrigger({ onClick }) {
   return (
@@ -20,6 +20,7 @@ export function MobileMenuTrigger({ onClick }) {
 
 export function MobileMenuOverlay({ isOpen, onClose }) {
   const pathname = usePathname();
+  const { navigation, siteConfig } = useCms();
 
   return (
     <AnimatePresence>

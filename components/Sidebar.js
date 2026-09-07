@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ProtectedEmail from '@/components/ProtectedEmail';
-import { navigation, siteConfig } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { navigation, siteConfig } = useCms();
 
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-[180px] flex-col justify-between border-r border-border-primary bg-background px-6 py-[28px] md:flex z-40">

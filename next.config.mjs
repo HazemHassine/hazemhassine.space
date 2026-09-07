@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...(process.env.BUILD_STANDALONE === 'true' && { output: 'standalone' }),
+  outputFileTracingIncludes: {
+    '/*': ['./content/blog/**/*'],
+  },
   images: {
     remotePatterns: [
       {

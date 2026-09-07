@@ -9,23 +9,22 @@ import TopBar from '@/components/TopBar';
 import MobileMenu from '@/components/MobileMenu';
 import SectionReveal from '@/components/SectionReveal';
 import TiltCard from '@/components/TiltCard';
-import { projects, siteConfig, getProjectThumbnail } from '@/lib/data';
+import { getProjectThumbnail } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
-const projectCategories = [
-  { id: 'all', label: 'ALL PROJECTS' },
-  { id: 'ai-agents', label: 'AI & AGENTS' },
-  { id: 'dev-tools', label: 'DEV TOOLS & SRE' },
-  { id: 'data', label: 'BIG DATA & OSS' },
-  { id: 'frontend', label: 'FRONTEND & WEBGL' },
-];
+const IN_PROGRESS_PROJECTS = new Set(['arbiter', 'repotrajectory', 'gitaudit']);
 
 function ProjectCard({ project, index, onTagClick, activeTag }) {
   const [imageError, setImageError] = useState(false);
   const thumbnailUrl = getProjectThumbnail(project);
+  const projectStatus = project.status || (
+    IN_PROGRESS_PROJECTS.has(project.slug) ? 'STILL IN PROGRESS' : null
+  );
 
   return (
     <motion.div
       layout
+      data-highlight-id={`project-${project.slug}`}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
@@ -66,12 +65,18 @@ function ProjectCard({ project, index, onTagClick, activeTag }) {
 
             {/* Main Info Column */}
             <div className="flex-1 min-w-0 flex flex-col">
-              <div className="hidden md:flex items-center gap-3 mb-1">
-                <h2 className="font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-fixed leading-tight transition-colors duration-300">
+              <div className="flex flex-wrap items-center gap-2.5 mb-1">
+                <h2 className="hidden md:block font-[family-name:var(--font-display)] text-xl font-bold uppercase text-primary group-hover:text-primary-fixed leading-tight transition-colors duration-300">
                   {project.title}
                 </h2>
+                {projectStatus && (
+                  <span className="inline-flex items-center gap-1.5 border border-primary-fixed/60 bg-primary-fixed/10 px-2 py-0.5 text-[9px] font-mono font-bold tracking-wider text-primary-fixed">
+                    <span className="h-1.5 w-1.5 bg-primary-fixed" aria-hidden="true"></span>
+                    {projectStatus}
+                  </span>
+                )}
                 {project.categoryLabel && (
-                  <span className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 border border-border-primary text-text-dim group-hover:border-primary-fixed/40 group-hover:text-primary-fixed/80 transition-colors">
+                  <span className="hidden md:inline-flex text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 border border-border-primary text-text-dim group-hover:border-primary-fixed/40 group-hover:text-primary-fixed/80 transition-colors">
                     {project.categoryLabel}
                   </span>
                 )}
@@ -161,9 +166,18 @@ function ProjectCard({ project, index, onTagClick, activeTag }) {
 }
 
 export default function ProjectsPage() {
+  const { projects, siteConfig, pageContent } = useCms();
+  const copy = pageContent?.projects || {};
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeTag, setActiveTag] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const projectCategories = useMemo(() => [
+    { id: 'all', label: 'ALL PROJECTS' },
+    ...Array.from(new Map(projects.map((project) => [
+      project.category,
+      { id: project.category, label: project.categoryLabel || project.category },
+    ])).values()).filter((category) => category.id),
+  ], [projects]);
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
@@ -179,7 +193,7 @@ export default function ProjectsPage() {
 
       return matchesCategory && matchesTag && matchesSearch;
     });
-  }, [selectedCategory, activeTag, searchQuery]);
+  }, [projects, selectedCategory, activeTag, searchQuery]);
 
   const handleTagClick = (tag) => {
     setActiveTag((prev) => (prev === tag ? null : tag));
@@ -206,7 +220,7 @@ export default function ProjectsPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-fixed"></span>
                   </span>
-                  <span>SYSTEM TELEMETRY: ALL {projects.length} PROJECTS ONLINE</span>
+                  <span>{copy.telemetryLabel || 'SYSTEM TELEMETRY'}: ALL {projects.length} PROJECTS ONLINE</span>
                 </div>
                 <div className="text-[11px] text-text-dim uppercase font-mono">
                   FILTERED: <strong className="text-primary-fixed">{filteredProjects.length}</strong> / {projects.length}
@@ -216,10 +230,10 @@ export default function ProjectsPage() {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                   <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase text-primary mb-3 leading-tight tracking-tight">
-                    / PROJECTS
+                    {copy.title || '/ PROJECTS'}
                   </h1>
                   <p className="text-body-md text-text-muted max-w-2xl font-mono leading-relaxed">
-                    Production-grade systems, autonomous agent control planes, explainable analytics pipelines, and interactive developer tools.
+                    {copy.introduction || 'Engineered AI systems, agent-enabled control planes, explainable analytics pipelines, and interactive developer tools.'}
                   </p>
                 </div>
 
@@ -232,7 +246,7 @@ export default function ProjectsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="SEARCH CODEBASES..."
+                    placeholder={copy.searchPlaceholder || 'SEARCH CODEBASES...'}
                     className="w-full bg-surface border border-border-primary pl-9 pr-8 py-2 text-[12px] font-mono text-primary placeholder:text-text-dim focus:outline-none focus:border-primary-fixed transition-colors"
                   />
                   {searchQuery && (

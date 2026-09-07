@@ -1,10 +1,11 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { navigation, siteConfig } from '@/lib/data';
+import { useCms } from '@/components/CmsProvider';
 
 export default function TopBar() {
   const pathname = usePathname();
+  const { navigation, siteConfig } = useCms();
   const currentNav = navigation.find(
     (item) => item.href === pathname || (item.href !== '/' && pathname.startsWith(item.href))
   ) || { label: 'HOME' };

@@ -1,0 +1,89 @@
+.timelineItem {
+  isolation: isolate;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timelineItem::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 1.5%));
+  content: '';
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.timelineItem:hover,
+.timelineItem:focus-visible,
+.timelineItemActive {
+  transform: translateX(6px);
+}
+
+.timelineItem:focus-visible {
+  outline: none;
+}
+
+.timelineItem:hover::before,
+.timelineItem:focus-visible::before,
+.timelineItemActive::before {
+  border-color: color-mix(in srgb, var(--color-primary-fixed) 38%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-primary-fixed) 8%, transparent),
+    rgb(255 255 255 / 1.5%) 70%,
+    transparent
+  );
+}
+
+.timelineMarker {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timelineMarkerActive {
+  border-color: var(--color-primary-fixed);
+  background: var(--color-primary-fixed);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-primary-fixed) 70%, transparent);
+  transform: rotate(45deg) scale(0.82);
+}
+
+.viewportPanel {
+  box-shadow: 16px 16px 0 rgb(0 0 0 / 24%);
+}
+
+.sceneStage {
+  background:
+    radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--color-primary-fixed) 8%, transparent), transparent 44%),
+    #080808;
+}
+
+.stageGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(52 52 52 / 28%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(52 52 52 / 28%) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at center, black 5%, transparent 78%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timelineItem,
+  .timelineMarker {
+    transition: none;
+  }
+
+  .timelineItem:hover,
+  .timelineItem:focus-visible,
+  .timelineItemActive {
+    transform: none;
+  }
+}

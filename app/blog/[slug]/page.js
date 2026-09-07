@@ -4,28 +4,35 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import MobileMenu from '@/components/MobileMenu';
+import { createPageMetadata } from '@/lib/seo';
+
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({
+  const posts = await getAllPosts();
+  return (posts || []).map((post) => ({
     slug: post.slug,
   }));
 }
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const post = getPostBySlug(resolvedParams.slug);
+  const post = await getPostBySlug(resolvedParams.slug);
   if (!post) return { title: 'Not Found' };
   
-  return {
+  return createPageMetadata({
     title: `${post.title} | HAZEM HASSINE`,
     description: post.summary,
-  };
+    pathname: `/blog/${post.slug}`,
+    type: 'article',
+    image: post.image || post.coverImage,
+  });
 }
 
 export default async function BlogPost({ params }) {
   const resolvedParams = await params;
-  const post = getPostBySlug(resolvedParams.slug);
+  const post = await getPostBySlug(resolvedParams.slug);
 
   if (!post) {
     notFound();
