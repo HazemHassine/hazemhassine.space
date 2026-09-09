@@ -15,11 +15,17 @@ export default function ProjectShowcaseView({ project, adjacent }) {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [lightboxImage, setLightboxImage] = useState(null);
+  const closeLightbox = () => {
+    setLightboxImage(null);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cursor:reset'));
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        setLightboxImage(null);
+        closeLightbox();
       }
     };
     if (lightboxImage) {
@@ -149,9 +155,18 @@ export default function ProjectShowcaseView({ project, adjacent }) {
               {heroImage && (
                 <TiltCard className="border border-border-primary bg-surface-container-high overflow-hidden shadow-2xl hover:border-primary-fixed/80 transition-all">
                   <div 
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setLightboxImage(heroImage)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setLightboxImage(heroImage);
+                      }
+                    }}
                     className="relative group cursor-pointer aspect-video md:aspect-[16/10] overflow-hidden"
                     title="Click to view full image"
+                    aria-label={`View full preview image for ${project.title}`}
                   >
                     <Image
                       src={heroImage}
@@ -335,8 +350,18 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                     {project.architecture.image && (
                       <TiltCard className="mb-8 border border-border-primary bg-black p-2 relative group shadow-2xl">
                         <div 
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setLightboxImage(project.architecture.image)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setLightboxImage(project.architecture.image);
+                            }
+                          }}
                           className="relative w-full aspect-video md:aspect-[16/9] cursor-pointer overflow-hidden"
+                          title="Click to enlarge diagram"
+                          aria-label="Enlarge architecture diagram"
                         >
                           <Image
                             src={project.architecture.image}
@@ -475,9 +500,18 @@ export default function ProjectShowcaseView({ project, adjacent }) {
                   {/* Main Viewport */}
                   <TiltCard className="bg-surface border border-border-primary p-4 md:p-6 shadow-2xl">
                     <div 
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setLightboxImage(project.screenshots[activeScreenshot].src)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setLightboxImage(project.screenshots[activeScreenshot].src);
+                        }
+                      }}
                       className="relative w-full aspect-video md:aspect-[16/9] border border-border-primary bg-black overflow-hidden mb-4 cursor-pointer group"
                       title="Click to view full size"
+                      aria-label="Click to view full size image"
                     >
                       <Image
                         src={project.screenshots[activeScreenshot].src}
@@ -681,15 +715,19 @@ export default function ProjectShowcaseView({ project, adjacent }) {
       {lightboxImage && (
         <div 
           className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fadeIn"
-          onClick={() => setLightboxImage(null)}
+          onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image preview modal"
         >
           <div 
-            className="relative max-w-6xl w-full max-h-[90vh] aspect-video border border-border-primary bg-black p-2 shadow-2xl"
+            className="relative max-w-6xl w-full max-h-[90vh] aspect-video border border-border-primary bg-black p-2 shadow-2xl cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setLightboxImage(null)}
-              className="absolute -top-10 right-0 text-white font-mono text-[12px] hover:text-primary-fixed transition-colors flex items-center gap-1"
+              onClick={closeLightbox}
+              className="absolute -top-10 right-0 text-white font-mono text-[12px] hover:text-primary-fixed transition-colors flex items-center gap-1 cursor-pointer"
+              aria-label="Close fullscreen preview"
             >
               <span className="material-symbols-outlined text-[18px]">close</span>
               [ CLOSE ESC ]
