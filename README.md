@@ -39,7 +39,7 @@ The interface uses a restrained neo-brutalist and cyberpunk-inspired visual lang
 | AI | Vercel AI SDK 6, Google Gemini via Vercel AI Gateway |
 | Authentication | TOTP with Node.js Crypto, JWT with `jose` |
 | Content | Markdown, `gray-matter`, `react-markdown`, `@uiw/react-md-editor` |
-| Email and analytics | Resend, Vercel Analytics |
+| Email, analytics, and performance | Resend, Vercel Analytics, Vercel Speed Insights |
 | Deployment | Vercel, Next.js standalone output, Docker Compose |
 
 ## Architecture
@@ -177,7 +177,7 @@ The two `NEXT_PUBLIC_*` Supabase values are passed as build arguments because Ne
 
 ## Deployment
 
-The live site is deployed on Vercel and includes Vercel Analytics. Configure the required environment variables in the deployment project before building. The standalone Docker image provides an alternative for environments that can run containers.
+The live site is deployed on Vercel and includes Vercel Analytics and Speed Insights. Configure the required environment variables in the deployment project before building. The standalone Docker image provides an alternative for environments that can run containers.
 
 ## Security Notes
 
