@@ -1,5 +1,6 @@
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import PageTransition from "@/components/PageTransition";
 import ChatWrapper from "@/components/ChatWrapper";
 import "./globals.css";
@@ -64,6 +65,7 @@ export default async function RootLayout({ children }) {
         </CmsProvider>
         <ChatWrapper />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
