@@ -41,7 +41,9 @@ async function handleDelete(request) {
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
 
-    revalidatePath('/', 'layout');
+    revalidatePath('/');
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${cleanSlug}`);
     revalidatePath('/sitemap.xml');
 
     // Also remove local file in development if it exists

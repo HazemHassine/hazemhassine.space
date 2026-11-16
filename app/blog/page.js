@@ -17,8 +17,8 @@ export async function generateMetadata() {
 }
 
 export default async function BlogPage({ cmsData } = {}) {
-  const posts = await getAllPosts();
-  const cms = cmsData || await getPublishedCmsData();
+  const posts = await getAllPosts({ strict: true });
+  const cms = cmsData || await getPublishedCmsData({ strict: true });
   const copy = cms.pageContent?.blog || {};
 
   return (

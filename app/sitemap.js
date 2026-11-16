@@ -20,10 +20,14 @@ export default async function sitemap() {
 
   // Dynamic blog routes
   const posts = await getAllPosts();
-  const blogRoutes = (posts || []).map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
-  }));
+  const blogRoutes = (posts || []).map((post) => {
+    // Post dates are free-form display strings; fall back when one does not parse.
+    const parsed = new Date(post.updatedAt || post.date || '');
+    return {
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: (Number.isNaN(parsed.getTime()) ? new Date() : parsed).toISOString(),
+    };
+  });
 
   return [...routes, ...projectRoutes, ...blogRoutes];
 }

@@ -52,7 +52,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProjectPage({ params, cmsData } = {}) {
   const resolvedParams = await params;
-  const cms = cmsData || await getPublishedCmsData();
+  const cms = cmsData || await getPublishedCmsData({ strict: true });
   const allProjects = cms.projectDetails || projectsDetail;
   const project = findProject(allProjects, resolvedParams.slug);
 

@@ -65,21 +65,37 @@ export async function POST(request) {
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
 
+    const contentDirectory = path.join(process.cwd(), 'content', 'blog');
+    const changedSlugs = [cleanSlug];
+
     if (originalSlug && originalSlug !== cleanSlug) {
       const cleanOriginalSlug = originalSlug.replace(/[^a-zA-Z0-9_-]/g, '');
       if (cleanOriginalSlug) {
         await supabaseAdmin.from('posts').delete().eq('slug', cleanOriginalSlug);
+        changedSlugs.push(cleanOriginalSlug);
       }
     }
 
-    // Public pages are cached, so refresh them (also covers unpublishing to draft).
-    revalidatePath('/', 'layout');
+    // Public pages are cached: refresh only the ones that show posts
+    // (this also covers unpublishing to draft and renames).
+    revalidatePath('/');
+    revalidatePath('/blog');
+    for (const changedSlug of changedSlugs) revalidatePath(`/blog/${changedSlug}`);
     revalidatePath('/sitemap.xml');
+
+    // A draft must not leave a readable local copy behind.
+    if (process.env.NODE_ENV === 'development' && status === 'draft') {
+      try {
+        const filePath = path.join(contentDirectory, `${cleanSlug}.md`);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      } catch (fileErr) {
+        console.warn('Could not remove local backup file:', fileErr);
+      }
+    }
 
     // Published posts get a local development backup; drafts remain private.
     if (process.env.NODE_ENV === 'development' && status === 'published') {
       try {
-        const contentDirectory = path.join(process.cwd(), 'content', 'blog');
         if (!fs.existsSync(contentDirectory)) {
           fs.mkdirSync(contentDirectory, { recursive: true });
         }
