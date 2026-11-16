@@ -6,7 +6,9 @@ import Link from 'next/link';
 import { getPublishedCmsData } from '@/lib/cms-server';
 import { createPageMetadata } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+// Served from cache; regenerated on publish (revalidatePath in the admin routes)
+// and at most hourly as a fallback if a Supabase read failed during a render.
+export const revalidate = 3600;
 
 export async function generateMetadata() {
   const cms = await getPublishedCmsData();
@@ -15,8 +17,8 @@ export async function generateMetadata() {
 }
 
 export default async function BlogPage({ cmsData } = {}) {
-  const posts = await getAllPosts();
-  const cms = cmsData || await getPublishedCmsData();
+  const posts = await getAllPosts({ strict: true });
+  const cms = cmsData || await getPublishedCmsData({ strict: true });
   const copy = cms.pageContent?.blog || {};
 
   return (

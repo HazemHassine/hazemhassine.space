@@ -5,8 +5,11 @@ import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import MobileMenu from '@/components/MobileMenu';
 import { createPageMetadata } from '@/lib/seo';
+import { getPublishedCmsData } from '@/lib/cms-server';
 
-export const dynamic = 'force-dynamic';
+// Served from cache; regenerated on publish (revalidatePath in the admin routes)
+// and at most hourly as a fallback if a Supabase read failed during a render.
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
@@ -32,7 +35,12 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPost({ params }) {
   const resolvedParams = await params;
-  const post = await getPostBySlug(resolvedParams.slug);
+  // The root layout renders CMS content into this page; share its read (deduped)
+  // so a failed one is not cached along with the post.
+  const [post] = await Promise.all([
+    getPostBySlug(resolvedParams.slug, { strict: true }),
+    getPublishedCmsData({ strict: true }),
+  ]);
 
   if (!post) {
     notFound();

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import fs from 'fs';
 import path from 'path';
 import { supabaseAdmin } from '@/lib/supabase';
@@ -39,6 +40,11 @@ async function handleDelete(request) {
       console.error('Supabase delete error:', dbError);
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
+
+    revalidatePath('/');
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${cleanSlug}`);
+    revalidatePath('/sitemap.xml');
 
     // Also remove local file in development if it exists
     if (process.env.NODE_ENV === 'development') {

@@ -4,7 +4,9 @@ import ProjectShowcaseView from '@/components/ProjectShowcaseView';
 import { getPublishedCmsData } from '@/lib/cms-server';
 import { createPageMetadata } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+// Served from cache; regenerated on publish (revalidatePath in the admin routes)
+// and at most hourly as a fallback if a Supabase read failed during a render.
+export const revalidate = 3600;
 
 function findProject(projects, slug) {
   if (!slug) return null;
@@ -50,7 +52,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProjectPage({ params, cmsData } = {}) {
   const resolvedParams = await params;
-  const cms = cmsData || await getPublishedCmsData();
+  const cms = cmsData || await getPublishedCmsData({ strict: true });
   const allProjects = cms.projectDetails || projectsDetail;
   const project = findProject(allProjects, resolvedParams.slug);
 
