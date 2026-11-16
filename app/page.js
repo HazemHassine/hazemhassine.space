@@ -8,7 +8,9 @@ import Marquee from '@/components/Marquee';
 import { getAllPosts } from '@/lib/markdown';
 import { getPublishedCmsData } from '@/lib/cms-server';
 
-export const dynamic = 'force-dynamic';
+// Served from cache; regenerated on publish (revalidatePath in the admin routes)
+// and at most hourly as a fallback if a Supabase read failed during a render.
+export const revalidate = 3600;
 
 export default async function Home({ cmsData } = {}) {
   const cms = cmsData || await getPublishedCmsData();

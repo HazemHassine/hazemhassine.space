@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -70,6 +71,10 @@ export async function POST(request) {
         await supabaseAdmin.from('posts').delete().eq('slug', cleanOriginalSlug);
       }
     }
+
+    // Public pages are cached, so refresh them (also covers unpublishing to draft).
+    revalidatePath('/', 'layout');
+    revalidatePath('/sitemap.xml');
 
     // Published posts get a local development backup; drafts remain private.
     if (process.env.NODE_ENV === 'development' && status === 'published') {
